@@ -12,6 +12,8 @@ A **base template** for **GDS-compliant** frontends on **TypeScript / Node**: **
 
 **Priorities:** frontend web performance → frontend security → reduced maintenance → accessibility → inclusive design ([priorities.md](priorities.md)).
 
+**Documentation:** every lasting change is documented for **humans and agents** ([documentation-structure.md](documentation-structure.md)).
+
 **HTML:** prefer **Nunjucks macros**; fixtures for extensive **100% parity** tests. Before Frontend upgrades, always read https://github.com/alphagov/govuk-frontend/releases/latest.
 
 ## Priorities

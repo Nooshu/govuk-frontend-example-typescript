@@ -42,11 +42,13 @@ Details: [`docs/priorities.md`](docs/priorities.md).
 | Stack / language (TypeScript) | [`docs/tech-stack.md`](docs/tech-stack.md)                                                                              |
 | Sync from agnostic template   | [`docs/syncing-from-template.md`](docs/syncing-from-template.md)                                                        |
 
-**Language rule:** This line is **TypeScript on Node**. Follow current TypeScript/Node ESM best practices for structure, typing, tests, and tooling — without weakening the non-negotiables below. **Prefer Nunjucks** (Frontend’s native macros) for component HTML instead of copy-pasting static HTML from each release.
+**Language rule:** This line is **TypeScript on Node**. **Every** feature and code change must follow TypeScript’s and Node’s **latest** best practices (project layout, typing, modules, tests, packaging, CI, lint) as recorded in [`docs/tech-stack.md`](docs/tech-stack.md) — without weakening the non-negotiables below. Prefer current stable idioms over outdated patterns. **Prefer Nunjucks** (Frontend’s native macros) for component HTML instead of copy-pasting static HTML from each release.
 
 **GOV.UK Frontend’s own stack:** Frontend ships as a **Node** package with **Nunjucks** macros, official `fixtures.json`, and `template.njk` sources. Refer to Node/Nunjucks directly for install, fixtures, macro options, encoding, and fixture-verification scripts.
 
 **Guidance rule:** Prefer searching the URLs in [`docs/guidance-sources.md`](docs/guidance-sources.md) over inventing local policy.
+
+**Documentation rule:** Every prompt, feature, and code change for this template **and** projects built from it must leave **comprehensive dual-audience documentation** (humans + AI agents) in the right place. Detail: [`docs/documentation-structure.md`](docs/documentation-structure.md).
 
 ## Non-negotiables
 
@@ -64,6 +66,8 @@ Details: [`docs/priorities.md`](docs/priorities.md).
 12. **Always review the latest release notes** before upgrading — https://github.com/alphagov/govuk-frontend/releases/latest — then follow [`docs/upgrading-govuk-frontend.md`](docs/upgrading-govuk-frontend.md).
 13. **Performance and security baseline** — every response uses [`baseline/`](baseline/) (cache kind, OWASP headers, CSP hash for the `js-enabled` snippet). Sync that directory from the template; do not invent a weaker set. See [`docs/frontend-performance.md`](docs/frontend-performance.md) and [`docs/frontend-security.md`](docs/frontend-security.md).
 14. **Split finished work into focused commits** — once a coherent piece of code or docs is complete, create **specific** commits with **comprehensive** messages (why, contract impact, how to verify). Do not leave a large mixed working tree; do not squash unrelated concerns into one commit. This applies to agents and humans using this template.
+15. **Document every change for humans and agents** — no feature, prompt-driven change, or behaviour lands without dual-audience docs updated in the right place (`/docs` detail, `AGENTS.md` / skill / rules links when contracts change, onboarding or CONTRIBUTING when workflow changes). Aim for easier onboarding and maintenance. See [`docs/documentation-structure.md`](docs/documentation-structure.md).
+16. **Follow the latest language best practices** — all new and changed code must match TypeScript / Node’s current best practices in [`docs/tech-stack.md`](docs/tech-stack.md) (not outdated tutorials). Shared Node tooling (Sass, baseline, fixtures) follows current Node/ESM practice. Never weaken Frontend, parity, security, or performance non-negotiables to chase a fad.
 
 Using this repo does **not** make a service assessment-ready. See [`docs/service-assessment-readiness.md`](docs/service-assessment-readiness.md).
 
@@ -85,6 +89,7 @@ Using this repo does **not** make a service assessment-ready. See [`docs/service
 | Content & forms                     | [`docs/content-and-forms.md`](docs/content-and-forms.md)               |
 | Design tokens (colour, type, space) | [`docs/design-tokens.md`](docs/design-tokens.md)                       |
 | Styles / Sass cascade               | [`docs/styles.md`](docs/styles.md)                                     |
+| Dual-audience documentation         | [`docs/documentation-structure.md`](docs/documentation-structure.md)   |
 | Guidance sources                    | [`docs/guidance-sources.md`](docs/guidance-sources.md)                 |
 | Authoritative links                 | [`docs/authoritative-references.md`](docs/authoritative-references.md) |
 
@@ -104,6 +109,8 @@ Before finishing a page change:
 - [ ] Pattern guidance followed; out-of-scope widgets called out with inset text
 - [ ] Coverage remains 100% functions / branches / statements for touched library code
 - [ ] Fixture parity still green for any touched components
+- [ ] Dual-audience docs updated (humans in `/docs` or CONTRIBUTING; agents via `AGENTS.md` / skill / playbook links if contracts changed)
+- [ ] Code follows TypeScript / Node’s latest best practices ([`docs/tech-stack.md`](docs/tech-stack.md))
 
 ## Watching upstream
 

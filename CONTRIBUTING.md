@@ -19,6 +19,8 @@ Thanks for helping maintain this **GDS-compliant frontend** template. This guide
 - Before upgrading Frontend, read https://github.com/alphagov/govuk-frontend/releases/latest.
 - HTTP responses use the shared [`baseline/`](baseline/). Compress with Brotli; Gzip is only the fallback when the client does not advertise `br`.
 - Compile CSS via Sass (`styles/` → Frontend `@use` → `govuk-overrides.scss` last). Never use `!important` in service CSS. See [`docs/styles.md`](docs/styles.md).
+- Document every change for **humans and agents** ([docs/documentation-structure.md](docs/documentation-structure.md)).
+- Follow the **latest** TypeScript / Node best practices in [docs/tech-stack.md](docs/tech-stack.md).
 
 Full list: [`AGENTS.md`](AGENTS.md).
 
@@ -50,7 +52,8 @@ See [`docs/syncing-from-template.md`](docs/syncing-from-template.md). Dotfiles a
 
 ## Pull requests
 
-- Keep changes focused; update `/docs` (and `AGENTS.md` links) when behaviour or process changes.
+- Keep changes focused; update `/docs` (and `AGENTS.md` links) when behaviour or process changes — dual audience, same PR.
+- Follow TypeScript / Node’s latest best practices; do not introduce outdated stack idioms.
 - Split finished work into focused commits with comprehensive messages (see [`AGENTS.md`](AGENTS.md)).
 - Use the PR template checklist.
 - For Frontend bumps: follow [`docs/upgrading-govuk-frontend.md`](docs/upgrading-govuk-frontend.md).

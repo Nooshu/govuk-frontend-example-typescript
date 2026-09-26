@@ -13,7 +13,7 @@ Sync shared docs/dotfiles from the language-agnostic template: [syncing-from-tem
 
 ## TypeScript conventions
 
-Follow current TypeScript / Node ESM best practices:
+**Every** feature and code change must follow **TypeScript / Node’s latest** best practices for the pinned major versions (not outdated tutorials):
 
 - TypeScript **7.0.2** (`typescript` on npm). `tsc` is the native compiler.
 - `strict`, plus `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `noImplicitOverride`, `noImplicitReturns`, `noFallthroughCasesInSwitch`, `noUnusedLocals`, `noUnusedParameters`, `noUncheckedSideEffectImports`, `verbatimModuleSyntax`, `isolatedModules`, and `erasableSyntaxOnly`
@@ -24,6 +24,8 @@ Follow current TypeScript / Node ESM best practices:
 - Prefer calling **Nunjucks macros** from `govuk-frontend` for component HTML; thin TypeScript wrappers around options → HTML only when needed — still fixture-parity
 - Tests: Node’s built-in test runner via `tsx` (`npm test`)
 - Coverage gate: **100%** functions, branches, statements, and lines for application code (see [testing-components.md](testing-components.md))
+
+Shared Node tooling (Sass pipeline, `baseline/`, docs scripts) already uses current ESM / Node 22+ practice; keep it that way. Dual-audience documentation for stack notes: [documentation-structure.md](documentation-structure.md).
 
 ## Consistency tooling
 
