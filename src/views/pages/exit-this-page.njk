@@ -1,0 +1,18 @@
+{% extends "layout.njk" %}
+{% from "macros/columns.njk" import twoThirds %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{% block content %}
+  {% call twoThirds() %}
+    <h1 class="govuk-heading-l">{{ heading }}</h1>
+    {{ govukWarningText({
+      text: "Use this component only on services where someone may be in danger.",
+      iconFallbackText: "Warning"
+    }) }}
+    {{ govukInsetText({
+      text: "This page is an example of the component. It is not part of the rod licence application. Choosing the button leaves this example and opens the BBC weather forecast."
+    }) }}
+    <p class="govuk-body">The button is the first thing on the page, which matches the component guidance.</p>
+  {% endcall %}
+{% endblock %}

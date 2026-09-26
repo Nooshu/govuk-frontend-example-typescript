@@ -1,0 +1,20 @@
+{% extends "layout.njk" %}
+{% from "macros/columns.njk" import twoThirds %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
+{% block content %}
+  {% call twoThirds() %}
+    {{ govukNotificationBanner(notification) }}
+    <h1 class="govuk-heading-xl">{{ heading }}</h1>
+    <p class="govuk-body-l">{{ lede }}</p>
+    {{ govukButton(startButton) }}
+    <p class="govuk-body">{{ timing }}</p>
+    {{ govukWarningText(warning) }}
+    {{ govukInsetText(inset) }}
+    {{ govukDetails(details) }}
+  {% endcall %}
+{% endblock %}

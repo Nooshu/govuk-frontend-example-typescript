@@ -1,0 +1,11 @@
+{% extends "layout.njk" %}
+{% from "macros/form.njk" import formPage %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block content %}
+  {% call formPage(errorSummary, csrf, returnTo) %}
+    {{ govukDateInput(dateOfBirth) }}
+    {{ govukButton({ text: "Continue" }) }}
+  {% endcall %}
+{% endblock %}

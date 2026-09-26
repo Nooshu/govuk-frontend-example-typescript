@@ -1,0 +1,11 @@
+{% extends "layout.njk" %}
+{% from "macros/columns.njk" import twoThirds %}
+{% from "govuk/components/pagination/macro.njk" import govukPagination %}
+
+{% block content %}
+  {% call twoThirds() %}
+    <h1 class="govuk-heading-l">{{ heading }}</h1>
+    <p class="govuk-body">{{ body }}</p>
+    {{ govukPagination(pagination) }}
+  {% endcall %}
+{% endblock %}

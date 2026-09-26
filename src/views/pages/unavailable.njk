@@ -1,0 +1,10 @@
+{% extends "layout.njk" %}
+{% from "macros/columns.njk" import twoThirds %}
+
+{% block content %}
+  {% call twoThirds() %}
+    <h1 class="govuk-heading-l">{{ heading }}</h1>
+    <p class="govuk-body">You will be able to use the service later.</p>
+    <p class="govuk-body">We have not saved your answers. When the service is available, you will have to start again.</p>
+  {% endcall %}
+{% endblock %}

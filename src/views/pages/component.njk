@@ -1,0 +1,29 @@
+{% extends "layout.njk" %}
+{% from "macros/columns.njk" import fullWidth %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{% block content %}
+  {% call fullWidth() %}
+    <h1 class="govuk-heading-l">{{ componentTitle }}</h1>
+    <p class="govuk-body"><a class="govuk-link" href="{{ designSystemUrl }}">{{ componentTitle }} on the GOV.UK Design System</a></p>
+    <h2 class="govuk-heading-m">Fixtures</h2>
+    <ul class="govuk-list">
+      {% for item in fixtures %}
+        <li>
+          {% if item.current %}
+            <strong>{{ item.name }}</strong>
+          {% else %}
+            <a class="govuk-link" href="/components/{{ componentName }}?fixture={{ item.href }}">{{ item.name }}</a>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+    {{ govukNotificationBanner(parity) }}
+    {% if description %}
+      {{ govukInsetText({ text: description }) }}
+    {% endif %}
+    <h2 class="govuk-heading-m">{{ fixtureName }}</h2>
+    {{ rendered | safe }}
+  {% endcall %}
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends "layout.njk" %}
+{% from "macros/columns.njk" import twoThirds %}
+
+{% block content %}
+  {% call twoThirds() %}
+    <h1 class="govuk-heading-l">{{ heading }}</h1>
+    <p class="govuk-body">Every GOV.UK Frontend component in version {{ frontendVersion }}, with a preview for each fixture. This page lists links only.</p>
+    <ul class="govuk-list">
+      {% for component in components %}
+        <li>
+          <a class="govuk-link" href="/components/{{ component.name }}">{{ component.title }}</a>
+          <p class="govuk-body">{{ component.description }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  {% endcall %}
+{% endblock %}

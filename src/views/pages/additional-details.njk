@@ -1,0 +1,11 @@
+{% extends "layout.njk" %}
+{% from "macros/form.njk" import formPage %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block content %}
+  {% call formPage(errorSummary, csrf, returnTo) %}
+    {{ govukCharacterCount(details) }}
+    {{ govukButton({ text: "Continue" }) }}
+  {% endcall %}
+{% endblock %}

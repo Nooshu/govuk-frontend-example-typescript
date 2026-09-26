@@ -1,0 +1,18 @@
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% macro formPage(errorSummary, csrf, returnTo, enctype) %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {% if errorSummary %}
+        {{ govukErrorSummary(errorSummary) }}
+      {% endif %}
+      <form method="post" novalidate{% if enctype %} enctype="{{ enctype }}"{% endif %}>
+        <input type="hidden" name="csrf" value="{{ csrf }}">
+        {% if returnTo %}
+          <input type="hidden" name="returnTo" value="{{ returnTo }}">
+        {% endif %}
+        {{ caller() }}
+      </form>
+    </div>
+  </div>
+{% endmacro %}

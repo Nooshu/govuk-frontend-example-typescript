@@ -1,0 +1,13 @@
+{% extends "layout.njk" %}
+{% from "macros/form.njk" import formPage %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block content %}
+  {% call formPage(errorSummary, csrf, returnTo) %}
+    <h1 class="govuk-heading-l">{{ heading }}</h1>
+    {{ govukInput(firstName) }}
+    {{ govukInput(lastName) }}
+    {{ govukButton({ text: "Continue" }) }}
+  {% endcall %}
+{% endblock %}

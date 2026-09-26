@@ -1,0 +1,11 @@
+{% extends "layout.njk" %}
+{% from "macros/columns.njk" import twoThirds %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block content %}
+  {% call twoThirds() %}
+    <h1 class="govuk-heading-l">{{ heading }}</h1>
+    <p class="govuk-body">Your answer was not saved. Start again.</p>
+    {{ govukButton({ text: "Start again", href: "/new-application" }) }}
+  {% endcall %}
+{% endblock %}

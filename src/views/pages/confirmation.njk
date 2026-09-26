@@ -1,0 +1,12 @@
+{% extends "layout.njk" %}
+{% from "macros/columns.njk" import twoThirds %}
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+
+{% block content %}
+  {% call twoThirds() %}
+    {{ govukPanel(panel) }}
+    <h2 class="govuk-heading-m">What happens next</h2>
+    <p class="govuk-body">This example does not take payment or send email. In a live service we would email your licence to you.</p>
+    <p class="govuk-body"><a class="govuk-link" href="/new-application">Apply for another licence</a></p>
+  {% endcall %}
+{% endblock %}

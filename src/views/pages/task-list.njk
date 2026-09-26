@@ -1,0 +1,14 @@
+{% extends "layout.njk" %}
+{% from "macros/columns.njk" import twoThirds %}
+{% from "govuk/components/task-list/macro.njk" import govukTaskList %}
+
+{% block content %}
+  {% call twoThirds() %}
+    <h1 class="govuk-heading-xl">{{ heading }}</h1>
+    <p class="govuk-body">Complete every section before you check your answers.</p>
+    {% for section in sections %}
+      <h2 class="govuk-heading-m">{{ section.heading }}</h2>
+      {{ govukTaskList({ idPrefix: section.idPrefix, items: section.items }) }}
+    {% endfor %}
+  {% endcall %}
+{% endblock %}

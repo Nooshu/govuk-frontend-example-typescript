@@ -1,0 +1,10 @@
+{% extends "layout.njk" %}
+{% from "macros/columns.njk" import fullWidth %}
+{% from "govuk/components/tabs/macro.njk" import govukTabs %}
+
+{% block content %}
+  {% call fullWidth() %}
+    <h1 class="govuk-heading-l">{{ heading }}</h1>
+    {{ govukTabs(tabs) }}
+  {% endcall %}
+{% endblock %}

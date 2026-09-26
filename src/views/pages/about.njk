@@ -1,0 +1,22 @@
+{% extends "layout.njk" %}
+{% from "macros/columns.njk" import twoThirds %}
+
+{% block content %}
+  {% call twoThirds() %}
+    <h1 class="govuk-heading-l">{{ heading }}</h1>
+    <p class="govuk-body">This TypeScript example shows how to build a GOV.UK service with GOV.UK Frontend Nunjucks macros. It is not a real licensing service.</p>
+    <p class="govuk-body">Pages call the official macros. Tests compare every component fixture from GOV.UK Frontend {{ frontendVersion }} with the HTML those macros return.</p>
+    <h2 class="govuk-heading-m">In this example</h2>
+    <ul class="govuk-list govuk-list--bullet">
+      <li><a class="govuk-link" href="/">Start page</a></li>
+      <li><a class="govuk-link" href="/task-list">Task list</a></li>
+      <li><a class="govuk-link" href="/fees">Licence fees</a></li>
+      <li><a class="govuk-link" href="/help">Help</a></li>
+      <li><a class="govuk-link" href="/guidance">Guidance</a></li>
+      {% if demosEnabled %}
+        <li><a class="govuk-link" href="/components">Component catalogue</a></li>
+        <li><a class="govuk-link" href="/examples">Example pages</a></li>
+      {% endif %}
+    </ul>
+  {% endcall %}
+{% endblock %}
