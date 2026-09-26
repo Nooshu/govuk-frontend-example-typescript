@@ -9,12 +9,20 @@ import {
   startMonths,
 } from './options.js';
 
+/** One row of the check-your-answers summary. */
 export type SummaryRow = {
   key: { text: string };
   value: { text: string };
   actions: { items: { href: string; text: string; visuallyHiddenText: string }[] };
 };
 
+/**
+ * Check-your-answers rows, including change links back to each question.
+ *
+ * @param application - Current answers.
+ * @param now - Clock used to label the start month.
+ * @returns Summary list rows. The password row says whether it was set, not what it was.
+ */
 export function summaryRows(application: Application, now: Date): SummaryRow[] {
   return [
     row('Name', joinName(application), '/name', 'name'),
@@ -57,12 +65,19 @@ export function summaryRows(application: Application, now: Date): SummaryRow[] {
   ];
 }
 
+/** One task-list section. */
 export type TaskSection = {
   heading: string;
   idPrefix: string;
   items: Record<string, unknown>[];
 };
 
+/**
+ * Task list sections for the licence journey.
+ *
+ * @param application - Current answers.
+ * @returns Sections whose statuses are "Completed", "Not started", or "Cannot start yet".
+ */
 export function taskSections(application: Application): TaskSection[] {
   const ready = requiredStepsComplete(application);
   return [

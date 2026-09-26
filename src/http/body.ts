@@ -1,5 +1,10 @@
 import { MAX_BODY_BYTES } from '../config.js';
 
+/**
+ * A request body that could not be read.
+ *
+ * `status` is the HTTP status to return, such as 413 or 415.
+ */
 export class RequestBodyError extends Error {
   readonly status: number;
 
@@ -10,24 +15,48 @@ export class RequestBodyError extends Error {
   }
 }
 
+/** A file part from a multipart body. Only the field name and filename are kept. */
 export type UploadedFile = {
   fieldName: string;
   filename: string;
 };
 
+/** Parsed form fields, plus at most one uploaded file. */
 export type ParsedBody = {
   fields: Map<string, string[]>;
   file?: UploadedFile;
 };
 
+/**
+ * First value posted for a field.
+ *
+ * @param body - Parsed body.
+ * @param name - Field name.
+ * @returns The first value, or an empty string when the field is absent.
+ */
 export function field(body: ParsedBody, name: string): string {
   return body.fields.get(name)?.[0] ?? '';
 }
 
+/**
+ * Every value posted for a field.
+ *
+ * @param body - Parsed body.
+ * @param name - Field name.
+ * @returns The values, or an empty list when the field is absent.
+ */
 export function fields(body: ParsedBody, name: string): string[] {
   return body.fields.get(name) ?? [];
 }
 
+/**
+ * Parse a urlencoded or multipart form body.
+ *
+ * @param contentType - Request `Content-Type`, or `null`.
+ * @param body - Raw body.
+ * @returns Fields and, for multipart, one file part.
+ * @throws RequestBodyError when the body is too large, the type is unsupported, or multipart is malformed.
+ */
 export function parseRequestBody(contentType: string | null, body: Buffer): ParsedBody {
   if (body.length > MAX_BODY_BYTES) {
     throw new RequestBodyError(413, 'Payload too large');
@@ -47,6 +76,12 @@ function mediaType(contentType: string | null): string {
   return type.trim().toLowerCase();
 }
 
+/**
+ * Parse an `application/x-www-form-urlencoded` body.
+ *
+ * @param raw - Decoded body text.
+ * @returns The fields. Repeated names keep every value.
+ */
 export function parseUrlEncoded(raw: string): ParsedBody {
   const fieldsMap = new Map<string, string[]>();
   for (const [key, value] of new URLSearchParams(raw)) {
@@ -57,6 +92,14 @@ export function parseUrlEncoded(raw: string): ParsedBody {
   return { fields: fieldsMap };
 }
 
+/**
+ * Parse a `multipart/form-data` body.
+ *
+ * @param contentType - Full `Content-Type`, including the boundary.
+ * @param body - Raw body.
+ * @returns The fields and the first file part that has a filename.
+ * @throws RequestBodyError when the boundary is missing or the body is malformed.
+ */
 export function parseMultipart(contentType: string, body: Buffer): ParsedBody {
   const boundary = boundaryFrom(contentType);
   if (!boundary) throw new RequestBodyError(400, 'Missing multipart boundary');

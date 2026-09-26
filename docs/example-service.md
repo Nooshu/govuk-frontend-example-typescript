@@ -15,6 +15,18 @@ Opens at <http://127.0.0.1:3000>. Set `PORT` to use another port.
 
 `NODE_ENV=production` hides the component catalogue and the extra example pages. The licence journey stays available.
 
+## Start to confirmation
+
+The journey is one service, from the start page through to confirmation.
+
+1. Start at `/` (English) or `/cy` (Welsh start page only). Choose **Start now**.
+2. The task list at `/task-list` links to each question.
+3. Answer the questions in order: name, date of birth, email, contact preference, where you will fish, licence length, start month, address, evidence (optional), additional details (optional), and password.
+4. Check your answers at `/check-answers`. Change links return to a question and then come back.
+5. Submit. The confirmation page at `/confirmation` shows a reference. The password is not shown.
+
+Invalid answers stay on the same question, with an error summary and the values you entered. You cannot open confirmation until the required questions are complete.
+
 ## Pages
 
 | Path                                 | What it shows                                                                              |

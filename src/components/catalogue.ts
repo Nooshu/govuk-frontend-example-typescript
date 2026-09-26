@@ -1,8 +1,10 @@
 import { listComponentNames } from './fixtures.js';
 import { titleFromKebab } from './names.js';
 
+/** A page in this example that uses the component. */
 export type UsedOn = { href: string; text: string };
 
+/** Catalogue entry for one GOV.UK Frontend component. */
 export type ComponentInfo = {
   name: string;
   title: string;
@@ -254,6 +256,12 @@ const DETAILS: Record<string, Omit<ComponentInfo, 'name'>> = {
   },
 };
 
+/**
+ * Catalogue copy for one component.
+ *
+ * @param name - Kebab-case component name.
+ * @returns Known copy, or a title derived from the name when this release adds a component we have not described.
+ */
 export function describeComponent(name: string): ComponentInfo {
   const known = DETAILS[name];
   if (!known) {
@@ -268,10 +276,20 @@ export function describeComponent(name: string): ComponentInfo {
   return { name, ...known };
 }
 
+/**
+ * Catalogue entries for every component in the pinned Frontend package.
+ *
+ * @returns Entries in component-name order.
+ */
 export function listCatalogue(): ComponentInfo[] {
   return listComponentNames().map((name) => describeComponent(name));
 }
 
+/**
+ * Component names this catalogue has hand-written copy for.
+ *
+ * @returns The keys of the local catalogue, which tests compare with the package.
+ */
 export function catalogueNames(): string[] {
   return Object.keys(DETAILS);
 }

@@ -20,12 +20,20 @@ const CONTENT_TYPES: Record<string, string> = {
   '.jpeg': 'image/jpeg',
 };
 
+/** A Frontend static file that is safe to send. */
 export type Asset = {
   filePath: string;
   contentType: string;
   cacheControl: string;
 };
 
+/**
+ * Resolve `/assets/…` to a file inside the Frontend package.
+ *
+ * @param urlPath - Request path, including the `/assets/` prefix.
+ * @param roots - Directories for root files (`govuk-frontend.min.css` and `.js`) and nested assets.
+ * @returns The file to send, or `undefined` when the path is missing, unsafe, or not an allowed type.
+ */
 export function resolveAsset(
   urlPath: string,
   roots: { files: string; assets: string } = { files: govukRoot, assets: frontendAssetRoot },

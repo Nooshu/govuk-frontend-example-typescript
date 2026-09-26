@@ -5,6 +5,15 @@ import { asContactBy, asLicenceLength, clean, normalisePostcode } from './valida
 
 const REGION_VALUES = new Set<string>([...REGIONS.map((region) => region.value), NOT_SURE]);
 
+/**
+ * Save the name and mark the step complete only when it is valid.
+ *
+ * @param application - Current answers.
+ * @param firstName - First name as posted.
+ * @param lastName - Last name as posted.
+ * @param valid - Whether validation passed.
+ * @returns The updated application.
+ */
 export function saveName(
   application: Application,
   firstName: string,
@@ -19,6 +28,16 @@ export function saveName(
   };
 }
 
+/**
+ * Save the date of birth and mark the step from `valid`.
+ *
+ * @param application - Current answers.
+ * @param day - Day as posted.
+ * @param month - Month as posted.
+ * @param year - Year as posted.
+ * @param valid - Whether validation passed.
+ * @returns The updated application.
+ */
 export function saveDate(
   application: Application,
   day: string,
@@ -35,6 +54,14 @@ export function saveDate(
   };
 }
 
+/**
+ * Save the email address and mark the step from `valid`.
+ *
+ * @param application - Current answers.
+ * @param email - Email as posted.
+ * @param valid - Whether validation passed.
+ * @returns The updated application.
+ */
 export function saveEmail(application: Application, email: string, valid: boolean): Application {
   return {
     ...application,
@@ -43,6 +70,15 @@ export function saveEmail(application: Application, email: string, valid: boolea
   };
 }
 
+/**
+ * Save the contact preference. The telephone is stored only as text.
+ *
+ * @param application - Current answers.
+ * @param contactBy - Posted contact method.
+ * @param telephone - Telephone as posted.
+ * @param valid - Whether validation passed.
+ * @returns The updated application.
+ */
 export function saveContact(
   application: Application,
   contactBy: string,
@@ -57,6 +93,14 @@ export function saveContact(
   };
 }
 
+/**
+ * Save known region values and mark the step from `valid`.
+ *
+ * @param application - Current answers.
+ * @param regions - Posted region values. Unknown values are dropped.
+ * @param valid - Whether validation passed.
+ * @returns The updated application.
+ */
 export function saveRegions(
   application: Application,
   regions: readonly string[],
@@ -69,6 +113,14 @@ export function saveRegions(
   };
 }
 
+/**
+ * Save the licence length and mark the step from `valid`.
+ *
+ * @param application - Current answers.
+ * @param value - Posted licence length.
+ * @param valid - Whether validation passed.
+ * @returns The updated application.
+ */
 export function saveLicence(application: Application, value: string, valid: boolean): Application {
   return {
     ...application,
@@ -77,6 +129,14 @@ export function saveLicence(application: Application, value: string, valid: bool
   };
 }
 
+/**
+ * Save the start month and mark the step from `valid`.
+ *
+ * @param application - Current answers.
+ * @param value - Posted `YYYY-MM` value.
+ * @param valid - Whether validation passed.
+ * @returns The updated application.
+ */
 export function saveMonth(application: Application, value: string, valid: boolean): Application {
   return {
     ...application,
@@ -85,6 +145,14 @@ export function saveMonth(application: Application, value: string, valid: boolea
   };
 }
 
+/**
+ * Save the address. The postcode is normalised only when the answer is valid.
+ *
+ * @param application - Current answers.
+ * @param values - Address lines as posted.
+ * @param valid - Whether validation passed.
+ * @returns The updated application.
+ */
 export function saveAddress(
   application: Application,
   values: { line1: string; line2: string; town: string; postcode: string },
@@ -100,6 +168,14 @@ export function saveAddress(
   };
 }
 
+/**
+ * Save an evidence filename. A missing or invalid upload keeps the previous name.
+ *
+ * @param application - Current answers.
+ * @param filename - Safe filename, or `undefined` when there is no acceptable file.
+ * @param valid - Whether validation passed.
+ * @returns The updated application.
+ */
 export function saveEvidence(
   application: Application,
   filename: string | undefined,
@@ -112,6 +188,14 @@ export function saveEvidence(
   };
 }
 
+/**
+ * Save additional details and mark the step from `valid`.
+ *
+ * @param application - Current answers.
+ * @param value - Details as posted.
+ * @param valid - Whether validation passed.
+ * @returns The updated application.
+ */
 export function saveDetails(application: Application, value: string, valid: boolean): Application {
   return {
     ...application,
@@ -120,6 +204,13 @@ export function saveDetails(application: Application, value: string, valid: bool
   };
 }
 
+/**
+ * Record that a password was accepted. The password is not stored.
+ *
+ * @param application - Current answers.
+ * @param valid - Whether validation passed.
+ * @returns The updated application. `passwordCreated` follows `valid`.
+ */
 export function savePassword(application: Application, valid: boolean): Application {
   return {
     ...application,

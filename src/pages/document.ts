@@ -8,6 +8,9 @@ import type { Session } from '../session/store.js';
 const require = createRequire(import.meta.url);
 const nunjucks = require('nunjucks') as typeof import('nunjucks');
 
+/**
+ * Data for one page render. A page has a back link or breadcrumbs, not both.
+ */
 export type PageView = {
   template: string;
   status: number;
@@ -33,6 +36,17 @@ const FEEDBACK = {
   html: '<p class="govuk-body">This example does not send feedback. <a class="govuk-link" href="/help">Get help with this example</a>.</p>',
 };
 
+/**
+ * Render a page inside the GOV.UK Frontend page template.
+ *
+ * @param view - Template name, heading, and page-specific context.
+ * @param session - Session used for the CSRF token and cookie banner.
+ * @param url - Request URL, used for a safe return path.
+ * @param nonce - CSP nonce for the `initAll` script.
+ * @param demosEnabled - Whether catalogue and example links are included.
+ * @returns The full HTML document.
+ * @throws Error when the view sets both a back link and breadcrumbs.
+ */
 export function renderPage(
   view: PageView,
   session: Session,

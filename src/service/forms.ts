@@ -4,6 +4,12 @@ import type { Application } from './model.js';
 import { CONTACT_OPTIONS, LICENCE_LENGTHS, NOT_SURE, REGIONS, startMonths } from './options.js';
 import type { FieldError } from './validate.js';
 
+/**
+ * Error summary macro params, or nothing when there are no errors.
+ *
+ * @param errors - Field errors for this page.
+ * @returns Params for the error summary macro.
+ */
 export function errorSummary(errors: FieldError[]): Record<string, unknown> | undefined {
   if (errors.length === 0) return undefined;
   return {
@@ -12,6 +18,13 @@ export function errorSummary(errors: FieldError[]): Record<string, unknown> | un
   };
 }
 
+/**
+ * Text input params for the name question.
+ *
+ * @param application - Current answers, used to retain values.
+ * @param errors - Field errors for this page.
+ * @returns Params for the first-name and last-name inputs.
+ */
 export function nameFields(
   application: Application,
   errors: FieldError[],
@@ -30,6 +43,13 @@ export function nameFields(
   };
 }
 
+/**
+ * Text input params for the email question.
+ *
+ * @param application - Current answers, used to retain the value.
+ * @param errors - Field errors for this page.
+ * @returns Params whose label is the page heading.
+ */
 export function emailField(
   application: Application,
   errors: FieldError[],
@@ -50,6 +70,13 @@ export function emailField(
   };
 }
 
+/**
+ * Date input params for the date of birth question.
+ *
+ * @param application - Current answers, used to retain the value.
+ * @param errors - Field errors for this page.
+ * @returns Params for the date input macro.
+ */
 export function dateField(application: Application, errors: FieldError[]): Record<string, unknown> {
   const message = messageFor(errors, 'date-of-birth');
   return {
@@ -74,6 +101,13 @@ export function dateField(application: Application, errors: FieldError[]): Recor
   };
 }
 
+/**
+ * Radio params for the contact preference, with a conditional telephone input.
+ *
+ * @param application - Current answers, used to retain the value.
+ * @param errors - Field errors for this page.
+ * @returns Params for the radios macro.
+ */
 export function contactFields(
   application: Application,
   errors: FieldError[],
@@ -97,24 +131,32 @@ export function contactFields(
       },
       hint: { text: 'We will use this if we need to ask about your application' },
       ...(message ? { errorMessage: { text: message } } : {}),
-      items: [
-        {
-          value: 'email',
-          text: 'Email',
-          id: 'contact-by',
-          checked: application.contactBy === 'email',
-        },
-        {
-          value: 'telephone',
-          text: 'Telephone',
-          checked: application.contactBy === 'telephone',
-          conditional: { html: renderComponent('input', telephone) },
-        },
-      ],
+      items: CONTACT_OPTIONS.map((option) =>
+        option.value === 'telephone'
+          ? {
+              value: option.value,
+              text: option.text,
+              checked: application.contactBy === 'telephone',
+              conditional: { html: renderComponent('input', telephone) },
+            }
+          : {
+              value: option.value,
+              text: option.text,
+              id: 'contact-by',
+              checked: application.contactBy === option.value,
+            },
+      ),
     },
   };
 }
 
+/**
+ * Checkbox params for where the applicant will fish.
+ *
+ * @param application - Current answers, used to retain the value.
+ * @param errors - Field errors for this page.
+ * @returns Params for the checkboxes macro.
+ */
 export function regionFields(
   application: Application,
   errors: FieldError[],
@@ -151,6 +193,13 @@ export function regionFields(
   };
 }
 
+/**
+ * Radio params for the licence length, including the example fee.
+ *
+ * @param application - Current answers, used to retain the value.
+ * @param errors - Field errors for this page.
+ * @returns Params for the radios macro.
+ */
 export function licenceFields(
   application: Application,
   errors: FieldError[],
@@ -178,6 +227,14 @@ export function licenceFields(
   };
 }
 
+/**
+ * Select params for the licence start month.
+ *
+ * @param application - Current answers, used to retain the value.
+ * @param errors - Field errors for this page.
+ * @param now - Clock used to build the next 12 months.
+ * @returns Params for the select macro.
+ */
 export function monthField(
   application: Application,
   errors: FieldError[],
@@ -208,6 +265,13 @@ export function monthField(
   };
 }
 
+/**
+ * Text input params for the address question.
+ *
+ * @param application - Current answers, used to retain the value.
+ * @param errors - Field errors for this page.
+ * @returns Params for each address field.
+ */
 export function addressFields(
   application: Application,
   errors: FieldError[],
@@ -247,6 +311,13 @@ export function addressFields(
   };
 }
 
+/**
+ * File upload params for optional evidence.
+ *
+ * @param application - Current answers. A stored filename is shown as the current file.
+ * @param errors - Field errors for this page.
+ * @returns Params for the file upload macro.
+ */
 export function evidenceField(
   application: Application,
   errors: FieldError[],
@@ -272,6 +343,13 @@ export function evidenceField(
   };
 }
 
+/**
+ * Character count params for optional extra details.
+ *
+ * @param application - Current answers, used to retain the value.
+ * @param errors - Field errors for this page.
+ * @returns Params for the character count macro.
+ */
 export function detailsField(
   application: Application,
   errors: FieldError[],
@@ -299,6 +377,12 @@ export function detailsField(
   };
 }
 
+/**
+ * Password input params. Values are not retained after a failed submit.
+ *
+ * @param errors - Field errors for this page.
+ * @returns Params for the password and confirmation inputs.
+ */
 export function passwordFields(errors: FieldError[]): Record<string, unknown> {
   return {
     password: withError(
@@ -329,6 +413,13 @@ export function passwordFields(errors: FieldError[]): Record<string, unknown> {
   };
 }
 
+/**
+ * Radio params for the cookie settings page.
+ *
+ * @param choice - Stored cookie choice, or `null` when the applicant has not chosen.
+ * @param errors - Field errors for this page.
+ * @returns Params for the radios macro.
+ */
 export function cookieFields(
   choice: 'accept' | 'reject' | null,
   errors: FieldError[],
@@ -356,6 +447,11 @@ export function cookieFields(
   };
 }
 
+/**
+ * Table params for the example licence fees.
+ *
+ * @returns Params for the table macro.
+ */
 export function feesTable(): Record<string, unknown> {
   return {
     caption: 'Rod licence fees',
@@ -369,6 +465,11 @@ export function feesTable(): Record<string, unknown> {
   };
 }
 
+/**
+ * Accordion params for the help page.
+ *
+ * @returns Params for the accordion macro.
+ */
 export function helpAccordion(): Record<string, unknown> {
   return {
     id: 'help',
@@ -395,6 +496,11 @@ export function helpAccordion(): Record<string, unknown> {
   };
 }
 
+/**
+ * Tabs params for the guidance page.
+ *
+ * @returns Params for the tabs macro.
+ */
 export function guidanceTabs(): Record<string, unknown> {
   return {
     id: 'guidance',
@@ -424,6 +530,12 @@ export function guidanceTabs(): Record<string, unknown> {
   };
 }
 
+/**
+ * Panel params for the confirmation page. The reference is escaped.
+ *
+ * @param reference - Application reference.
+ * @returns Params for the panel macro. The panel is the page `h1`.
+ */
 export function confirmationPanel(reference: string): Record<string, unknown> {
   return {
     titleText: 'Application complete',

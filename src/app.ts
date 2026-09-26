@@ -44,7 +44,6 @@ import {
   firstIncompleteStep,
   nextStep,
   previousStep,
-  requiredStepsComplete,
   stepByPath,
   type Step,
 } from './service/model.js';
@@ -80,6 +79,7 @@ import {
 
 const SESSION_COOKIE = 'rod_session';
 
+/** Dependencies for {@link createApp}. Tests replace the store, clock, renderer, and body parser. */
 export type AppOptions = {
   demosEnabled?: boolean;
   store?: SessionStore;
@@ -89,12 +89,22 @@ export type AppOptions = {
   readBody?: (request: Request) => Promise<ParsedBody>;
 };
 
+/** HTTP application. `handle` returns a Fetch `Response`. */
 export type App = {
   handle(request: Request): Promise<Response>;
 };
 
 type RawResult = { type: 'raw'; response: Response };
 
+/**
+ * Build the example service.
+ *
+ * Routes cover the rod licence journey from the start page to confirmation, plus notices,
+ * cookies, and — unless demos are off — the component catalogue and fixture previews.
+ *
+ * @param options - Optional store, clock, and test doubles.
+ * @returns An app whose `handle` method serves one request.
+ */
 export function createApp(options: AppOptions = {}): App {
   const store = options.store ?? createMemoryStore();
   const demosEnabled = options.demosEnabled ?? demosEnabledFromEnv();
@@ -307,8 +317,8 @@ function demoGet(
 }
 
 function postStep(step: Step, body: ParsedBody, session: Session, now: Date): RedirectResult {
-  const errors = validateStep(step, body, session, now);
-  session.application = applyStep(step, body, session.application, errors.length === 0, now);
+  const errors = validateStep(step, body, now);
+  session.application = applyStep(step, body, session.application, errors.length === 0);
   if (errors.length > 0) {
     session.errors = { path: step.path, items: errors };
     return { type: 'redirect', location: withReturn(step.path, body), session };
@@ -320,7 +330,7 @@ function postStep(step: Step, body: ParsedBody, session: Session, now: Date): Re
   return { type: 'redirect', location: nextStep(step.id)?.path ?? '/check-answers', session };
 }
 
-function validateStep(step: Step, body: ParsedBody, session: Session, now: Date): FieldError[] {
+function validateStep(step: Step, body: ParsedBody, now: Date): FieldError[] {
   switch (step.id) {
     case 'name':
       return validateName(field(body, 'first-name'), field(body, 'last-name'));
@@ -361,7 +371,6 @@ function applyStep(
   body: ParsedBody,
   application: ReturnType<typeof createApplication>,
   valid: boolean,
-  now: Date,
 ) {
   switch (step.id) {
     case 'name':
@@ -906,11 +915,25 @@ function textResponse(status: number, body: string, nonce: string): Response {
   });
 }
 
+/**
+ * TCP port a server is bound to.
+ *
+ * @param address - Value from `server.address()`.
+ * @returns The port.
+ * @throws Error when the server is not bound to a TCP port.
+ */
 export function listeningPort(address: string | AddressInfo | null): number {
   if (address && typeof address === 'object') return address.port;
   throw new Error('Server is not listening on a TCP port');
 }
 
+/**
+ * Listen for HTTP requests and adapt Node's request to {@link App.handle}.
+ *
+ * @param port - Port to bind. `0` asks the operating system for a free port.
+ * @param app - Application to serve. Defaults to {@link createApp}.
+ * @returns The bound port, a local URL, and a function that closes the server.
+ */
 export function startServer(
   port = 0,
   app: App = createApp(),
@@ -931,20 +954,45 @@ export function startServer(
   });
 }
 
+/**
+ * HTTP method, treating a missing method as GET.
+ *
+ * @param method - Node request method.
+ * @returns The method.
+ */
 export function requestMethod(method: string | undefined): string {
   return method ?? 'GET';
 }
 
+/**
+ * Host used to resolve the request URL.
+ *
+ * @param host - Node `Host` header, which may be repeated.
+ * @returns The first host, or `127.0.0.1`.
+ */
 export function requestHost(host: string | string[] | undefined): string {
   if (Array.isArray(host)) return host[0] ?? '127.0.0.1';
   return host ?? '127.0.0.1';
 }
 
+/**
+ * Absolute URL for a Node request target.
+ *
+ * @param url - Request target. An empty or missing target is `/`.
+ * @param host - Host used as the base.
+ * @returns The URL.
+ */
 export function requestTarget(url: string | undefined, host: string): URL {
   const path = url === undefined || url.length === 0 ? '/' : url;
   return new URL(path, `http://${host}`);
 }
 
+/**
+ * Copy Node incoming headers onto a Fetch `Headers` object.
+ *
+ * @param headers - Node header map. Array values are appended. Other values are ignored.
+ * @param target - Headers to write.
+ */
 export function copyNodeHeaders(
   headers: Record<string, string | string[] | undefined>,
   target: Headers,

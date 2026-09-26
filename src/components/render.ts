@@ -18,13 +18,25 @@ const env = new nunjucks.Environment(new nunjucks.FileSystemLoader(govukDist), {
 
 const compiled = new Map<string, Template>();
 
+/**
+ * Whether this Frontend package ships a component with this name.
+ *
+ * @param componentName - Kebab-case component name.
+ * @returns `true` when a matching component directory exists.
+ */
 export function isKnownComponent(componentName: string): boolean {
   return known.has(componentName);
 }
 
 /**
  * Render a GOV.UK Frontend component by calling its Nunjucks macro.
- * The result matches official `fixtures.json` HTML (outer whitespace trimmed).
+ *
+ * The result matches official `fixtures.json` HTML. Only the renderer's own outer whitespace is trimmed.
+ *
+ * @param componentName - Kebab-case component name.
+ * @param params - Macro options. Defaults to an empty object.
+ * @returns The macro HTML.
+ * @throws Error when the component is not in this Frontend package.
  */
 export function renderComponent(componentName: string, params: MacroParams = {}): string {
   if (!isComponentName(componentName) || !known.has(componentName)) {

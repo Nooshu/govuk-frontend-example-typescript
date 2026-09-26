@@ -15,8 +15,12 @@ Sync shared docs/dotfiles from the language-agnostic template: [syncing-from-tem
 
 Follow current TypeScript / Node ESM best practices:
 
-- `strict` and related flags in `tsconfig.json` (`noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `verbatimModuleSyntax`)
-- ESM only (aligned with user preference for JavaScript ESM)
+- TypeScript **7.0.2** (`typescript` on npm). `tsc` is the native compiler.
+- `strict`, plus `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `noImplicitOverride`, `noImplicitReturns`, `noFallthroughCasesInSwitch`, `noUnusedLocals`, `noUnusedParameters`, `noUncheckedSideEffectImports`, `verbatimModuleSyntax`, `isolatedModules`, and `erasableSyntaxOnly`
+- `module` and `moduleResolution` are `NodeNext`. `target` and `lib` are `ES2024`, which Node 22 runs.
+- `erasableSyntaxOnly` keeps the source free of enums, runtime namespaces, and parameter properties, so the types can be stripped
+- ESM only, with `import type` for types
+- **TSDoc** on exported functions, classes, and types (`/** … */`, `@param`, `@returns`). That is the TypeScript equivalent of JSDoc. Comments describe the API; they do not replace the types in the signature
 - Prefer calling **Nunjucks macros** from `govuk-frontend` for component HTML; thin TypeScript wrappers around options → HTML only when needed — still fixture-parity
 - Tests: Node’s built-in test runner via `tsx` (`npm test`)
 - Coverage gate: **100%** functions, branches, statements, and lines for application code (see [testing-components.md](testing-components.md))
@@ -39,7 +43,7 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 | Item                              | Value                                                                                                                                                                                |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Implementation language           | TypeScript 5.x on Node ≥22                                                                                                                                                           |
+| Implementation language           | TypeScript 7.0.2 on Node ≥22                                                                                                                                                         |
 | Templating / component approach   | Prefer Nunjucks macros from `govuk-frontend`; TypeScript for app/library logic                                                                                                       |
 | `govuk-frontend` (Node)           | **6.5.1** — [v6.5.1](https://github.com/alphagov/govuk-frontend/releases/tag/v6.5.1) (reviewed against [latest release](https://github.com/alphagov/govuk-frontend/releases/latest)) |
 | Nunjucks                          | 3.2.4, with Frontend’s `trimBlocks` and `lstripBlocks`                                                                                                                               |

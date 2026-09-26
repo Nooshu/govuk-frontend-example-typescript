@@ -3,8 +3,10 @@ import { randomBytes } from 'node:crypto';
 import type { Application } from '../service/model.js';
 import { createApplication } from '../service/model.js';
 
+/** Cookie banner choice stored on the session. */
 export type CookieChoice = 'accept' | 'reject';
 
+/** In-memory session for one applicant. */
 export type Session = {
   id: string;
   csrf: string;
@@ -15,12 +17,18 @@ export type Session = {
   notice: { path: string; text: string } | null;
 };
 
+/** Store that creates, reads, and replaces sessions. */
 export type SessionStore = {
   create(): Session;
   get(id: string): Session | undefined;
   save(session: Session): void;
 };
 
+/**
+ * Create a session with a new id, CSRF token, and empty application.
+ *
+ * @returns The session. It is not stored until a {@link SessionStore} saves it.
+ */
 export function createSession(): Session {
   return {
     id: randomBytes(16).toString('hex'),
@@ -33,6 +41,11 @@ export function createSession(): Session {
   };
 }
 
+/**
+ * Session store that keeps sessions in memory for this process.
+ *
+ * @returns A store. Sessions disappear when the process stops.
+ */
 export function createMemoryStore(): SessionStore {
   const sessions = new Map<string, Session>();
   return {
@@ -50,6 +63,12 @@ export function createMemoryStore(): SessionStore {
   };
 }
 
+/**
+ * Confirmation reference for a session.
+ *
+ * @param sessionId - Session id, hex.
+ * @returns `RL` plus the first six characters, in upper case.
+ */
 export function referenceFor(sessionId: string): string {
   return `RL${sessionId.slice(0, 6).toUpperCase()}`;
 }
