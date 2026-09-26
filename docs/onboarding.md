@@ -25,32 +25,32 @@ See [priorities.md](priorities.md). Short version: frontend web performance → 
 | **Component** | Design System building block (button, text input, …)                     | Library wrapper that renders exact Frontend HTML | **Yes** — official `fixtures.json`                                      |
 | **Pattern**   | Guidance for a journey or page composition (addresses, check answers, …) | Compose shipped components into pages            | **No** — follow Design System guidance; no invented pattern HTML suites |
 
-## Repo map (intended)
-
-Exact paths follow the chosen language’s conventions — record them in [tech-stack.md](tech-stack.md). Conceptually expect:
+## Repo map
 
 ```text
 AGENTS.md                 # Slim agent playbook
 docs/                     # All documentation (this folder)
-<src>/                    # App + component library (layout per language best practice)
-  …/govuk/…               # One unit per component + fixtures.json
-  …/layouts/…             # Page template / chrome
-  …/previews/…            # Dev-only parity browser per component
-  …/fixtures/…            # Dev-only raw HTML fragment endpoints
-tests/                    # Structural, parity (wrapper language), Nunjucks suite (Node)
-scripts/ or tasks/        # Frontend upgrade automation (often Node + wrapper tooling)
+src/                      # TypeScript application (ESM)
+  main.ts                 # npm start
+  app.ts                  # Routes and the Node HTTP server
+  components/             # Nunjucks macro renderer, fixtures, catalogue
+  views/                  # Page templates (layout, service, demos)
+  service/                # Rod licence journey
+  http/                   # Request body, cookies, assets, security headers
+  pages/                  # Page document around the Frontend template
+  session/                # In-memory session
 ```
 
-## Run modes (intended)
+Detail: [example-service.md](example-service.md) and [tech-stack.md](tech-stack.md).
 
-| Mode    | Purpose                                                                                   |
-| ------- | ----------------------------------------------------------------------------------------- |
-| Preview | Local server for component previews and pattern demos                                     |
-| Test    | Unit/parity tests (wrapper) + Nunjucks fixture verification (Node)                        |
-| Verify  | Config check + fixtures + full test suite (CI equivalent)                                 |
-| Upgrade | Mechanical Frontend bump — see [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md) |
+## Run modes
 
-Command names for the _wrapper_ are stack-specific — document them in [tech-stack.md](tech-stack.md). Expect **Node**/npm for `govuk-frontend` install and the Nunjucks suite regardless.
+| Mode    | Command          | Purpose                                                                    |
+| ------- | ---------------- | -------------------------------------------------------------------------- |
+| Preview | `npm start`      | Example service, component catalogue, and fixture previews                 |
+| Test    | `npm test`       | Fixture parity and service tests. Fails below 100% coverage                |
+| Verify  | `npm run verify` | Docs, typecheck, and the full test suite                                   |
+| Upgrade | see the playbook | Frontend bump — [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md) |
 
 ## Testing mindset
 
@@ -74,13 +74,14 @@ Details: [testing-components.md](testing-components.md).
 
 More pitfalls: [creating-components.md](creating-components.md).
 
-## Consistency tooling (today)
-
-While the wrapper language is TBD, Node tooling keeps docs and shared config consistent:
+## Consistency tooling
 
 ```sh
 npm install
+npm start
+npm test
 npm run verify:docs   # Prettier + markdownlint
+npm run verify
 ```
 
 See [CONTRIBUTING.md](../CONTRIBUTING.md). Dotfiles: `.editorconfig`, `.prettierrc.json`, `.markdownlint-cli2.jsonc`, `.nvmrc`, `.vscode/`, `.cursor/rules/`, `.github/`.

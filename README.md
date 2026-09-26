@@ -23,6 +23,8 @@ Dual-audience map: [`docs/documentation-structure.md`](docs/documentation-struct
 
 ```sh
 npm install
+npm start               # example pages and component demos
+npm test                # fixture parity and service tests
 npm run verify          # docs + typecheck + tests
 npm run sync:template   # pull shared docs/dotfiles from the agnostic template
 ```

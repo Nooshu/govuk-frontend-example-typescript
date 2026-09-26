@@ -74,6 +74,7 @@ Using this repo does **not** make a service assessment-ready. See [`docs/service
 | Add a pattern                       | [`docs/creating-patterns.md`](docs/creating-patterns.md)               |
 | Layout / chrome                     | [`docs/layout-chrome.md`](docs/layout-chrome.md)                       |
 | Fixture / parity testing            | [`docs/testing-components.md`](docs/testing-components.md)             |
+| Example service                     | [`docs/example-service.md`](docs/example-service.md)                   |
 | Page shell                          | [`docs/page-shell.md`](docs/page-shell.md)                             |
 | Accessibility                       | [`docs/accessibility.md`](docs/accessibility.md)                       |
 | Content & forms                     | [`docs/content-and-forms.md`](docs/content-and-forms.md)               |

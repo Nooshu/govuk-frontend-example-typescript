@@ -24,6 +24,8 @@ Full list: [`AGENTS.md`](AGENTS.md).
 
 ```sh
 npm install
+npm start               # example service at http://127.0.0.1:3000
+npm test                # fixtures and the example service; 100% coverage
 npm run verify          # docs + typecheck + tests
 npm run sync:template   # shared paths from Nooshu/govuk-frontend-example
 ```
