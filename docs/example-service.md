@@ -44,13 +44,19 @@ Invalid answers stay on the same question, with an error summary and the values 
 
 Question pages use one `h1`, `novalidate`, an error summary, and field errors. Answers are kept when validation fails. A page uses a back link or breadcrumbs, not both.
 
+## Responses
+
+Pages and assets use the shared [baseline](frontend-security.md). Public HTML that sets the session cookie is `private, no-cache`, with a strong `ETag`. Question, task list, check your answers, confirmation, and cookie settings pages are `no-store`. The stylesheet, Frontend script, and the external `initAll()` module are fingerprinted and cached as immutable. The `js-enabled` snippet is the one line hashed in `baseline/policy.json`.
+
+The server compresses with Brotli when the browser sends `Accept-Encoding: br`. Gzip is only used when the browser does not advertise `br`. Local `npm start` is HTTP, so the session cookie is not `Secure` and responses do not send HSTS.
+
 ## Tests
 
 ```sh
 npm test
 ```
 
-This runs the Node test runner and fails if application code is below **100%** function, branch, statement, or line coverage. `src/main.ts` is the process entry and is excluded.
+This runs the shared baseline suite at **100%** line, branch, and function coverage, then the Node test runner. The application suite fails if code is below **100%** function, branch, statement, or line coverage. `src/main.ts` is the process entry and is excluded.
 
 Component tests render **every** official fixture shipped with the pinned `govuk-frontend` release, including hidden fixtures. The comparison is the fixture `html` string. The renderer trims only the outer whitespace of its own output so that output can equal the fixture. Tests do not edit fixture HTML and do not normalise it before comparing.
 

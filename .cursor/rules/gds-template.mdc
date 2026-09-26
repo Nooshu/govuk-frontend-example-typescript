@@ -15,3 +15,4 @@ alwaysApply: true
 - Do not invent stack paths until [`docs/tech-stack.md`](docs/tech-stack.md) records the language; then follow that language’s best practices.
 - Respect EditorConfig / Prettier / markdownlint; run `npm run verify:docs` after doc changes.
 - 100% coverage (functions, branches, statements) for application code when it exists; never edit fixture `html` to pass tests.
+- Serve pages and assets with [`baseline/`](baseline/) (cache kinds and OWASP headers). Compress with Brotli (`br`); Gzip is only the fallback when the client does not advertise `br`. Playbooks: [`docs/frontend-performance.md`](docs/frontend-performance.md), [`docs/frontend-security.md`](docs/frontend-security.md).

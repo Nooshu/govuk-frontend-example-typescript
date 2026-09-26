@@ -30,7 +30,7 @@ Follow current TypeScript / Node ESM best practices:
 ```sh
 npm install
 npm start              # example service and component demos — http://127.0.0.1:3000
-npm test               # fixture parity and service tests; 100% coverage
+npm test               # baseline suite, fixture parity, and service tests; 100% coverage
 npm run typecheck
 npm run verify:docs    # Prettier + markdownlint
 npm run verify         # docs + typecheck + tests
@@ -38,6 +38,23 @@ npm run sync:template  # pull shared paths from language-agnostic template
 ```
 
 See [CONTRIBUTING.md](../CONTRIBUTING.md).
+
+## Shared baseline
+
+[`baseline/`](../baseline/) is synced from the language-agnostic template. This line calls it. It does not keep a second header or cache policy.
+
+| Piece                                             | How this line uses it                                                                                          |
+| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| [`baseline/policy.json`](../baseline/policy.json) | OWASP header values, CSP directives (including the Frontend `js-enabled` hash), cache kinds, Brotli budgets    |
+| [`baseline/index.mjs`](../baseline/index.mjs)     | `applyResponseHeaders` on every response, `buildSetCookie` for the session cookie, `strongEtag` on public HTML |
+
+`npm run test:baseline` is the template's 100% line, branch, and function gate for `baseline/`. `npm test` runs that and then the TypeScript coverage gate. The shared testing playbook describes the baseline suite on its own, because the template has no wrapper language yet.
+
+Local `npm start` is plain HTTP, so responses omit HSTS and the session cookie is `rod_session` without `Secure`. An `https:` request URL, or `X-Forwarded-Proto: https`, sends HSTS and `__Host-session`. Public HTML that sets a cookie uses `private, no-cache`. Pages that show the application use `sensitive-document` (`no-store`). Fingerprinted styles, scripts, the `initAll()` module, and hashed fonts use `public, max-age=31536000, immutable`. Unhashed asset URLs use `no-cache`.
+
+The server compresses with Brotli when the client advertises `br`, and Gzip otherwise. `Vary: Accept-Encoding` comes from the baseline.
+
+Details: [frontend-performance.md](frontend-performance.md), [frontend-security.md](frontend-security.md).
 
 ## Version pin
 
@@ -51,6 +68,7 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md).
 | Page template reference           | https://design-system.service.gov.uk/styles/page-template/                                                                                                                           |
 | Fixture testing guide             | https://frontend.design-system.service.gov.uk/testing-your-html/                                                                                                                     |
 | Example service                   | [example-service.md](example-service.md) — `npm start`                                                                                                                               |
+| Response baseline                 | [`baseline/`](../baseline/) via `applyResponseHeaders` — [frontend-performance.md](frontend-performance.md), [frontend-security.md](frontend-security.md)                            |
 | Upgrade / test / preview commands | `npm start`, `npm test`, `npm run typecheck`, `npm run verify`; Frontend upgrade per [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)                                      |
 
 ## Hard constraints (always)

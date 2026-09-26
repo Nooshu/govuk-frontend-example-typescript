@@ -61,6 +61,7 @@ Details: [`docs/priorities.md`](docs/priorities.md).
 9. **Do not ship unreleased GOV.UK chrome** — wait for Frontend release + fixtures. See [`docs/govuk-frontend-roadmap.md`](docs/govuk-frontend-roadmap.md).
 10. **100% code coverage** — functions, branches, and statements at **100%** for application/library code under test; CI must fail below that. Do not weaken fixture HTML equality to chase coverage. See [`docs/testing-components.md`](docs/testing-components.md).
 11. **Always review the latest release notes** before upgrading — https://github.com/alphagov/govuk-frontend/releases/latest — then follow [`docs/upgrading-govuk-frontend.md`](docs/upgrading-govuk-frontend.md).
+12. **Performance and security baseline** — every response uses [`baseline/`](baseline/) (cache kind, OWASP headers, CSP hash for the `js-enabled` snippet). Sync that directory from the template; do not invent a weaker set. See [`docs/frontend-performance.md`](docs/frontend-performance.md) and [`docs/frontend-security.md`](docs/frontend-security.md).
 
 Using this repo does **not** make a service assessment-ready. See [`docs/service-assessment-readiness.md`](docs/service-assessment-readiness.md).
 
@@ -76,6 +77,8 @@ Using this repo does **not** make a service assessment-ready. See [`docs/service
 | Fixture / parity testing            | [`docs/testing-components.md`](docs/testing-components.md)             |
 | Example service                     | [`docs/example-service.md`](docs/example-service.md)                   |
 | Page shell                          | [`docs/page-shell.md`](docs/page-shell.md)                             |
+| Frontend performance                | [`docs/frontend-performance.md`](docs/frontend-performance.md)         |
+| Frontend security                   | [`docs/frontend-security.md`](docs/frontend-security.md)               |
 | Accessibility                       | [`docs/accessibility.md`](docs/accessibility.md)                       |
 | Content & forms                     | [`docs/content-and-forms.md`](docs/content-and-forms.md)               |
 | Design tokens (colour, type, space) | [`docs/design-tokens.md`](docs/design-tokens.md)                       |
@@ -92,6 +95,8 @@ Before finishing a page change:
 - [ ] Forms: `novalidate`, Error summary + messages, values retained
 - [ ] Focus styles untouched; no `outline: none`
 - [ ] Trusted/sanitised HTML only; prefer plain text options
+- [ ] HTML responses use the baseline security headers; assets use the matching cache kind
+- [ ] CSS in `<head>`; Frontend JS is an external `type="module"`; the `js-enabled` snippet matches the pinned CSP hash
 - [ ] Pattern guidance followed; out-of-scope widgets called out with inset text
 - [ ] Coverage remains 100% functions / branches / statements for touched library code
 - [ ] Fixture parity still green for any touched components

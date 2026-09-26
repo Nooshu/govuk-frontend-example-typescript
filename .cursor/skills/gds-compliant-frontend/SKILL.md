@@ -62,3 +62,4 @@ Local index: [`docs/guidance-sources.md`](../../../docs/guidance-sources.md).
 2. Never hand-paste `govuk-*` component HTML; use macros / library API.
 3. Upgrade only after reviewing the [latest release](https://github.com/alphagov/govuk-frontend/releases/latest).
 4. New components: [`docs/creating-components.md`](../../../docs/creating-components.md). Patterns: [`docs/creating-patterns.md`](../../../docs/creating-patterns.md).
+5. HTTP responses use [`baseline/`](../../../baseline/) — call `applyResponseHeaders` and `buildSetCookie`. Compress with Brotli (`br`); Gzip is only the fallback when the client does not advertise `br`. Playbooks: [`docs/frontend-performance.md`](../../../docs/frontend-performance.md), [`docs/frontend-security.md`](../../../docs/frontend-security.md). Sync `baseline/` from the template; do not fork a weaker policy.

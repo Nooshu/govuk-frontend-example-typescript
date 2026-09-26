@@ -17,6 +17,7 @@ Thanks for helping maintain this **GDS-compliant frontend** template. This guide
 - Official fixtures for **100% HTML parity**; never edit fixture `html` to pass tests.
 - **100%** code coverage (functions, branches, statements) when application code exists.
 - Before upgrading Frontend, read https://github.com/alphagov/govuk-frontend/releases/latest.
+- HTTP responses use the shared [`baseline/`](baseline/). Compress with Brotli; Gzip is only the fallback when the client does not advertise `br`.
 
 Full list: [`AGENTS.md`](AGENTS.md).
 
@@ -25,7 +26,7 @@ Full list: [`AGENTS.md`](AGENTS.md).
 ```sh
 npm install
 npm start               # example service at http://127.0.0.1:3000
-npm test                # fixtures and the example service; 100% coverage
+npm test                # baseline suite, fixtures, and the example service; 100% coverage
 npm run verify          # docs + typecheck + tests
 npm run sync:template   # shared paths from Nooshu/govuk-frontend-example
 ```
