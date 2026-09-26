@@ -4,12 +4,16 @@ Ordered priorities for projects from this template. When trade-offs conflict, pr
 
 ## 1. Frontend web performance
 
-- Ship only the GOV.UK Frontend CSS/JS the page needs; no competing UI frameworks or heavy client bundles.
-- Prefer progressive enhancement and server-rendered HTML over client-side UI frameworks.
+Ship only the GOV.UK Frontend CSS and JS the page needs. Cache fingerprinted assets immutably, revalidate HTML, and compress with Brotli (`br`), the current standard. Gzip is only for clients that do not advertise `br`. Shared contract: [frontend-performance.md](frontend-performance.md) and [`baseline/`](../baseline/).
+
+- No competing UI frameworks or heavy client bundles.
+- Prefer progressive enhancement and server-rendered HTML.
 - Prefer **Nunjucks macros** (or thin wrappers that call them) so you are not maintaining pasted HTML that bloats reviews and drifts between releases.
 - Keep preview/debug assets off production layouts; measure asset size and init cost on Frontend upgrades.
 
 ## 2. Frontend security
+
+Apply the OWASP response-header baseline on every response (CSP with the Frontend `js-enabled` hash, HSTS on HTTPS, nosniff, framing denial, `Permissions-Policy`, COOP, COEP, CORP). Shared contract: [frontend-security.md](frontend-security.md) and [`baseline/`](../baseline/).
 
 - Treat any `html` component options as untrusted until sanitised; prefer `text`.
 - Do not inject arbitrary markup or bypass Frontend encoding (match Nunjucks `escape` for parity).

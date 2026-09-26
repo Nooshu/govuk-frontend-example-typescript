@@ -12,6 +12,7 @@ Local server for human parity checks and pattern demos.
 - A preview surface per component renders **only the selected** fixture, with a parity banner vs official `html`.
 - A raw-fixture surface returns an HTML **fragment** for automation.
 - Preview and fixture surfaces are Development / Testing only.
+- Preview responses use the same [`baseline/`](../baseline/) headers as production. On local HTTP, pass `secureTransport: false` so HSTS is not sent.
 - Syntax highlighting (if any) loads on Previews only — never on the global layout.
 - Optional health / readiness endpoints follow the stack’s normal conventions; missing optional infra should not block Frontend-only preview.
 

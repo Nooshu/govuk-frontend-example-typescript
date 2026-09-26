@@ -24,6 +24,12 @@ Check these when unsure. Prefer upstream over inventing local rules. Primary lis
 | Frontend roadmap (local)                                   | [govuk-frontend-roadmap.md](govuk-frontend-roadmap.md)                                                              |
 | Design System cycle board                                  | https://github.com/orgs/alphagov/projects/53                                                                        |
 | Frontend release notes (latest — mandatory before upgrade) | https://github.com/alphagov/govuk-frontend/releases/latest                                                          |
+| Frontend performance (Service Manual)                      | https://www.gov.uk/service-manual/technology/how-to-test-frontend-performance                                       |
+| Frontend performance (GDS Way)                             | https://gds-way.digital.cabinet-office.gov.uk/standards/optimise-frontend-perf.html                                 |
+| Frontend performance (local)                               | [frontend-performance.md](frontend-performance.md)                                                                  |
+| OWASP HTTP headers                                         | https://cheatsheetseries.owasp.org/cheatsheets/HTTP_Headers_Cheat_Sheet.html                                        |
+| OWASP Content Security Policy                              | https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html                             |
+| Frontend security (local)                                  | [frontend-security.md](frontend-security.md)                                                                        |
 | Accessibility (Design System)                              | https://design-system.service.gov.uk/accessibility/                                                                 |
 | Making your service accessible                             | https://www.gov.uk/service-manual/helping-people-to-use-your-service/making-your-service-accessible-an-introduction |
 | Feedback                                                   | https://design-system.service.gov.uk/community/feedback/                                                            |

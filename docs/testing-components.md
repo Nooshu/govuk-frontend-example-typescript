@@ -53,6 +53,8 @@ Document in [tech-stack.md](tech-stack.md):
 - Nunjucks fixture verification (Node + `govuk-frontend`)
 - a single “verify” gate for local + CI
 
+Today, before a wrapper language exists, the shared baseline is covered by Node’s test runner (`npm test`). That gate requires 100% lines (one statement per line), branches, and functions for `baseline/`. `npm run verify` runs docs checks and that suite.
+
 ## Preview as human parity browser
 
 Previews render **one selected fixture**, show library HTML beside official `html`, and display a parity success/fail banner. Details: [preview-server.md](preview-server.md).

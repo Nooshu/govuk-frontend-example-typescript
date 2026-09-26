@@ -61,6 +61,7 @@ If parity fails:
 
 - [ ] Apply page-template and chrome changes from release notes to the shared layout.
 - [ ] Confirm skip link, header, service navigation, footer still match Frontend 6+ rules ([layout-chrome.md](layout-chrome.md)).
+- [ ] If the `js-enabled` snippet changed, update `jsEnabledSnippet` and `jsEnabledScriptHash` in [`baseline/policy.json`](../baseline/policy.json) to the hash published in [import JavaScript](https://frontend.design-system.service.gov.uk/import-javascript/). Re-measure CSS and JS budgets in [frontend-performance.md](frontend-performance.md).
 
 ### 4. New upstream components
 

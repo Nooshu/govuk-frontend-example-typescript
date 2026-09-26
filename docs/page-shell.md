@@ -25,9 +25,12 @@ Stay consistent with the [GOV.UK page template](https://design-system.service.go
       </main>
     </div>
     <!-- Footer -->
+    <script type="module" src="/assets/app.[fingerprint].mjs"></script>
   </body>
 </html>
 ```
+
+The `js-enabled` snippet must be that exact one line. The CSP hash in [`baseline/policy.json`](../baseline/policy.json) is computed from it. Whitespace changes block the script. `app.[fingerprint].mjs` is an external module that imports and calls `initAll()` — not a second inline script. See [frontend-security.md](frontend-security.md) and [frontend-performance.md](frontend-performance.md).
 
 ## Required order
 

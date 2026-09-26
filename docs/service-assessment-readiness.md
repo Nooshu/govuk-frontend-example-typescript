@@ -29,4 +29,6 @@ Mirror the checklist in `[AGENTS.md](../AGENTS.md)`: shell, components only, bac
 
 ## Outside this repo
 
-User research evidence, assisted digital, privacy/security, performance KPIs, open source policy, published accessibility statement, and an accessibility audit before public beta.
+User research evidence, assisted digital, privacy reviews, penetration testing, performance KPIs from production traffic, open source policy, published accessibility statement, and an accessibility audit before public beta.
+
+The response-header and cache baseline in [frontend-security.md](frontend-security.md) and [frontend-performance.md](frontend-performance.md) is the starting point for points 9 and 14. It does not replace an assessment.

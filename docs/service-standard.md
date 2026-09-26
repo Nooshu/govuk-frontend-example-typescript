@@ -19,4 +19,4 @@ The 14 points (titles only — follow the official pages for detail):
 13. Use and contribute to open standards, common components and patterns
 14. Operate a reliable service
 
-This example repo most directly supports **4, 5, 11, 13, and 14** in the UI layer. See [service-assessment-readiness.md](service-assessment-readiness.md).
+This example repo most directly supports **4, 5, 9, 11, 13, and 14** in the UI layer. Point 9’s frontend controls (headers, CSP, cookies) are the shared baseline in [frontend-security.md](frontend-security.md). See [service-assessment-readiness.md](service-assessment-readiness.md).

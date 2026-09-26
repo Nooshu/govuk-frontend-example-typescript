@@ -27,6 +27,8 @@ The Technology Code of Practice (TCoP) is used for Cabinet Office spend controls
 - Prefer open standards and common government components ([GOV.UK Frontend](https://frontend.design-system.service.gov.uk/) / [Design System](https://design-system.service.gov.uk/)).
 - Be open / use open source where appropriate (point 3); make new source open aligns with Service Standard point 12.
 - Share, reuse, collaborate (point 8) — do not invent parallel UI systems or frontend frameworks for GOV.UK chrome.
+- Make things secure (point 6) — apply the shared response-header baseline ([frontend-security.md](frontend-security.md)), not a one-off header set per service.
+- Make privacy integral (point 7) — `Referrer-Policy`, `Permissions-Policy`, and `no-store` for personal HTML are part of that baseline.
 - Meet the Service Standard (point 13) — see [service-standard.md](service-standard.md) and [service-assessment-readiness.md](service-assessment-readiness.md).
 - Plan for maintenance: pinned Frontend version, fixture parity, documented upgrade path ([upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)).
 

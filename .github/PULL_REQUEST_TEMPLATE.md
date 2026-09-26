@@ -15,6 +15,7 @@
 - [ ] Fixture HTML not edited to make tests pass
 - [ ] If upgrading `govuk-frontend`: reviewed https://github.com/alphagov/govuk-frontend/releases/latest and followed `docs/upgrading-govuk-frontend.md`
 - [ ] Coverage remains 100% functions / branches / statements for application code (when present)
+- [ ] HTTP responses use `baseline/` (cache kind, CSP, OWASP headers) when the change serves pages or assets
 
 ## Test plan
 

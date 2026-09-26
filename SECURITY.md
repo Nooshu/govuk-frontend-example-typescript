@@ -45,6 +45,7 @@ This template prioritises **frontend security** (see [`docs/priorities.md`](docs
 - Treat component `html` options as untrusted until sanitised; prefer `text`
 - Do not add SPA/frontend frameworks that expand client attack surface for GOV.UK UI
 - Keep `govuk-frontend` pinned and review https://github.com/alphagov/govuk-frontend/releases/latest before upgrading
+- Apply the shared response-header baseline ([`docs/frontend-security.md`](docs/frontend-security.md), [`baseline/`](baseline/)) on every HTML and asset response
 
 ## Dependencies
 
