@@ -3,9 +3,9 @@ import { constants as fsConstants } from 'node:fs';
 import { accessSync, readFileSync, statSync } from 'node:fs';
 import { join, normalize, relative } from 'node:path';
 
-import { frontendAssetRoot, govukRoot } from '../config.js';
+import { applicationStylesheet, frontendAssetRoot, govukRoot } from '../config.js';
 
-const ROOT_FILES = new Set(['govuk-frontend.min.css', 'govuk-frontend.min.js']);
+const ROOT_FILES = new Set(['govuk-frontend.min.js']);
 
 const CONTENT_TYPES: Record<string, string> = {
   '.css': 'text/css; charset=utf-8',
@@ -52,6 +52,13 @@ type Published = PageAssets & {
 let published: Published | undefined;
 
 /**
+ * Clear the fingerprinted asset cache. Used by tests after changing built CSS.
+ */
+export function clearPublishedAssetsCache(): void {
+  published = undefined;
+}
+
+/**
  * Fingerprinted stylesheet and module URLs, plus the font files the CSS uses.
  *
  * @returns Paths to put in the page. The URLs change when the file bytes change.
@@ -70,7 +77,7 @@ export function pageAssets(): PageAssets {
  * stylesheet, script, or application module.
  *
  * @param urlPath - Request path, including the `/assets/` prefix.
- * @param roots - Directories for root files (`govuk-frontend.min.css` and `.js`) and nested assets.
+ * @param roots - Directories for root files (`govuk-frontend.min.js`) and nested assets.
  * @returns The file to send, or `undefined` when the path is missing, unsafe, or not an allowed type.
  */
 export function resolveAsset(
@@ -114,7 +121,7 @@ function publishedAsset(urlPath: string): Asset | undefined {
   const assets = loadPublished();
   if (urlPath === assets.cssHref) {
     return {
-      filePath: join(govukRoot, 'govuk-frontend.min.css'),
+      filePath: applicationStylesheet,
       body: assets.css,
       contentType: 'text/css; charset=utf-8',
       kind: 'fingerprinted-asset',
@@ -141,9 +148,16 @@ function publishedAsset(urlPath: string): Asset | undefined {
 
 function loadPublished(): Published {
   if (published) return published;
-  const css = readFileSync(join(govukRoot, 'govuk-frontend.min.css'));
+  let css: Buffer;
+  try {
+    css = readFileSync(applicationStylesheet);
+  } catch {
+    throw new Error(
+      `Missing ${applicationStylesheet}. Run \`npm run build:styles\` before starting the server or tests.`,
+    );
+  }
   const script = readFileSync(join(govukRoot, 'govuk-frontend.min.js'));
-  const cssHref = `/assets/govuk-frontend.${fingerprint(css)}.min.css`;
+  const cssHref = `/assets/application.${fingerprint(css)}.css`;
   const scriptHref = `/assets/govuk-frontend.${fingerprint(script)}.min.js`;
   const app = Buffer.from(`import { initAll } from '${scriptHref}';\n\ninitAll();\n`, 'utf8');
   const appHref = `/assets/app.${fingerprint(app)}.mjs`;
@@ -163,8 +177,9 @@ function loadPublished(): Published {
 
 function fontPreloads(css: string): PageAssets['preloads'] {
   const hrefs = new Set<string>();
-  for (const match of css.matchAll(/url\((\/assets\/fonts\/[^)]+\.woff2)\)/g)) {
-    hrefs.add(match[0].slice('url('.length, -1));
+  for (const match of css.matchAll(/url\(\s*["']?(\/assets\/fonts\/[^"')\s]+\.woff2)["']?\s*\)/g)) {
+    const href = match[1];
+    if (href) hrefs.add(href);
   }
   return [...hrefs].map((href) => ({ href, as: 'font', type: 'font/woff2' }));
 }

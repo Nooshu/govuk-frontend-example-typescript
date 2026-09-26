@@ -27,6 +27,15 @@ export const frontendAssetRoot = join(govukRoot, 'assets');
 /** Absolute path to this app's Nunjucks page templates. */
 export const viewsRoot = fileURLToPath(new URL('./views/', import.meta.url));
 
+/** Absolute path to the repository root (parent of `src/`). */
+export const repoRoot = fileURLToPath(new URL('../', import.meta.url));
+
+/**
+ * Compiled application stylesheet from `npm run build:styles`.
+ * Do not serve `govuk-frontend.min.css` as the long-term CSS source.
+ */
+export const applicationStylesheet = join(repoRoot, 'dist', 'stylesheets', 'application.css');
+
 /** English service name used in the header, title, and phase banner. */
 export const SERVICE_NAME = 'Apply for a rod fishing licence';
 

@@ -1,27 +1,30 @@
-import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, renameSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { pageAssets, resolveAsset } from './assets.js';
+import { applicationStylesheet } from '../config.js';
+import { clearPublishedAssetsCache, pageAssets, resolveAsset } from './assets.js';
 
 describe('static assets', () => {
-  it('serves Frontend CSS, JavaScript, and font files', () => {
+  it('serves compiled CSS, Frontend JavaScript, and font files', () => {
     const assets = pageAssets();
     assert.deepEqual(pageAssets().preloads, assets.preloads);
-    assert.match(assets.stylesheetHref, /^\/assets\/govuk-frontend\.[a-f0-9]{10}\.min\.css$/);
+    assert.match(assets.stylesheetHref, /^\/assets\/application\.[a-f0-9]{10}\.css$/);
     assert.match(assets.appModuleHref, /^\/assets\/app\.[a-f0-9]{10}\.mjs$/);
     assert.ok(assets.preloads.length > 0);
     assert.equal(assets.preloads[0]?.as, 'font');
 
-    const css = resolveAsset('/assets/govuk-frontend.min.css');
-    assert.match(css?.contentType ?? '', /^text\/css/);
-    assert.equal(css?.kind, 'static-asset');
+    assert.equal(resolveAsset('/assets/govuk-frontend.min.css'), undefined);
 
     const fingerprintedCss = resolveAsset(assets.stylesheetHref);
     assert.equal(fingerprintedCss?.kind, 'fingerprinted-asset');
     assert.match(fingerprintedCss?.body?.toString('utf8') ?? '', /govuk/);
+    assert.match(
+      fingerprintedCss?.body?.toString('utf8') ?? '',
+      /--app-stylesheet-layer:\s*govuk-overrides/,
+    );
 
     const script = resolveAsset('/assets/govuk-frontend.min.js');
     assert.match(script?.contentType ?? '', /javascript/);
@@ -47,19 +50,19 @@ describe('static assets', () => {
   });
 
   it('rejects paths that are not a published file', () => {
-    assert.equal(resolveAsset('/other/govuk-frontend.min.css'), undefined);
+    assert.equal(resolveAsset('/other/govuk-frontend.min.js'), undefined);
     assert.equal(resolveAsset('/assets/%'), undefined);
     assert.equal(resolveAsset('/assets/'), undefined);
     assert.equal(resolveAsset('/assets/%00.css'), undefined);
-    assert.equal(resolveAsset('/assets/../govuk-frontend.min.css'), undefined);
+    assert.equal(resolveAsset('/assets/../govuk-frontend.min.js'), undefined);
     assert.equal(resolveAsset('/assets/missing.css'), undefined);
-    assert.equal(resolveAsset('/assets/govuk-frontend.min.css.map'), undefined);
+    assert.equal(resolveAsset('/assets/govuk-frontend.min.js.map'), undefined);
   });
 
   it('rejects directories and files outside the configured roots', () => {
     const files = mkdtempSync(join(tmpdir(), 'govuk-files-'));
     const assets = mkdtempSync(join(tmpdir(), 'govuk-assets-'));
-    writeFileSync(join(files, 'govuk-frontend.min.css'), 'body{}');
+    writeFileSync(join(files, 'govuk-frontend.min.js'), 'ok');
     writeFileSync(join(assets, 'icon.png'), 'png');
     writeFileSync(join(assets, 'photo.jpg'), 'jpg');
     writeFileSync(join(assets, 'photo.jpeg'), 'jpeg');
@@ -76,9 +79,10 @@ describe('static assets', () => {
 
     const roots = { files, assets };
     assert.match(
-      resolveAsset('/assets/govuk-frontend.min.css', roots)?.filePath ?? '',
-      /govuk-frontend\.min\.css$/,
+      resolveAsset('/assets/govuk-frontend.min.js', roots)?.filePath ?? '',
+      /govuk-frontend\.min\.js$/,
     );
+    assert.equal(resolveAsset('/assets/govuk-frontend.min.css', roots), undefined);
     assert.equal(resolveAsset('/assets/icon.png', roots)?.contentType, 'image/png');
     assert.equal(resolveAsset('/assets/photo.jpg', roots)?.contentType, 'image/jpeg');
     assert.equal(resolveAsset('/assets/photo.jpeg', roots)?.contentType, 'image/jpeg');
@@ -92,5 +96,17 @@ describe('static assets', () => {
     assert.equal(resolveAsset('/assets/LICENSE', roots), undefined);
     assert.equal(resolveAsset('/assets/../../etc/passwd', roots), undefined);
     assert.equal(resolveAsset('/assets/.', roots), undefined);
+  });
+
+  it('tells operators to run build:styles when the compiled CSS is missing', () => {
+    const backup = `${applicationStylesheet}.bak-test`;
+    renameSync(applicationStylesheet, backup);
+    clearPublishedAssetsCache();
+    try {
+      assert.throws(() => pageAssets(), /npm run build:styles/);
+    } finally {
+      renameSync(backup, applicationStylesheet);
+      clearPublishedAssetsCache();
+    }
   });
 });

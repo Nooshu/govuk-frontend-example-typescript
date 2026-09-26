@@ -96,7 +96,7 @@ function assertShell(html: string, lang = 'en'): void {
   assert.match(html, /document\.body\.className \+= ' js-enabled'/);
   assert.match(html, /<script type="module" src="\/assets\/app\.[a-f0-9]+\.mjs"><\/script>/);
   assert.doesNotMatch(html, /nonce=/);
-  assert.match(html, /\/assets\/govuk-frontend\.[a-f0-9]+\.min\.css/);
+  assert.match(html, /\/assets\/application\.[a-f0-9]+\.css/);
   assert.doesNotMatch(html, /outline:\s*none/);
   const skip = html.indexOf(lang === 'cy' ? 'Neidio i&#39;r prif gynnwys' : 'Skip to main content');
   const banner = html.indexOf('Cookies on Apply for a rod fishing licence');
@@ -625,21 +625,19 @@ describe('example service', { timeout: 120_000 }, () => {
     assert.equal(health.text, 'ok');
     assert.equal(health.response.headers.get('set-cookie'), null);
 
-    const css = await send('/assets/govuk-frontend.min.css');
-    assert.equal(css.status, 200);
-    assert.match(css.response.headers.get('content-type') ?? '', /text\/css/);
-    assert.equal(css.response.headers.get('cache-control'), 'no-cache');
-    assert.equal(css.response.headers.get('content-security-policy'), null);
-    assert.equal(css.response.headers.get('x-content-type-options'), 'nosniff');
-    const stylesheet = /href="(\/assets\/govuk-frontend\.[a-f0-9]+\.min\.css)"/.exec(
-      about.text,
-    )?.[1];
+    const legacyCss = await send('/assets/govuk-frontend.min.css');
+    assert.equal(legacyCss.status, 404);
+    const stylesheet = /href="(\/assets\/application\.[a-f0-9]+\.css)"/.exec(about.text)?.[1];
     assert.ok(stylesheet);
     const cachedCss = await send(stylesheet);
+    assert.match(cachedCss.response.headers.get('content-type') ?? '', /text\/css/);
+    assert.equal(cachedCss.response.headers.get('content-security-policy'), null);
+    assert.equal(cachedCss.response.headers.get('x-content-type-options'), 'nosniff');
     assert.equal(
       cachedCss.response.headers.get('cache-control'),
       'public, max-age=31536000, immutable',
     );
+    assert.match(cachedCss.text, /--app-stylesheet-layer:\s*govuk-overrides/);
     const modulePath = /src="(\/assets\/app\.[a-f0-9]+\.mjs)"/.exec(about.text)?.[1];
     assert.ok(modulePath);
     const moduleResponse = await send(modulePath);
