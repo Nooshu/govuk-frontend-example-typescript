@@ -21,7 +21,7 @@ See:
 4. **Progressive enhancement** — body class snippet; `initAll()`; core tasks without Frontend JS ([browser support](https://frontend.design-system.service.gov.uk/browser-support/)).
 5. **Exact Frontend HTML for components** — fixture parity ([testing your HTML](https://frontend.design-system.service.gov.uk/testing-your-html/)); sanitise any `html` options.
 6. **Reliable downtime UX** ([point 14](https://www.gov.uk/service-manual/service-standard)) — Page not found / Problem with the service / Service unavailable patterns; cookies page + cookie banner by public beta.
-7. **No custom CSS** that restyles Frontend.
+7. **No ad-hoc custom CSS** — use the Sass pipeline and `govuk-overrides.scss` cascade ([styles.md](styles.md)); never `!important` in service CSS.
 
 ## Quick page review
 

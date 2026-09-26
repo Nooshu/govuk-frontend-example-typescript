@@ -18,15 +18,15 @@ Sync `baseline/` with this repo. Node calls `buildResponseHeaders`. Other langua
 
 From the [GDS Way](https://gds-way.digital.cabinet-office.gov.uk/standards/optimise-frontend-perf.html), do these before lower-priority work:
 
-| Priority | Practice                                | How this template does it                                                                                           |
-| -------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| High     | CSS in the document head, defer scripts | Page template: stylesheet in `<head>`, Frontend JS as `<script type="module">` (modules defer)                      |
-| High     | Minify, then compress with Brotli       | Serve the published `govuk-frontend.min.css` and `govuk-frontend.min.js`. Brotli (`br`) is the compression standard |
-| High     | Fingerprint assets and cache them       | `kind: 'fingerprinted-asset'` sends `public, max-age=31536000, immutable`                                           |
-| High     | Ship only the CSS and JS the page needs | Import the Frontend modules you use. No second UI framework                                                         |
-| High     | Optimise images                         | Width and height set; modern formats; no third-party image hosts by default                                         |
-| Medium   | Fewer cross-origin connections          | `performance.budgets.thirdPartyRequests` is `0`                                                                     |
-| Low      | Small cookies, HTTP/2 or HTTP/3         | Cookie-free asset responses; HTTP/2 minimum, HTTP/3 preferred                                                       |
+| Priority | Practice                                | How this template does it                                                                      |
+| -------- | --------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| High     | CSS in the document head, defer scripts | Page template: stylesheet in `<head>`, Frontend JS as `<script type="module">` (modules defer) |
+| High     | Minify, then compress with Brotli       | Compile `styles/application.scss` to CSS, then Brotli (`br`) as the compression standard       |
+| High     | Fingerprint assets and cache them       | `kind: 'fingerprinted-asset'` sends `public, max-age=31536000, immutable`                      |
+| High     | Ship only the CSS and JS the page needs | Import the Frontend modules you use. No second UI framework                                    |
+| High     | Optimise images                         | Width and height set; modern formats; no third-party image hosts by default                    |
+| Medium   | Fewer cross-origin connections          | `performance.budgets.thirdPartyRequests` is `0`                                                |
+| Low      | Small cookies, HTTP/2 or HTTP/3         | Cookie-free asset responses; HTTP/2 minimum, HTTP/3 preferred                                  |
 
 Brotli (`Content-Encoding: br`) is the compression standard for HTML, CSS, JavaScript, and other compressible responses. The HTTP server or edge compresses; the app does not set `Content-Encoding`. When the client sends `Accept-Encoding: br`, respond with Brotli. Offer Gzip only when the client does not advertise `br`.
 
@@ -34,7 +34,7 @@ The helper sets `Vary: Accept-Encoding` so caches store the Brotli, Gzip, and un
 
 ## Asset placement
 
-1. Stylesheet `<link>` in `<head>`, so the first paint uses GOV.UK Frontend CSS.
+1. Stylesheet `<link>` in `<head>` pointing at the **compiled** Sass output (`dist/stylesheets/application.css` after `npm run build:styles`), so the first paint uses GOV.UK Frontend CSS plus any cascade overrides. Do not link the prebuilt `govuk-frontend.min.css` as the long-term source — see [styles.md](styles.md).
 2. The `js-enabled` snippet immediately after `<body>` opens. It must be the one-line string in `policy.json` so the CSP hash stays valid. It is tiny and has to run before enhanced components paint.
 3. One external module before `</body>` that imports `initAll` (or `createAll` for the components on that page) and calls it. Do not add a second inline script. An external file is cached and stays inside `script-src 'self'`.
 
@@ -84,12 +84,12 @@ Or pass `preload` to `buildResponseHeaders` and it sets `Link`. Do not preload t
 
 `policy.json` `performance.budgets` is the starting gate:
 
-| Budget               | Value | Notes                                                                                               |
-| -------------------- | ----- | --------------------------------------------------------------------------------------------------- |
-| Brotli HTML          | 50KB  | Re-measure on a real page, compressed with Brotli                                                   |
-| Brotli CSS           | 32KB  | Headroom over the full `govuk-frontend.min.css` bundle (about 13KB Brotli when this budget was set) |
-| Brotli JS            | 32KB  | Headroom over the full `govuk-frontend.min.js` bundle (about 10KB Brotli when this budget was set)  |
-| Third-party requests | 0     | No analytics, fonts, or widgets from other origins                                                  |
+| Budget               | Value | Notes                                                                                                              |
+| -------------------- | ----- | ------------------------------------------------------------------------------------------------------------------ |
+| Brotli HTML          | 50KB  | Re-measure on a real page, compressed with Brotli                                                                  |
+| Brotli CSS           | 32KB  | Headroom over a full Frontend Sass compile (about 13KB Brotli when this budget was set; re-measure after upgrades) |
+| Brotli JS            | 32KB  | Headroom over the full `govuk-frontend.min.js` bundle (about 10KB Brotli when this budget was set)                 |
+| Third-party requests | 0     | No analytics, fonts, or widgets from other origins                                                                 |
 
 Core Web Vitals targets in the same file are the usual “good” thresholds: LCP 2.5s, INP 200ms, CLS 0.1. The Service Manual does not publish those numbers; it tells you to benchmark, then optimise. Re-measure Brotli CSS and JS after every Frontend upgrade.
 

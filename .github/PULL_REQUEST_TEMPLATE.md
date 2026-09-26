@@ -16,6 +16,8 @@
 - [ ] If upgrading `govuk-frontend`: reviewed https://github.com/alphagov/govuk-frontend/releases/latest and followed `docs/upgrading-govuk-frontend.md`
 - [ ] Coverage remains 100% functions / branches / statements for application code (when present)
 - [ ] HTTP responses use `baseline/` (cache kind, CSP, OWASP headers) when the change serves pages or assets
+- [ ] Styles come from the Sass pipeline (`styles/`); no `!important` in service CSS; `govuk-overrides.scss` stays last
+- [ ] Finished work is split into focused commits with comprehensive messages when landing multiple concerns
 
 ## Test plan
 

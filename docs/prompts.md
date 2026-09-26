@@ -50,7 +50,7 @@ The rest of the file can be restructured off this:
 
 # GOV.UK Service
 
-## Overview  
+## Overview
 A purposeful, accessible design system for government digital services. The aesthetic prioritises clarity and usability — high contrast typography and generous spacing. Designed for citizens who need to complete essential tasks efficiently.
 
 **Human onboarding:** new developers should read [`docs/onboarding.md`](docs/onboarding.md) (repo map, run modes, components vs patterns, testing, troubleshooting). This `AGENTS.md` file remains the dense playbook for coding agents and detailed UI rules.
@@ -158,53 +158,53 @@ Every page MUST use the layout shell in `Pages/Shared/_Layout.cshtml`. That layo
 - Add a black rectangle/banner or custom dark header in place of the brand blue masthead
 - Put the service name inside the blue `govuk-header` block
 
-## Colours  
-| Category          | Token                 | Hex       | Notes                                 |  
-| ----------------- | --------------------- | --------- | ------------------------------------- |  
-| **Text**          | text                | #0b0c0c | Primary body text                     |  
-|                   | secondary-text      | #484949 | Secondary text                        |  
-|                   | inverse-text        | #ffffff | Use for text on dark backgrounds      |  
-| **Link**          | link                | #1a65a6 | Default link colour                   |  
-|                   | link-hover          | #0f385c | Hover state                           |  
-|                   | link-visited        | #54319f | Visited links                         |  
-|                   | link-active         | #0b0c0c | Active link state                     |  
-| **Border**        | border              | #cecece | Standard borders                      |  
-|                   | input-border        | #0b0c0c | Input field borders                   |  
-| **Background**    | template-background | #f4f8fb | Match the html element background     |  
-|                   | body-background     | #ffffff | Match the body element background     |  
-| **Focus State**   | focus               | #ffdd00 | Use only to indicate keyboard focus   |  
-|                   | focus-text          | #0b0c0c | Text colour on focused elements       |  
-| **Error State**   | error               | #ca3535 | Error messages and error indicators   |  
-| **Success State** | success             | #0f7a52 | Success messages and indicators       |  
-| **Hover State**   | hover               | #cecece | Input hover states                    |  
-| **Brand**         | brand               | #1d70b8 | Primary brand colour                  |  
-| **Surface**       | surface-background  | #f4f8fb | Surface backgrounds                   |  
-|                   | surface-text        | #0b0c0c | Text on surface backgrounds           |  
+## Colours
+| Category          | Token                 | Hex       | Notes                                 |
+| ----------------- | --------------------- | --------- | ------------------------------------- |
+| **Text**          | text                | #0b0c0c | Primary body text                     |
+|                   | secondary-text      | #484949 | Secondary text                        |
+|                   | inverse-text        | #ffffff | Use for text on dark backgrounds      |
+| **Link**          | link                | #1a65a6 | Default link colour                   |
+|                   | link-hover          | #0f385c | Hover state                           |
+|                   | link-visited        | #54319f | Visited links                         |
+|                   | link-active         | #0b0c0c | Active link state                     |
+| **Border**        | border              | #cecece | Standard borders                      |
+|                   | input-border        | #0b0c0c | Input field borders                   |
+| **Background**    | template-background | #f4f8fb | Match the html element background     |
+|                   | body-background     | #ffffff | Match the body element background     |
+| **Focus State**   | focus               | #ffdd00 | Use only to indicate keyboard focus   |
+|                   | focus-text          | #0b0c0c | Text colour on focused elements       |
+| **Error State**   | error               | #ca3535 | Error messages and error indicators   |
+| **Success State** | success             | #0f7a52 | Success messages and indicators       |
+| **Hover State**   | hover               | #cecece | Input hover states                    |
+| **Brand**         | brand               | #1d70b8 | Primary brand colour                  |
+| **Surface**       | surface-background  | #f4f8fb | Surface backgrounds                   |
+|                   | surface-text        | #0b0c0c | Text on surface backgrounds           |
 |                   | surface-border      | #8eb8dc | Surface borders                       |
 
-## Typography  
-**Display Font**: GDS Transport — loaded from GOV.UK Frontend assets  
-**Body Font**: GDS Transport — consistent font family throughout  
+## Typography
+**Display Font**: GDS Transport — loaded from GOV.UK Frontend assets
+**Body Font**: GDS Transport — consistent font family throughout
 **Code Font**: monospace — system default for code blocks and technical content
 
 All text uses GDS Transport at regular (400) and bold (700) weights only. The custom typeface was designed specifically for digital government services, optimised for screen reading and accessibility. Large text uses tight letter spacing for efficiency. Body text prioritises maximum legibility at various sizes.
 
 Type scale: Display 48px, Headline 36px, Section heading 24px, Subhead 19px, Body 19px, Small 16px, Caption 14px.
 
-## Elevation  
+## Elevation
 Minimal shadow usage. Cards and panels use 1px borders only. Focus states use thick yellow borders (4px) rather than shadows for maximum visibility. Error summaries and important banners gain subtle shadows (0 2px 4px rgba(0,0,0,0.1)). Modals use backdrop with no shadow. The header remains flat with a 1px bottom border. All elevation serves accessibility and task completion.
 
-## Components  
-**Header**: Via `AppChrome` + `GovUkHeader` ViewComponent — blue brand masthead with white GOV.UK logotype SVG (`fill="currentcolor"`, include `<title>GOV.UK</title>`). Homepage link uses `govuk-header__homepage-link`. Service name belongs in `govuk-service-navigation` under the masthead (`AppServiceNavigation`), inside `<header class="govuk-template__header">`. Do not put the service name inside the blue header (Frontend 6+).  
-**Start Button**: Green button with class `govuk-button govuk-button--start`. Contains visible text "Start now" followed by an inline arrow SVG: `<svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" focusable="false" aria-hidden="true"><path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"/></svg>`  
-**Buttons**: Primary uses GOV.UK green (#00703C) fill with white text, no radius, bold weight. Secondary uses transparent bg with 2px dark blue border. Warning uses red (#d4351c) bg with white text. All buttons are 40px minimum height for touch accessibility. Hover darkens background colour. Focus adds 4px yellow border offset.  
-**Cards**: White background, 1px mid-grey border (#B1B4B6), no radius, 20px padding. Service cards show status with coloured left stripe (5px). No hover effects — interaction happens through contained buttons only.  
-**Inputs**: 1px black border (#0b0c0c), white background, no radius, 8px padding. Font size 19px minimum for mobile accessibility. Focus: thick black border (4px) with yellow outline. Error: red border with error message below. Labels are 19px bold above input.  
-**Radios/Checkboxes**: 24px touch targets, high contrast borders. Selected state uses thick borders and fills. Focus adds yellow outline. Always paired with clear labels.  
-**Error Summary**: Red left border (5px), light red background tint, bold heading, bulleted list of linked errors. Positioned at page top for screen readers.  
-**Info Notice**: Uses `role="note"` with `aria-label="Information"` for informational callouts within page content.  
-**Phase Banner**: Coloured tag (alpha/beta/live) with explanatory text, positioned below header, spans full width.  
-**Breadcrumbs**: Use the `GovUkBreadcrumbs` ViewComponent (`govuk-breadcrumbs`). Place before `main` via `BeforeContent`. Never combine with a back link. See **Breadcrumbs (agent usage)**.  
+## Components
+**Header**: Via `AppChrome` + `GovUkHeader` ViewComponent — blue brand masthead with white GOV.UK logotype SVG (`fill="currentcolor"`, include `<title>GOV.UK</title>`). Homepage link uses `govuk-header__homepage-link`. Service name belongs in `govuk-service-navigation` under the masthead (`AppServiceNavigation`), inside `<header class="govuk-template__header">`. Do not put the service name inside the blue header (Frontend 6+).
+**Start Button**: Green button with class `govuk-button govuk-button--start`. Contains visible text "Start now" followed by an inline arrow SVG: `<svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" focusable="false" aria-hidden="true"><path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"/></svg>`
+**Buttons**: Primary uses GOV.UK green (#00703C) fill with white text, no radius, bold weight. Secondary uses transparent bg with 2px dark blue border. Warning uses red (#d4351c) bg with white text. All buttons are 40px minimum height for touch accessibility. Hover darkens background colour. Focus adds 4px yellow border offset.
+**Cards**: White background, 1px mid-grey border (#B1B4B6), no radius, 20px padding. Service cards show status with coloured left stripe (5px). No hover effects — interaction happens through contained buttons only.
+**Inputs**: 1px black border (#0b0c0c), white background, no radius, 8px padding. Font size 19px minimum for mobile accessibility. Focus: thick black border (4px) with yellow outline. Error: red border with error message below. Labels are 19px bold above input.
+**Radios/Checkboxes**: 24px touch targets, high contrast borders. Selected state uses thick borders and fills. Focus adds yellow outline. Always paired with clear labels.
+**Error Summary**: Red left border (5px), light red background tint, bold heading, bulleted list of linked errors. Positioned at page top for screen readers.
+**Info Notice**: Uses `role="note"` with `aria-label="Information"` for informational callouts within page content.
+**Phase Banner**: Coloured tag (alpha/beta/live) with explanatory text, positioned below header, spans full width.
+**Breadcrumbs**: Use the `GovUkBreadcrumbs` ViewComponent (`govuk-breadcrumbs`). Place before `main` via `BeforeContent`. Never combine with a back link. See **Breadcrumbs (agent usage)**.
 **Footer**: Grey background. Must include OGL licence text: "All content is available under the Open Government Licence v3.0, except where otherwise stated" with link to nationalarchives.gov.uk. Crown copyright link on the right. Uses class `govuk-footer`.
 **GOV.UK ViewComponents**: Implement Design System components as Razor ViewComponents under `src/Api/Components/GovUk/`. Follow **Creating a new GOV.UK component (agent playbook)** for fixtures, renderer, preview, homepage nav, and exact HTML parity. Accordion, back link, breadcrumbs, button, character count, checkboxes, cookie banner, date input, details, error message, error summary, exit this page, fieldset, file upload, generic header, GOV.UK footer, GOV.UK header, inset text, notification banner, pagination, panel, password input, phase banner, radios, select, service navigation, skip link, summary list, table, tabs, tag, task list, text input, textarea, and warning text are the reference implementations.
 **GOV.UK patterns**: Design System *patterns* (e.g. Addresses, Confirmation pages) are **composed Razor Pages**, not new ViewComponents. Follow **Creating a new GOV.UK pattern (agent playbook)**. For Design System **Pages** patterns, also follow **Creating Pages patterns** — always use shipped ViewComponents and the [page template](https://design-system.service.gov.uk/styles/page-template/) accessibility rules. Do not invent pattern HTML or add fixture-parity suites for patterns.
@@ -417,7 +417,7 @@ Keep `tests/govuk-fixtures/<kebab-name>.fixtures.json` byte-identical for the Nu
 
 #### 7. Add Fixtures endpoint (raw HTML for tests)
 
-`Pages/Fixtures/<Name>.cshtml` — only `@page` + `@model` (no layout body).  
+`Pages/Fixtures/<Name>.cshtml` — only `@page` + `@model` (no layout body).
 `OnGet` uses **`GovUkFixtureLoader.Load("<Name>")`**, maps options, returns `Content(Renderer.Render(...), "text/html")`.
 
 Guard: only when `IsDevelopment()` or `IsEnvironment("Testing")`; otherwise `NotFound()`.
@@ -601,22 +601,22 @@ Detailed usage guides for each component live in `docs/`. Consult the relevant d
 | Textarea | [`docs/govuk-textarea.md`](docs/govuk-textarea.md) | `/Previews/Textarea` |
 | Warning text | [`docs/govuk-warning-text.md`](docs/govuk-warning-text.md) | `/Previews/WarningText` |
 
-## Spacing  
-Base unit: 4px  
-Scale: 5, 10, 15, 20, 25, 30, 40, 50, 60px (GOV.UK standard spacing)  
-Component padding: small 10x15, medium 15x20, large 20x30  
-Section spacing: 30px mobile, 40px tablet, 50px desktop  
-Container max width: 960px with 15px horizontal padding mobile, 30px desktop  
+## Spacing
+Base unit: 4px
+Scale: 5, 10, 15, 20, 25, 30, 40, 50, 60px (GOV.UK standard spacing)
+Component padding: small 10x15, medium 15x20, large 20x30
+Section spacing: 30px mobile, 40px tablet, 50px desktop
+Container max width: 960px with 15px horizontal padding mobile, 30px desktop
 Form element spacing: 20px between form groups, 30px before submit buttons
 
-## Border Radius  
-0px: All components use sharp corners for consistency and accessibility  
+## Border Radius
+0px: All components use sharp corners for consistency and accessibility
 No rounded elements except where technically required by browsers
-## Layout Patterns  
-**Two-thirds column**: Main content in 66% width column for optimal reading line length  
-**Full width**: Forms, tables, and simple content can span full container width    
-**Grid**: 12-column responsive grid with consistent gutters  
-**Sidebar**: One-third column for secondary navigation or supplementary content  
+## Layout Patterns
+**Two-thirds column**: Main content in 66% width column for optimal reading line length
+**Full width**: Forms, tables, and simple content can span full container width
+**Grid**: 12-column responsive grid with consistent gutters
+**Sidebar**: One-third column for secondary navigation or supplementary content
 **Centered**: Single column layouts centered within max-width container
 
 ## Footer
@@ -625,8 +625,8 @@ Every page must use the `govuk-footer` component containing:
 - Crown copyright link to nationalarchives.gov.uk
 - `govuk-footer__meta` wrapper with `govuk-footer__meta-item--grow`
 
-## Accessibility Requirements  
-## Page Structure  
+## Accessibility Requirements
+## Page Structure
 Every page must stay consistent with the [GOV.UK page template](https://design-system.service.gov.uk/styles/page-template/) and related styles ([Layout](https://design-system.service.gov.uk/styles/layout/), [Typography](https://design-system.service.gov.uk/styles/typography/), [Colour](https://design-system.service.gov.uk/styles/colour/)). When unsure, check those pages before inventing markup.
 
 **Prefer this app’s `_Layout.cshtml`** for the shell (`AppChrome` + ViewComponents). Do **not** paste a second full HTML document or hand-write chrome that already exists as ViewComponents. See [`docs/layout-chrome.md`](docs/layout-chrome.md).
@@ -665,56 +665,56 @@ Required elements in order:
 6. Grid row with appropriate column width
 7. Footer via ViewComponent (OGL licence and Crown copyright)
 
-## Accessibility Requirements  
-**WCAG 2.2 AA**: Minimum standard for all components and patterns ([Making your service accessible](https://www.gov.uk/service-manual/helping-people-to-use-your-service/making-your-service-accessible-an-introduction))  
-**Design System ≠ accessible by default**: Additional research, testing and an accessibility statement are still required ([Design System accessibility](https://design-system.service.gov.uk/accessibility/))  
-**Keyboard navigation**: All interactive elements accessible via keyboard only; verify skip link and tab order  
-**Focus indicators**: 4px yellow outlines on all interactive elements — never override Frontend focus styles ([focus states](https://design-system.service.gov.uk/get-started/focus-states/))  
-**Colour contrast**: 4.5:1 minimum for normal text, 3:1 for large text  
-**Touch targets**: 40px minimum for all interactive elements  
-**Screen readers**: Proper heading hierarchy (one `h1`), ARIA only via components, semantic HTML  
-**Landmarks**: Skip link → header → before-content → `main` → footer  
-**Progressive enhancement**: Core journey usable without JavaScript; Frontend JS via `type="module"` + `initAll()`  
-**Plain English**: Content written at reading age 9 level where possible  
-**Page template**: Follow https://design-system.service.gov.uk/styles/page-template/ when creating or changing any page shell  
+## Accessibility Requirements
+**WCAG 2.2 AA**: Minimum standard for all components and patterns ([Making your service accessible](https://www.gov.uk/service-manual/helping-people-to-use-your-service/making-your-service-accessible-an-introduction))
+**Design System ≠ accessible by default**: Additional research, testing and an accessibility statement are still required ([Design System accessibility](https://design-system.service.gov.uk/accessibility/))
+**Keyboard navigation**: All interactive elements accessible via keyboard only; verify skip link and tab order
+**Focus indicators**: 4px yellow outlines on all interactive elements — never override Frontend focus styles ([focus states](https://design-system.service.gov.uk/get-started/focus-states/))
+**Colour contrast**: 4.5:1 minimum for normal text, 3:1 for large text
+**Touch targets**: 40px minimum for all interactive elements
+**Screen readers**: Proper heading hierarchy (one `h1`), ARIA only via components, semantic HTML
+**Landmarks**: Skip link → header → before-content → `main` → footer
+**Progressive enhancement**: Core journey usable without JavaScript; Frontend JS via `type="module"` + `initAll()`
+**Plain English**: Content written at reading age 9 level where possible
+**Page template**: Follow https://design-system.service.gov.uk/styles/page-template/ when creating or changing any page shell
 **Service assessment**: Follow **Service assessment readiness (agent playbook)** and [`docs/service-assessment-readiness.md`](docs/service-assessment-readiness.md)
 
-## Content Rules  
-**Sentence case**: All headings, labels, and button text — never title case  
-**Active voice**: Direct, clear instructions — "Apply for your licence" not "A licence can be applied for"  
-**Front-loaded content**: Most important words first in headings and labels  
-**Button text**: Action-specific — "Save and continue", "Submit application", "Delete account"  
-**Error messages**: Clear, actionable — "Enter your email address" not "Email is required"  
+## Content Rules
+**Sentence case**: All headings, labels, and button text — never title case
+**Active voice**: Direct, clear instructions — "Apply for your licence" not "A licence can be applied for"
+**Front-loaded content**: Most important words first in headings and labels
+**Button text**: Action-specific — "Save and continue", "Submit application", "Delete account"
+**Error messages**: Clear, actionable — "Enter your email address" not "Email is required"
 **Hint text**: Helpful examples and context without duplicating label text
 
-## Form Patterns  
-Every form must include:  
-**Clear page title**: H1 that describes the specific task  
-**Fieldset legends**: Group related inputs with clear legends  
-**Label-input pairs**: Every input has an associated label, never placeholders as labels  
-**Hint text**: Where users need help understanding what to enter  
-**Error handling**: Server-side validation with linked error summary  
-**Single primary action**: One green "Continue" or "Submit" button per page  
+## Form Patterns
+Every form must include:
+**Clear page title**: H1 that describes the specific task
+**Fieldset legends**: Group related inputs with clear legends
+**Label-input pairs**: Every input has an associated label, never placeholders as labels
+**Hint text**: Where users need help understanding what to enter
+**Error handling**: Server-side validation with linked error summary
+**Single primary action**: One green "Continue" or "Submit" button per page
 **Progress indication**: Clear sense of position in multi-page journeys
 
-## Do's and Don'ts  
-Do use GOV.UK Frontend components exactly as documented, via shipped ViewComponents — no hand-written `govuk-*` chrome  
-Do follow the [page template](https://design-system.service.gov.uk/styles/page-template/) and check associated styles/component pages when unsure  
-Do test every page with keyboard-only navigation from start to finish  
-Do write error messages that tell users exactly what to do next  
-Do use the two-thirds column layout for content-heavy pages  
-Do keep form pages to one thing per page where possible  
-Don't add custom styling where GOV.UK patterns already exist  
-Don't use colour alone to convey information, always pair with text or icons  
-Don't create new form validation patterns, use established GOV.UK error handling  
-Don't hide important actions or information, everything must be explicit  
-Don't use placeholder text instead of proper labels or hints  
-Don't paste Design System HTML into pages instead of invoking ViewComponents  
-Don't combine breadcrumbs and a back link on the same page  
-Don't add decorative elements, every interface element must serve user needs  
-Don't use more than one primary action button per page  
-Do use the `GovUkHeader` ViewComponent with the full GOV.UK logotype — never omit the SVG path data  
-Don't use a plain black bar, black rectangle, or custom dark element as a header  
+## Do's and Don'ts
+Do use GOV.UK Frontend components exactly as documented, via shipped ViewComponents — no hand-written `govuk-*` chrome
+Do follow the [page template](https://design-system.service.gov.uk/styles/page-template/) and check associated styles/component pages when unsure
+Do test every page with keyboard-only navigation from start to finish
+Do write error messages that tell users exactly what to do next
+Do use the two-thirds column layout for content-heavy pages
+Do keep form pages to one thing per page where possible
+Don't add custom styling where GOV.UK patterns already exist
+Don't use colour alone to convey information, always pair with text or icons
+Don't create new form validation patterns, use established GOV.UK error handling
+Don't hide important actions or information, everything must be explicit
+Don't use placeholder text instead of proper labels or hints
+Don't paste Design System HTML into pages instead of invoking ViewComponents
+Don't combine breadcrumbs and a back link on the same page
+Don't add decorative elements, every interface element must serve user needs
+Don't use more than one primary action button per page
+Do use the `GovUkHeader` ViewComponent with the full GOV.UK logotype — never omit the SVG path data
+Don't use a plain black bar, black rectangle, or custom dark element as a header
 Don't use dots, squares, or placeholder Unicode characters instead of the crown / logotype SVG
 ````
 
@@ -723,116 +723,116 @@ Don't use dots, squares, or placeholder Unicode characters instead of the crown 
 - **When:** Friday, Jul 31, 2026, 9:40 AM (UTC+1)
 - **Session:** Language-agnostic template session, which then created this TypeScript repository
 
-````text
+```text
 defaults
-````
+```
 
 ## 3. Keep the Frontend upgrade section technology agnostic
 
 - **When:** Friday, Jul 31, 2026, 8:43 PM (UTC+1)
 - **Session:** Language-agnostic template session, which then created this TypeScript repository
 
-````text
+```text
 Note that the 1. Mechanical sync section is only for .NET / Razor builds other languages will have a totally different way to upgrade GOV.UK, so this section depends on the language being used, so has yet to be decided, but you could write a generalised technology agnostic version of the section
-````
+```
 
 ## 4. Keep the other documents technology agnostic
 
 - **When:** Friday, Jul 31, 2026, 8:45 PM (UTC+1)
 - **Session:** Language-agnostic template session, which then created this TypeScript repository
 
-````text
+```text
 Could you also make sure other written documents are technology agnostic and focus on whatever choosen languages best practices
-````
+```
 
 ## 5. Mention Node and Nunjucks where Frontend requires them
 
 - **When:** Friday, Jul 31, 2026, 9:01 PM (UTC+1)
 - **Session:** Language-agnostic template session, which then created this TypeScript repository
 
-````text
+```text
 Feel free to mention languages directly related to GOV.UK Frontend like Node / Nunjucks where needed since that is what it uses by default
-````
+```
 
 ## 6. Record the base-template purpose and official guidance URLs
 
 - **When:** Saturday, Sep 26, 2026, 8:26 PM (UTC+1)
 - **Session:** Language-agnostic template session, which then created this TypeScript repository
 
-````text
+```text
 Is it worth adding additional context to this project somewhere, that this will be a base template for creating "GDS compliant" frontends using stantardised backend technologies like TypeScript, Go, Python etc, no frontend frameworks will be used as GOV.UK Frontend (latest version) will be the frontend component library of choice. The guidance that should be following in these projects should all be gathered from searching across the following URLs:
-https://www.gov.uk/guidance/the-technology-code-of-practice 
-https://www.gov.uk/service-manual/helping-people-to-use-your-service/assisted-digital-support-introduction 
-https://www.gov.uk/service-manual/service-standard 
-https://www.gov.uk/service-manual 
-https://design-system.service.gov.uk/ 
-https://frontend.design-system.service.gov.uk/ 
+https://www.gov.uk/guidance/the-technology-code-of-practice
+https://www.gov.uk/service-manual/helping-people-to-use-your-service/assisted-digital-support-introduction
+https://www.gov.uk/service-manual/service-standard
+https://www.gov.uk/service-manual
+https://design-system.service.gov.uk/
+https://frontend.design-system.service.gov.uk/
 Feel free to store all this information i whatever standard format / skill you feel is appropriate. Also update the @AGENTS.md to set a 100% line test coverage across functions, branches, and statements
-````
+```
 
 ## 7. Use macros, fixture parity, and the release notes before upgrades
 
 - **When:** Saturday, Sep 26, 2026, 8:35 PM (UTC+1)
 - **Session:** Language-agnostic template session, which then created this TypeScript repository
 
-````text
+```text
 Also add that all HTML could come from GOV.UK Frontend macros and test fixtures should be setup to enable extensive 100% parity testing of the HTML output coming from whatever backend is used to generate the frontend code, where possible use nunjucks as a template language rather than simply copy / pasting the HTML from each release.
 
-Also make sure that when it comes to updating GOV.UK Frontend make sure to always review the release documentation on this page: https://github.com/alphagov/govuk-frontend/releases/latest 
+Also make sure that when it comes to updating GOV.UK Frontend make sure to always review the release documentation on this page: https://github.com/alphagov/govuk-frontend/releases/latest
 
 Lastly, the top priorities for these projects, are frontend web performance, frontend security, reduced maintainence, accessibility, and inclusive design.
-````
+```
 
 ## 8. Structure the documentation for agents and humans, and add dotfiles
 
 - **When:** Saturday, Sep 26, 2026, 8:40 PM (UTC+1)
 - **Session:** Language-agnostic template session, which then created this TypeScript repository
 
-````text
+```text
 Could you make sure that all this documentation is structured for both AI agents and human developers, also add in any standard dotfiles that yo can at the moment to make overall maintainence and consistance across the codebase as high as possible.
-````
+```
 
 ## 9. Split the work into commits and push to main
 
 - **When:** Saturday, Sep 26, 2026, 8:45 PM (UTC+1)
 - **Session:** Language-agnostic template session, which then created this TypeScript repository
 
-````text
+```text
 split all this new code down into structured commits with comprehensive commit messages and a history that makes sense before pushing to main
-````
+```
 
 ## 10. Add an MIT licence and SECURITY.md
 
 - **When:** Saturday, Sep 26, 2026, 8:49 PM (UTC+1)
 - **Session:** Language-agnostic template session, which then created this TypeScript repository
 
-````text
+```text
 Could we now add a base MIT licence and security.md file
-````
+```
 
 ## 11. Create this TypeScript repository from the template
 
 - **When:** Saturday, Sep 26, 2026, 8:55 PM (UTC+1)
 - **Session:** Language-agnostic template session, which then created this TypeScript repository
 
-````text
+```text
 Could we now create the typescript version of this repo by duplicating it and calling it govuk-frontend-example-typescript and push it to my github account. If theres a clever way to allow the typescript version to pull in changes from the original template please include that too.
-````
+```
 
 ## 12. Build the end-to-end TypeScript service
 
 - **When:** Saturday, Sep 26, 2026, 9:07 PM (UTC+1)
 - **Session:** This TypeScript repository
 
-````text
+```text
 Could you now create a full end-to end GOV.UK service that links multiple complete pages built using TypeScript and all GOV.UK Frontend component macros, across all pages. This should act as a best-practice reference for setting up a base GOV.UK Design System / GOV.UK Frontend in TypeScript. component macros should he tested using the test fixtures supplied with each release of GOV.UK Frontend and comprehensive testing for the whole service should added. Lastly use npm test to run all tests and npm start to run the example pages and component demos
-````
+```
 
 ## 13. Log these prompts
 
 - **When:** Saturday, Sep 26, 2026, 9:45 PM (UTC+1)
 - **Session:** This TypeScript repository
 
-````text
+```text
 Could you also add a document to the repo that logs all the prompts that I have given the agent in order to generate this example template (inclusive of this one)
-````
+```

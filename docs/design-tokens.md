@@ -1,6 +1,6 @@
 # Design tokens
 
-Use GOV.UK Frontend classes and variables — **do not invent custom CSS**. This page documents the visual language agents should respect when describing or reviewing UI.
+Use GOV.UK Frontend classes and Sass tokens — **do not invent a parallel CSS system**. Service adjustments go in [`govuk-overrides.scss`](../styles/govuk-overrides.scss) via specificity (never `!important`). See [styles.md](styles.md).
 
 ## Colours
 
@@ -58,7 +58,7 @@ Minimal shadows. Cards/panels: 1px borders. Focus: thick yellow borders (4px), n
 
 ## Component appearance notes
 
-Agents should implement appearance **only** via components (button variants, error summary, phase banner, etc.), not by re-stating hex values in custom CSS. Examples:
+Agents should implement appearance **only** via components (button variants, error summary, phase banner, etc.), Frontend override classes, or cascade rules in `govuk-overrides.scss` — not by re-stating hex values with `!important`. Examples:
 
 - Start button: `govuk-button govuk-button--start` + start icon SVG from Frontend template
 - Primary / secondary / warning buttons via Frontend classes

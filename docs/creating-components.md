@@ -14,7 +14,7 @@ Related docs: [govuk-components.md](govuk-components.md), [testing-components.md
 2. **Options mirror Nunjucks macros** — names/shapes align with `macro-options.json` / fixture `options`.
 3. **Exact HTML parity** — output equals each fixture’s `html` byte-for-byte (ordinal equality with Nunjucks output).
 4. **Never hand-write component markup in pages** — pages invoke the library API.
-5. **No custom CSS** — only `govuk-`\* classes.
+5. **No ad-hoc custom CSS** — Sass pipeline + `govuk-overrides.scss` only; no `!important` ([styles.md](styles.md)).
 6. **Register in navigation** — every shipped component appears in the home/components list with a preview link.
 
 ## Which sibling to copy (once examples exist)
@@ -168,4 +168,4 @@ Use the preview server; hard-refresh after rebuilds. Confirm the component is li
 
 **Do:** start from fixtures + Nunjucks `template.njk` + closest sibling; keep one coherent unit per component; prove parity before calling done; use idiomatic types/modules/tests for the wrapper language; keep a Node Nunjucks suite for fixture freshness.
 
-**Don’t:** hand-paste `govuk-`\* into pages; ship without nav/preview; embed demos on index; custom CSS; normalise HTML in tests; invent fixture HTML; nest incompatible components; pretend Frontend is not Node/Nunjucks upstream.
+**Don’t:** hand-paste `govuk-`\* into pages; ship without nav/preview; embed demos on index; add ad-hoc CSS or `!important`; normalise HTML in tests; invent fixture HTML; nest incompatible components; pretend Frontend is not Node/Nunjucks upstream; ship the prebuilt minified Frontend CSS instead of the Sass pipeline.
