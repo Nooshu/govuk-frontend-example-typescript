@@ -1,0 +1,15 @@
+---
+description: Documentation and Markdown conventions for humans and agents
+globs: "**/*.{md,mdc}"
+alwaysApply: false
+---
+
+# Documentation conventions
+
+- Write for **both** humans and agents: clear headings, short sections, tables for indexes.
+- Link to playbooks instead of duplicating long checklists from `AGENTS.md`.
+- Prefer upstream GDS URLs from `docs/guidance-sources.md` over long pasted excerpts.
+- When adding a doc, list it in `docs/README.md` under the right audience section.
+- Keep `AGENTS.md` as an index; do not grow it with full playbooks.
+- Run `npm run verify:docs` after substantive Markdown edits.
+- Use relative links within the repo; absolute https URLs for external guidance.
