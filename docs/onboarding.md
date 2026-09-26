@@ -1,0 +1,97 @@
+# Onboarding
+
+Human-oriented map of this repository. Coding agents should treat [`AGENTS.md`](../AGENTS.md) as the dense entry point; humans should also read [`CONTRIBUTING.md`](../CONTRIBUTING.md). How docs are split for both audiences: [documentation-structure.md](documentation-structure.md).
+
+## What this repo is
+
+A **base template** for **GDS-compliant** frontends: backend languages (e.g. TypeScript, Go, Python) generate HTML; **GOV.UK Frontend** is the only UI library; **no frontend frameworks** for UI. Exact **HTML parity** against official Frontend fixtures. See [project-purpose.md](project-purpose.md).
+
+**Implementation language and templating stack are TBD.** Until confirmed, do not invent wrapper project paths or framework idioms beyond [tech-stack.md](tech-stack.md). Once chosen, organise the wrapper using that language’s **current best practices**.
+
+**GOV.UK Frontend is Node + Nunjucks by default.** Install `govuk-frontend` from npm, treat Nunjucks `template.njk` / `fixtures.json` as the HTML contract, and keep Node scripts for refreshing and verifying fixtures — even if the wrapper is another language.
+
+**Official guidance:** search the URLs in [guidance-sources.md](guidance-sources.md).
+
+**Priorities:** frontend web performance → frontend security → reduced maintenance → accessibility → inclusive design ([priorities.md](priorities.md)).
+
+**HTML:** prefer **Nunjucks macros** from `govuk-frontend`; set up official fixtures for extensive **100% parity** tests of backend output. Do not copy-paste component HTML from each release as the long-term approach. Before Frontend upgrades, always read https://github.com/alphagov/govuk-frontend/releases/latest.
+
+## Priorities
+
+See [priorities.md](priorities.md). Short version: frontend web performance → frontend security → reduced maintenance → accessibility → inclusive design.
+
+## Components vs patterns
+
+| Kind          | What it is                                                               | How we build it                                  | Fixture parity?                                                         |
+| ------------- | ------------------------------------------------------------------------ | ------------------------------------------------ | ----------------------------------------------------------------------- |
+| **Component** | Design System building block (button, text input, …)                     | Library wrapper that renders exact Frontend HTML | **Yes** — official `fixtures.json`                                      |
+| **Pattern**   | Guidance for a journey or page composition (addresses, check answers, …) | Compose shipped components into pages            | **No** — follow Design System guidance; no invented pattern HTML suites |
+
+## Repo map (intended)
+
+Exact paths follow the chosen language’s conventions — record them in [tech-stack.md](tech-stack.md). Conceptually expect:
+
+```text
+AGENTS.md                 # Slim agent playbook
+docs/                     # All documentation (this folder)
+<src>/                    # App + component library (layout per language best practice)
+  …/govuk/…               # One unit per component + fixtures.json
+  …/layouts/…             # Page template / chrome
+  …/previews/…            # Dev-only parity browser per component
+  …/fixtures/…            # Dev-only raw HTML fragment endpoints
+tests/                    # Structural, parity (wrapper language), Nunjucks suite (Node)
+scripts/ or tasks/        # Frontend upgrade automation (often Node + wrapper tooling)
+```
+
+## Run modes (intended)
+
+| Mode    | Purpose                                                                                   |
+| ------- | ----------------------------------------------------------------------------------------- |
+| Preview | Local server for component previews and pattern demos                                     |
+| Test    | Unit/parity tests (wrapper) + Nunjucks fixture verification (Node)                        |
+| Verify  | Config check + fixtures + full test suite (CI equivalent)                                 |
+| Upgrade | Mechanical Frontend bump — see [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md) |
+
+Command names for the _wrapper_ are stack-specific — document them in [tech-stack.md](tech-stack.md). Expect **Node**/npm for `govuk-frontend` install and the Nunjucks suite regardless.
+
+## Testing mindset
+
+1. **Parity checks** compare library output to fixture `html` with ordinal string equality.
+2. **Never** edit fixture `html` to make tests pass — fix the renderer.
+3. **Never** normalise HTML in tests.
+4. **Nunjucks suite** (Node) catches **stale fixtures**; library tests catch **renderer drift**.
+
+Details: [testing-components.md](testing-components.md).
+
+## Troubleshooting
+
+| Symptom                        | Likely cause                                                |
+| ------------------------------ | ----------------------------------------------------------- |
+| Parity fails on whitespace     | Renderer ≠ Nunjucks `template.njk` / `{%-` stripping        |
+| Encoding differs (`'` vs `'`)  | Used framework HTML encoder instead of Nunjucks `escape`    |
+| Attribute order differs        | Built attributes in code property order, not template order |
+| Preview/fixture 404 in tests   | Test host not enabling Dev/Testing routes                   |
+| Logo unreadable / wrong header | Frontend 5 header classes with Frontend 6+ CSS              |
+| Editing fixtures “fixes” tests | Wrong fix — update renderer                                 |
+
+More pitfalls: [creating-components.md](creating-components.md).
+
+## Consistency tooling (today)
+
+While the wrapper language is TBD, Node tooling keeps docs and shared config consistent:
+
+```sh
+npm install
+npm run verify:docs   # Prettier + markdownlint
+```
+
+See [CONTRIBUTING.md](../CONTRIBUTING.md). Dotfiles: `.editorconfig`, `.prettierrc.json`, `.markdownlint-cli2.jsonc`, `.nvmrc`, `.vscode/`, `.cursor/rules/`, `.github/`.
+
+## Next reads
+
+1. [documentation-structure.md](documentation-structure.md)
+2. [tech-stack.md](tech-stack.md)
+3. [page-shell.md](page-shell.md) and [layout-chrome.md](layout-chrome.md)
+4. [govuk-components.md](govuk-components.md)
+5. [service-assessment-readiness.md](service-assessment-readiness.md)
+6. [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)
