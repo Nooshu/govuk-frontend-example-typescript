@@ -4,17 +4,15 @@ Human-oriented map of this repository. Coding agents should treat [`AGENTS.md`](
 
 ## What this repo is
 
-A **base template** for **GDS-compliant** frontends: backend languages (e.g. TypeScript, Go, Python) generate HTML; **GOV.UK Frontend** is the only UI library; **no frontend frameworks** for UI. Exact **HTML parity** against official Frontend fixtures. See [project-purpose.md](project-purpose.md).
+A **base template** for **GDS-compliant** frontends on **TypeScript / Node**: **GOV.UK Frontend** is the only UI library; **no frontend frameworks** for UI. Exact **HTML parity** against official Frontend fixtures. See [project-purpose.md](project-purpose.md). Sync shared docs from the agnostic template: [syncing-from-template.md](syncing-from-template.md).
 
-**Implementation language and templating stack are TBD.** Until confirmed, do not invent wrapper project paths or framework idioms beyond [tech-stack.md](tech-stack.md). Once chosen, organise the wrapper using that language’s **current best practices**.
-
-**GOV.UK Frontend is Node + Nunjucks by default.** Install `govuk-frontend` from npm, treat Nunjucks `template.njk` / `fixtures.json` as the HTML contract, and keep Node scripts for refreshing and verifying fixtures — even if the wrapper is another language.
+**Stack:** TypeScript — [tech-stack.md](tech-stack.md). Prefer **Nunjucks macros** from `govuk-frontend`; keep Node scripts for fixtures and verification.
 
 **Official guidance:** search the URLs in [guidance-sources.md](guidance-sources.md).
 
 **Priorities:** frontend web performance → frontend security → reduced maintenance → accessibility → inclusive design ([priorities.md](priorities.md)).
 
-**HTML:** prefer **Nunjucks macros** from `govuk-frontend`; set up official fixtures for extensive **100% parity** tests of backend output. Do not copy-paste component HTML from each release as the long-term approach. Before Frontend upgrades, always read https://github.com/alphagov/govuk-frontend/releases/latest.
+**HTML:** prefer **Nunjucks macros**; fixtures for extensive **100% parity** tests. Before Frontend upgrades, always read https://github.com/alphagov/govuk-frontend/releases/latest.
 
 ## Priorities
 

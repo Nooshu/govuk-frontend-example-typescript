@@ -1,71 +1,53 @@
 # Tech stack
 
-**Status: TBD** (implementation language)
+**Status: TypeScript (Node)** — this is the TypeScript specialised line of [govuk-frontend-example](https://github.com/Nooshu/govuk-frontend-example).
 
-The _example implementation_ language and its 2026 best-practice templating / component approach are not chosen yet. This file is the **single place** to record them when decided.
+Sync shared docs/dotfiles from the language-agnostic template: [syncing-from-template.md](syncing-from-template.md).
 
 ## Two layers
 
-| Layer                          | Stack                                                                                               | Notes                                                                                                                                      |
-| ------------------------------ | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| **GOV.UK Frontend (upstream)** | **Node** package (`govuk-frontend`), **Nunjucks** macros (`template.njk`), official `fixtures.json` | Fixed by GDS. Always name Node/Nunjucks when discussing install, fixtures, macro options, escape behaviour, and verifying stored fixtures. |
-| **This template (wrapper)**    | TBD — e.g. TypeScript, Go, Python; **prefer Nunjucks** for GOV.UK HTML when viable                  | Server-side HTML from Frontend **macros**, not pasted release HTML. **No** React/Vue/Angular/Svelte for UI.                                |
+| Layer                          | Stack                                                                                               | Notes                                                                                                |
+| ------------------------------ | --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| **GOV.UK Frontend (upstream)** | **Node** package (`govuk-frontend`), **Nunjucks** macros (`template.njk`), official `fixtures.json` | Fixed by GDS. Always name Node/Nunjucks for install, fixtures, macros, encoding, verification.       |
+| **This line (wrapper)**        | **TypeScript** on **Node** (≥22), ESM (`"type": "module"`)                                          | Server-side HTML from Frontend **macros** (prefer Nunjucks). **No** React/Vue/Angular/Svelte for UI. |
 
-## Rule for agents and humans
+## TypeScript conventions
 
-Until an implementation language is recorded here: do not invent wrapper-specific paths, package managers, or framework idioms.
+Follow current TypeScript / Node ESM best practices:
 
-Once recorded: follow **that language’s current best practices** for project layout, typing, modules, testing, packaging, and CI — while honouring Frontend’s Nunjucks/fixture contract in [`AGENTS.md`](../AGENTS.md). **Prefer Nunjucks macros** for component HTML where the stack allows (e.g. Node/TypeScript calling `govuk-frontend` macros directly). If the language cannot call Nunjucks, implement thin renderers that stay byte-for-byte with fixtures — still do **not** maintain hand-copied HTML dumps from each release.
+- `strict` and related flags in `tsconfig.json` (`noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `verbatimModuleSyntax`)
+- ESM only (aligned with user preference for JavaScript ESM)
+- Prefer calling **Nunjucks macros** from `govuk-frontend` for component HTML; thin TypeScript wrappers around options → HTML only when needed — still fixture-parity
+- Tests: Node’s built-in test runner via `tsx` (`npm test`)
+- Coverage gate when the library grows: **100%** functions, branches, statements (see [testing-components.md](testing-components.md))
 
-## Consistency tooling (today)
-
-While the wrapper language is TBD, Node tooling keeps docs and shared config consistent:
+## Consistency tooling
 
 ```sh
 npm install
-npm run verify:docs   # Prettier + markdownlint
+npm run verify:docs    # Prettier + markdownlint
+npm run typecheck
+npm test
+npm run verify         # docs + typecheck + tests
+npm run sync:template  # pull shared paths from language-agnostic template
 ```
 
-See [CONTRIBUTING.md](../CONTRIBUTING.md). Dotfiles: `.editorconfig`, `.prettierrc.json`, `.markdownlint-cli2.jsonc`, `.nvmrc`, `.vscode/`, `.cursor/rules/`, `.github/`. Record language-specific formatters in this file when chosen.
+See [CONTRIBUTING.md](../CONTRIBUTING.md).
 
-Expect a **Node** dependency (and often small Node scripts) even when the wrapper is another language — that is how you install `govuk-frontend`, refresh fixtures, re-render Nunjucks for stale-fixture checks, and run shared docs hygiene.
+## Version pin
 
-## When implementation language is confirmed, document
-
-- Language, runtime, and version policy
-- Templating approach: **Nunjucks macros preferred**; document any non-Nunjucks renderer and how fixture parity is proven
-- Package manager, lockfile, and how dependencies are pinned (including `govuk-frontend` via npm/Node)
-- How Frontend CSS/JS (and fonts) are installed and served
-- Shared HTML escape + attribute helpers matching **Nunjucks `escape`** when not invoking Nunjucks directly (see [creating-components.md](creating-components.md))
-- Fixture loader and preview / raw-fixture route conventions (extensive parity coverage)
-- Layout chrome helpers (skip link, header, service navigation, footer)
-- Test runner commands, parity suite over **all** fixtures, **100%** coverage gate (functions / branches / statements), and **Nunjucks fixture-verification** scripts (Node)
-- Upgrade entrypoint — always review https://github.com/alphagov/govuk-frontend/releases/latest first; see [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)
-- Confirmation that no frontend UI framework is in the dependency tree for rendering
+| Item                              | Value                                                                                                                      |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Implementation language           | TypeScript 5.x on Node ≥22                                                                                                 |
+| Templating / component approach   | Prefer Nunjucks macros from `govuk-frontend`; TypeScript for app/library logic                                             |
+| `govuk-frontend` (Node)           | _TBD — set on first install; check [latest release](https://github.com/alphagov/govuk-frontend/releases/latest)_           |
+| Nunjucks fixture verification     | _TBD — Node scripts under tests/_                                                                                          |
+| Page template reference           | https://design-system.service.gov.uk/styles/page-template/                                                                 |
+| Fixture testing guide             | https://frontend.design-system.service.gov.uk/testing-your-html/                                                           |
+| Upgrade / test / preview commands | `npm run sync:template`, `npm run verify`; Frontend upgrade per [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md) |
 
 ## Hard constraints (always)
 
-- GOV.UK Frontend pins a single version; CSS/JS and fixtures must match.
-- Prefer **Nunjucks macros** for component HTML; do not maintain copy-pasted HTML from each release.
-- Component options mirror Nunjucks macro options (`macro-options.json` / fixture `options`).
-- Backend output must pass extensive **100% HTML fixture parity** (byte-for-byte with Nunjucks / fixture `html`).
-- No custom CSS that restyles Frontend.
-- Patterns compose components; they are not new low-level components.
-- Wrapper structure/tooling follow the **chosen language’s best practices**; Frontend tooling stays Node/Nunjucks.
-- No frontend UI frameworks for GOV.UK chrome — see [project-purpose.md](project-purpose.md).
-- Coverage: **100%** functions, branches, statements — see [testing-components.md](testing-components.md).
-- Before every Frontend upgrade: https://github.com/alphagov/govuk-frontend/releases/latest
+Same as the language-agnostic template: one Frontend pin, macros over pasted HTML, fixture parity, no custom CSS restyling Frontend, no SPA UI frameworks, 100% coverage for application code, review https://github.com/alphagov/govuk-frontend/releases/latest before upgrades.
 
-See [`AGENTS.md`](../AGENTS.md), [guidance-sources.md](guidance-sources.md), and [creating-components.md](creating-components.md).
-
-## Placeholder version pin
-
-| Item                              | Value                                                                                                            |
-| --------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Implementation language           | _TBD_                                                                                                            |
-| Templating / component approach   | _TBD — prefer Nunjucks macros when viable_                                                                       |
-| `govuk-frontend` (Node)           | _TBD — set on first install; check [latest release](https://github.com/alphagov/govuk-frontend/releases/latest)_ |
-| Nunjucks fixture verification     | _TBD — Node scripts under tests/_                                                                                |
-| Page template reference           | https://design-system.service.gov.uk/styles/page-template/                                                       |
-| Fixture testing guide             | https://frontend.design-system.service.gov.uk/testing-your-html/                                                 |
-| Upgrade / test / preview commands | _TBD — list here when wired_                                                                                     |
+See [`AGENTS.md`](../AGENTS.md), [guidance-sources.md](guidance-sources.md), [creating-components.md](creating-components.md).

@@ -1,21 +1,24 @@
 <!-- ============================================================
   GOV.UK Design System — Agent instructions
   ============================================================
-  Base template: GDS-compliant frontends (backend + GOV.UK Frontend)
+  Base: TypeScript line of GDS-compliant frontends (Node + GOV.UK Frontend)
+  Sync shared docs from Nooshu/govuk-frontend-example (see docs/syncing-from-template.md)
   Detail lives in /docs and .cursor/skills/gds-compliant-frontend
   ============================================================ -->
 
 ♛ GOV.UK
 
-# GOV.UK Frontend example
+# GOV.UK Frontend example (TypeScript)
 
-**Base template** for **GDS-compliant** government frontends: standardised **backend** languages (e.g. TypeScript, Go, Python) generate HTML; **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/)** (latest pinned version) is the **only** UI component library. **No frontend frameworks** (React, Vue, Angular, Svelte, etc.) for UI.
+**TypeScript** specialised line: **Node + TypeScript** generates HTML; **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/)** (latest pinned version) is the **only** UI component library. **No frontend frameworks** (React, Vue, Angular, Svelte, etc.) for UI.
 
-All component HTML should come from **GOV.UK Frontend macros** (prefer **Nunjucks** over copy-pasting release HTML). Official **test fixtures** enable extensive **100% HTML parity** testing of whatever backend generates the frontend markup.
+All component HTML should come from **GOV.UK Frontend macros** (prefer **Nunjucks** over copy-pasting release HTML). Official **test fixtures** enable extensive **100% HTML parity** testing of TypeScript/Nunjucks output.
+
+Language-agnostic template (shared playbooks): https://github.com/Nooshu/govuk-frontend-example — sync with `npm run sync:template` ([docs/syncing-from-template.md](docs/syncing-from-template.md)).
 
 **LIVE guidance** — [Design System feedback](https://design-system.service.gov.uk/community/feedback/).
 
-Skill: [`.cursor/skills/gds-compliant-frontend/SKILL.md`](.cursor/skills/gds-compliant-frontend/SKILL.md). Purpose: [`docs/project-purpose.md`](docs/project-purpose.md).
+Skill: [`.cursor/skills/gds-compliant-frontend/SKILL.md`](.cursor/skills/gds-compliant-frontend/SKILL.md). Purpose: [`docs/project-purpose.md`](docs/project-purpose.md). Stack: [`docs/tech-stack.md`](docs/tech-stack.md).
 
 ## Priorities (in order)
 
@@ -29,16 +32,17 @@ Details: [`docs/priorities.md`](docs/priorities.md).
 
 ## Start here
 
-| Audience                  | Doc                                                                                                                     |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| **Human developers**      | [`docs/onboarding.md`](docs/onboarding.md), [`CONTRIBUTING.md`](CONTRIBUTING.md)                                        |
-| **AI agents (this file)** | Keep reading; skill: [`.cursor/skills/gds-compliant-frontend/SKILL.md`](.cursor/skills/gds-compliant-frontend/SKILL.md) |
-| Dual-audience docs map    | [`docs/documentation-structure.md`](docs/documentation-structure.md), [`docs/README.md`](docs/README.md)                |
-| Project purpose           | [`docs/project-purpose.md`](docs/project-purpose.md)                                                                    |
-| Official guidance URLs    | [`docs/guidance-sources.md`](docs/guidance-sources.md)                                                                  |
-| Stack / language (TBD)    | [`docs/tech-stack.md`](docs/tech-stack.md)                                                                              |
+| Audience                      | Doc                                                                                                                     |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **Human developers**          | [`docs/onboarding.md`](docs/onboarding.md), [`CONTRIBUTING.md`](CONTRIBUTING.md)                                        |
+| **AI agents (this file)**     | Keep reading; skill: [`.cursor/skills/gds-compliant-frontend/SKILL.md`](.cursor/skills/gds-compliant-frontend/SKILL.md) |
+| Dual-audience docs map        | [`docs/documentation-structure.md`](docs/documentation-structure.md), [`docs/README.md`](docs/README.md)                |
+| Project purpose               | [`docs/project-purpose.md`](docs/project-purpose.md)                                                                    |
+| Official guidance URLs        | [`docs/guidance-sources.md`](docs/guidance-sources.md)                                                                  |
+| Stack / language (TypeScript) | [`docs/tech-stack.md`](docs/tech-stack.md)                                                                              |
+| Sync from agnostic template   | [`docs/syncing-from-template.md`](docs/syncing-from-template.md)                                                        |
 
-**Language rule:** Before an _implementation_ stack is recorded, stay agnostic about that wrapper language. After it is recorded, use that language’s current best practices for structure, typing, tests, and tooling — without weakening the non-negotiables below. **Prefer Nunjucks** (Frontend’s native macros) for templates where the stack allows, instead of copy-pasting static HTML from each release.
+**Language rule:** This line is **TypeScript on Node**. Follow current TypeScript/Node ESM best practices for structure, typing, tests, and tooling — without weakening the non-negotiables below. **Prefer Nunjucks** (Frontend’s native macros) for component HTML instead of copy-pasting static HTML from each release.
 
 **GOV.UK Frontend’s own stack:** Frontend ships as a **Node** package with **Nunjucks** macros, official `fixtures.json`, and `template.njk` sources. Refer to Node/Nunjucks directly for install, fixtures, macro options, encoding, and fixture-verification scripts.
 
@@ -64,6 +68,7 @@ Using this repo does **not** make a service assessment-ready. See [`docs/service
 
 | Task                                | Doc                                                                    |
 | ----------------------------------- | ---------------------------------------------------------------------- |
+| Sync from agnostic template         | [`docs/syncing-from-template.md`](docs/syncing-from-template.md)       |
 | Upgrade GOV.UK Frontend             | [`docs/upgrading-govuk-frontend.md`](docs/upgrading-govuk-frontend.md) |
 | Add a component                     | [`docs/creating-components.md`](docs/creating-components.md)           |
 | Add a pattern                       | [`docs/creating-patterns.md`](docs/creating-patterns.md)               |

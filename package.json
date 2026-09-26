@@ -1,8 +1,9 @@
 {
-  "name": "govuk-frontend-example",
+  "name": "govuk-frontend-example-typescript",
   "version": "0.0.0",
   "private": true,
-  "description": "Base template for GDS-compliant frontends using GOV.UK Frontend (wrapper language TBD). Node tooling for docs hygiene and future govuk-frontend pin.",
+  "description": "TypeScript line of the GDS-compliant GOV.UK Frontend template. Server-rendered HTML via Node/TypeScript + Nunjucks; no SPA UI frameworks.",
+  "type": "module",
   "engines": {
     "node": ">=22"
   },
@@ -10,10 +11,17 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint:md": "markdownlint-cli2",
-    "verify:docs": "npm run format:check && npm run lint:md"
+    "verify:docs": "npm run format:check && npm run lint:md",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test 'src/**/*.test.ts'",
+    "verify": "npm run verify:docs && npm run typecheck && npm test",
+    "sync:template": "./scripts/sync-from-template.sh"
   },
   "devDependencies": {
+    "@types/node": "24.5.2",
     "markdownlint-cli2": "0.23.3",
-    "prettier": "3.6.2"
+    "prettier": "3.6.2",
+    "tsx": "4.20.5",
+    "typescript": "5.9.2"
   }
 }

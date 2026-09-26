@@ -5,8 +5,10 @@ alwaysApply: true
 
 # Template consistency
 
-- This repo is a **base template**: backend HTML + **GOV.UK Frontend** only. **No** React/Vue/Angular/Svelte for UI.
+- This repo is the **TypeScript** line of the GDS template: Node/TypeScript HTML + **GOV.UK Frontend** only. **No** React/Vue/Angular/Svelte for UI.
 - Prefer **Nunjucks macros** over copy-pasted component HTML. Use official **fixtures** for 100% HTML parity.
+- Sync shared docs from `template` remote (`npm run sync:template`) — do not overwrite `docs/tech-stack.md`, `package.json`, or `src/` casually.
+- Language-agnostic sibling: https://github.com/Nooshu/govuk-frontend-example
 - Priorities: frontend web performance → frontend security → reduced maintenance → accessibility → inclusive design.
 - Keep [`AGENTS.md`](AGENTS.md) slim; put detail in [`docs/`](docs/README.md). Dual audience: see [`docs/documentation-structure.md`](docs/documentation-structure.md).
 - Before upgrading Frontend: read https://github.com/alphagov/govuk-frontend/releases/latest then [`docs/upgrading-govuk-frontend.md`](docs/upgrading-govuk-frontend.md).

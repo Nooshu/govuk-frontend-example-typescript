@@ -5,9 +5,10 @@ Thanks for helping maintain this **GDS-compliant frontend** template. This guide
 ## Before you start
 
 1. Read [`docs/project-purpose.md`](docs/project-purpose.md) and [`docs/onboarding.md`](docs/onboarding.md).
-2. Confirm the wrapper language status in [`docs/tech-stack.md`](docs/tech-stack.md).
+2. Confirm the stack in [`docs/tech-stack.md`](docs/tech-stack.md) (TypeScript on Node).
 3. Prefer official guidance listed in [`docs/guidance-sources.md`](docs/guidance-sources.md).
-4. Priorities: frontend web performance → frontend security → reduced maintenance → accessibility → inclusive design.
+4. Sync shared playbooks from the agnostic template when needed: [`docs/syncing-from-template.md`](docs/syncing-from-template.md).
+5. Priorities: frontend web performance → frontend security → reduced maintenance → accessibility → inclusive design.
 
 ## Non-negotiables (short)
 
@@ -21,16 +22,13 @@ Full list: [`AGENTS.md`](AGENTS.md).
 
 ## Consistency tooling
 
-These work today (language-agnostic + Node for Frontend/docs):
-
 ```sh
 npm install
-npm run format:check    # Prettier
-npm run lint:md         # Markdown lint
-npm run verify:docs     # format:check + lint:md
+npm run verify          # docs + typecheck + tests
+npm run sync:template   # shared paths from Nooshu/govuk-frontend-example
 ```
 
-When the wrapper language is chosen, add its format/lint/test/coverage commands to [`docs/tech-stack.md`](docs/tech-stack.md) and wire them into CI.
+See [`docs/syncing-from-template.md`](docs/syncing-from-template.md). Dotfiles and lint setup match the language-agnostic template; TypeScript adds `tsc` and Node’s test runner.
 
 ### Dotfiles (do not bypass)
 

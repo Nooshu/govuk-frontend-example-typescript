@@ -1,8 +1,10 @@
-# GOV.UK Frontend example
+# GOV.UK Frontend example (TypeScript)
 
-**Base template** for **GDS-compliant** government frontends: standardised backends (TypeScript, Go, Python, …) + **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/)** macros (**prefer Nunjucks**) — **no** React/Vue/Angular/Svelte for UI. Official fixtures enable **100% HTML parity** testing of backend output.
+**TypeScript** specialised line of the GDS-compliant frontend template: **Node + TypeScript** generates HTML; **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/)** macros (**prefer Nunjucks**) — **no** React/Vue/Angular/Svelte for UI. Official fixtures enable **100% HTML parity** testing.
 
-**Implementation language: TBD** — see [`docs/tech-stack.md`](docs/tech-stack.md).
+Language-agnostic sibling (shared playbooks): [Nooshu/govuk-frontend-example](https://github.com/Nooshu/govuk-frontend-example). Sync: [`docs/syncing-from-template.md`](docs/syncing-from-template.md).
+
+**Stack:** see [`docs/tech-stack.md`](docs/tech-stack.md).
 
 ## Priorities
 
@@ -15,13 +17,14 @@ Frontend web performance → frontend security → reduced maintenance → acces
 | **Human developer** | [`docs/onboarding.md`](docs/onboarding.md) → [`CONTRIBUTING.md`](CONTRIBUTING.md) → [`docs/`](docs/README.md)                                                  |
 | **AI coding agent** | [`AGENTS.md`](AGENTS.md) → [`.cursor/skills/gds-compliant-frontend/`](.cursor/skills/gds-compliant-frontend/SKILL.md) → playbooks in [`docs/`](docs/README.md) |
 
-How docs are split for both audiences: [`docs/documentation-structure.md`](docs/documentation-structure.md).
+Dual-audience map: [`docs/documentation-structure.md`](docs/documentation-structure.md).
 
-## Quick local checks (docs / Node tooling)
+## Quick local checks
 
 ```sh
 npm install
-npm run verify:docs
+npm run verify          # docs + typecheck + tests
+npm run sync:template   # pull shared docs/dotfiles from the agnostic template
 ```
 
 ## Licence and security
