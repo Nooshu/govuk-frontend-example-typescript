@@ -24,10 +24,11 @@ if [[ ! -f "$PATHS_FILE" ]]; then
   exit 1
 fi
 
-echo "Fetching $REMOTE…"
+# ASCII "...": macOS bash 3.2 treats a unicode ellipsis as part of $REMOTE under `set -u`.
+echo "Fetching $REMOTE..."
 git fetch "$REMOTE" "$REF"
 
-echo "Checking out shared paths from $REMOTE/$REF…"
+echo "Checking out shared paths from $REMOTE/$REF..."
 while IFS= read -r path || [[ -n "${path:-}" ]]; do
   # Skip blank lines and comments
   [[ -z "${path// }" ]] && continue
