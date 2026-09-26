@@ -20,6 +20,7 @@ How we keep docs dual-purpose: [documentation-structure.md](documentation-struct
 | [priorities.md](priorities.md)                       | Ordered priorities                                           |
 | [tech-stack.md](tech-stack.md)                       | TypeScript / Node + Frontend Nunjucks                        |
 | [example-service.md](example-service.md)             | Rod licence example, `npm start`, fixture previews           |
+| [prompts.md](prompts.md)                             | Prompts given to the agent to generate this template         |
 | [syncing-from-template.md](syncing-from-template.md) | Pull shared docs/dotfiles from govuk-frontend-example        |
 | [guidance-sources.md](guidance-sources.md)           | Official GDS / Service Manual / Frontend URLs                |
 | [CONTRIBUTING.md](../CONTRIBUTING.md)                | How to contribute, local checks, PR expectations             |

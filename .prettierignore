@@ -7,3 +7,5 @@ package-lock.json
 *.min.js
 *.min.css
 CHANGELOG.md
+# Verbatim prompt log. Prettier would strip trailing spaces from the quoted prompts.
+docs/prompts.md
