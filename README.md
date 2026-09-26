@@ -23,9 +23,10 @@ Dual-audience map: [`docs/documentation-structure.md`](docs/documentation-struct
 
 ```sh
 npm install
-npm start               # example pages and component demos
-npm test                # baseline, fixture parity, and service tests
-npm run verify          # docs + typecheck + tests
+npm run build:styles    # Sass → dist/stylesheets/application.css
+npm start               # build:styles, then example pages and component demos
+npm test                # baseline, Sass pipeline, fixture parity, and service tests
+npm run verify          # docs + build:styles + typecheck + tests
 npm run sync:template   # pull shared docs/dotfiles from the agnostic template
 ```
 

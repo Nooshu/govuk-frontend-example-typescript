@@ -18,6 +18,7 @@ Thanks for helping maintain this **GDS-compliant frontend** template. This guide
 - **100%** code coverage (functions, branches, statements) when application code exists.
 - Before upgrading Frontend, read https://github.com/alphagov/govuk-frontend/releases/latest.
 - HTTP responses use the shared [`baseline/`](baseline/). Compress with Brotli; Gzip is only the fallback when the client does not advertise `br`.
+- Compile CSS via Sass (`styles/` → Frontend `@use` → `govuk-overrides.scss` last). Never use `!important` in service CSS. See [`docs/styles.md`](docs/styles.md).
 
 Full list: [`AGENTS.md`](AGENTS.md).
 
@@ -25,9 +26,10 @@ Full list: [`AGENTS.md`](AGENTS.md).
 
 ```sh
 npm install
+npm run build:styles    # Sass → dist/stylesheets/application.css
 npm start               # example service at http://127.0.0.1:3000
-npm test                # baseline suite, fixtures, and the example service; 100% coverage
-npm run verify          # docs + typecheck + tests
+npm test                # baseline, Sass pipeline, fixtures, and the example service; 100% coverage
+npm run verify          # docs + build:styles + typecheck + tests
 npm run sync:template   # shared paths from Nooshu/govuk-frontend-example
 ```
 
@@ -49,7 +51,7 @@ See [`docs/syncing-from-template.md`](docs/syncing-from-template.md). Dotfiles a
 ## Pull requests
 
 - Keep changes focused; update `/docs` (and `AGENTS.md` links) when behaviour or process changes.
-- Do not commit unless maintainers ask in agent sessions; humans use normal git workflow.
+- Split finished work into focused commits with comprehensive messages (see [`AGENTS.md`](AGENTS.md)).
 - Use the PR template checklist.
 - For Frontend bumps: follow [`docs/upgrading-govuk-frontend.md`](docs/upgrading-govuk-frontend.md).
 

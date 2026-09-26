@@ -17,7 +17,7 @@ git remote -v
 
 ## Recommended: path sync (safe for divergence)
 
-Pulls only the paths listed in [`template-sync.paths`](../template-sync.paths) — Frontend playbooks, the shared [`baseline/`](../baseline/) performance and security contract, guidance, EditorConfig, Prettier, docs CI, licence/security — **without** overwriting TypeScript-specific files (`docs/tech-stack.md`, `package.json`, `README.md`, `AGENTS.md`, `src/`, …).
+Pulls only the paths listed in [`template-sync.paths`](../template-sync.paths) — Frontend playbooks, the shared [`baseline/`](../baseline/) performance and security contract, the Sass pipeline under [`styles/`](../styles/) and `scripts/build-styles*.mjs`, guidance, EditorConfig, Prettier, docs CI, licence/security — **without** overwriting TypeScript-specific files (`docs/tech-stack.md`, `package.json`, `README.md`, `AGENTS.md`, `src/`, …).
 
 ```sh
 ./scripts/sync-from-template.sh
@@ -34,7 +34,7 @@ TEMPLATE_REMOTE=template TEMPLATE_REF=main ./scripts/sync-from-template.sh
 
 After syncing, skim release notes if Frontend guidance changed: https://github.com/alphagov/govuk-frontend/releases/latest
 
-Then apply [`baseline/`](../baseline/) in this line's server (`applyResponseHeaders`, `buildSetCookie`, Brotli). Do not keep a weaker header or cache policy in `src/`. Playbooks: [frontend-performance.md](frontend-performance.md), [frontend-security.md](frontend-security.md).
+Then apply [`baseline/`](../baseline/) in this line's server (`applyResponseHeaders`, `buildSetCookie`, Brotli). Serve CSS from the compiled Sass output (`npm run build:styles`), not `govuk-frontend.min.css`. Do not keep a weaker header or cache policy in `src/`. Playbooks: [frontend-performance.md](frontend-performance.md), [frontend-security.md](frontend-security.md), [styles.md](styles.md).
 
 ## Alternative: full git merge
 

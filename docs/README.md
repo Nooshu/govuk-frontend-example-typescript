@@ -69,6 +69,7 @@ Agents should still open human-oriented docs when onboarding a teammate or expla
 | [accessibility.md](accessibility.md)               | WCAG, focus, progressive enhancement   |
 | [content-and-forms.md](content-and-forms.md)       | Content design, forms, errors          |
 | [design-tokens.md](design-tokens.md)               | Colour, typography, spacing            |
+| [styles.md](styles.md)                             | Sass pipeline, cascade, no !important  |
 | [frontend-performance.md](frontend-performance.md) | Caching, compression, budgets          |
 | [frontend-security.md](frontend-security.md)       | OWASP headers, CSP, cookies            |
 

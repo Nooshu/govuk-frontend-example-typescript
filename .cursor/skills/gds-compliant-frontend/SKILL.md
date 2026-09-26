@@ -63,3 +63,5 @@ Local index: [`docs/guidance-sources.md`](../../../docs/guidance-sources.md).
 3. Upgrade only after reviewing the [latest release](https://github.com/alphagov/govuk-frontend/releases/latest).
 4. New components: [`docs/creating-components.md`](../../../docs/creating-components.md). Patterns: [`docs/creating-patterns.md`](../../../docs/creating-patterns.md).
 5. HTTP responses use [`baseline/`](../../../baseline/) — call `applyResponseHeaders` and `buildSetCookie`. Compress with Brotli (`br`); Gzip is only the fallback when the client does not advertise `br`. Playbooks: [`docs/frontend-performance.md`](../../../docs/frontend-performance.md), [`docs/frontend-security.md`](../../../docs/frontend-security.md). Sync `baseline/` from the template; do not fork a weaker policy.
+6. Compile CSS via Sass (`styles/application.scss` → Frontend `@use` → `govuk-overrides.scss` last). Never use `!important` in service CSS. Playbook: [`docs/styles.md`](../../../docs/styles.md).
+7. When a coherent piece of work is finished, split it into focused commits with comprehensive messages — do not leave a large mixed working tree.

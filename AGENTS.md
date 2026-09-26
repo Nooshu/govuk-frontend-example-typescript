@@ -53,15 +53,17 @@ Details: [`docs/priorities.md`](docs/priorities.md).
 1. **GOV.UK Frontend macros are the HTML source of truth** — prefer rendering via Nunjucks macros (or an equivalent that tracks them). Do **not** copy-paste component HTML from release notes or the Design System site as the long-term approach.
 2. **Exact HTML parity via fixtures** — set up official `fixtures.json` so backend output can be tested extensively at **100% parity** (byte-for-byte vs fixture `html` / Nunjucks output). No normalisation; never edit fixture `html` to pass tests.
 3. **No frontend UI frameworks** — no React/Vue/Angular/Svelte (or similar) for GOV.UK UI; backend + GOV.UK Frontend only.
-4. **No custom CSS** that restyles Frontend — only `govuk-*` classes; extend via component options.
-5. **Components via macros / library API** — never hand-paste component `govuk-*` markup into pages.
-6. **Patterns compose components** — Design System patterns are pages/journeys, not new low-level components, and have no fixture-parity suites.
-7. **WCAG 2.2 AA baseline** — skip link, one `h1`, visible focus (never override yellow focus), keyboard paths, Error summary + field errors, `novalidate`.
-8. **Progressive enhancement** — core tasks work without Frontend JS; keep `js-enabled` / `govuk-frontend-supported` and `initAll()`.
-9. **Do not ship unreleased GOV.UK chrome** — wait for Frontend release + fixtures. See [`docs/govuk-frontend-roadmap.md`](docs/govuk-frontend-roadmap.md).
-10. **100% code coverage** — functions, branches, and statements at **100%** for application/library code under test; CI must fail below that. Do not weaken fixture HTML equality to chase coverage. See [`docs/testing-components.md`](docs/testing-components.md).
-11. **Always review the latest release notes** before upgrading — https://github.com/alphagov/govuk-frontend/releases/latest — then follow [`docs/upgrading-govuk-frontend.md`](docs/upgrading-govuk-frontend.md).
-12. **Performance and security baseline** — every response uses [`baseline/`](baseline/) (cache kind, OWASP headers, CSP hash for the `js-enabled` snippet). Sync that directory from the template; do not invent a weaker set. See [`docs/frontend-performance.md`](docs/frontend-performance.md) and [`docs/frontend-security.md`](docs/frontend-security.md).
+4. **No ad-hoc custom CSS** — ship styles through the Sass pipeline in [`styles/`](styles/) (`application.scss` → GOV.UK Frontend `@use` → [`govuk-overrides.scss`](styles/govuk-overrides.scss) last). Prefer component options and Design System patterns; do not paste or serve Frontend’s prebuilt `govuk-frontend.min.css` as the long-term source. See [`docs/styles.md`](docs/styles.md).
+5. **No `!important` in service CSS** — overrides must win with cascade order and specificity only. This applies to every project using this template. Frontend’s own `govuk-!-…` utilities are upstream; do not copy that pattern into service styles.
+6. **Components via macros / library API** — never hand-paste component `govuk-*` markup into pages.
+7. **Patterns compose components** — Design System patterns are pages/journeys, not new low-level components, and have no fixture-parity suites.
+8. **WCAG 2.2 AA baseline** — skip link, one `h1`, visible focus (never override yellow focus), keyboard paths, Error summary + field errors, `novalidate`.
+9. **Progressive enhancement** — core tasks work without Frontend JS; keep `js-enabled` / `govuk-frontend-supported` and `initAll()`.
+10. **Do not ship unreleased GOV.UK chrome** — wait for Frontend release + fixtures. See [`docs/govuk-frontend-roadmap.md`](docs/govuk-frontend-roadmap.md).
+11. **100% code coverage** — functions, branches, and statements at **100%** for application/library code under test; CI must fail below that. Do not weaken fixture HTML equality to chase coverage. See [`docs/testing-components.md`](docs/testing-components.md).
+12. **Always review the latest release notes** before upgrading — https://github.com/alphagov/govuk-frontend/releases/latest — then follow [`docs/upgrading-govuk-frontend.md`](docs/upgrading-govuk-frontend.md).
+13. **Performance and security baseline** — every response uses [`baseline/`](baseline/) (cache kind, OWASP headers, CSP hash for the `js-enabled` snippet). Sync that directory from the template; do not invent a weaker set. See [`docs/frontend-performance.md`](docs/frontend-performance.md) and [`docs/frontend-security.md`](docs/frontend-security.md).
+14. **Split finished work into focused commits** — once a coherent piece of code or docs is complete, create **specific** commits with **comprehensive** messages (why, contract impact, how to verify). Do not leave a large mixed working tree; do not squash unrelated concerns into one commit. This applies to agents and humans using this template.
 
 Using this repo does **not** make a service assessment-ready. See [`docs/service-assessment-readiness.md`](docs/service-assessment-readiness.md).
 
@@ -82,6 +84,7 @@ Using this repo does **not** make a service assessment-ready. See [`docs/service
 | Accessibility                       | [`docs/accessibility.md`](docs/accessibility.md)                       |
 | Content & forms                     | [`docs/content-and-forms.md`](docs/content-and-forms.md)               |
 | Design tokens (colour, type, space) | [`docs/design-tokens.md`](docs/design-tokens.md)                       |
+| Styles / Sass cascade               | [`docs/styles.md`](docs/styles.md)                                     |
 | Guidance sources                    | [`docs/guidance-sources.md`](docs/guidance-sources.md)                 |
 | Authoritative links                 | [`docs/authoritative-references.md`](docs/authoritative-references.md) |
 
@@ -96,7 +99,8 @@ Before finishing a page change:
 - [ ] Focus styles untouched; no `outline: none`
 - [ ] Trusted/sanitised HTML only; prefer plain text options
 - [ ] HTML responses use the baseline security headers; assets use the matching cache kind
-- [ ] CSS in `<head>`; Frontend JS is an external `type="module"`; the `js-enabled` snippet matches the pinned CSP hash
+- [ ] CSS from the Sass pipeline in `<head>` (not prebuilt `govuk-frontend.min.css`); Frontend JS is an external `type="module"`; the `js-enabled` snippet matches the pinned CSP hash
+- [ ] No `!important` in service styles; overrides only via `govuk-overrides.scss` specificity
 - [ ] Pattern guidance followed; out-of-scope widgets called out with inset text
 - [ ] Coverage remains 100% functions / branches / statements for touched library code
 - [ ] Fixture parity still green for any touched components

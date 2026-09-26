@@ -31,6 +31,8 @@ See [priorities.md](priorities.md). Short version: frontend web performance → 
 AGENTS.md                 # Slim agent playbook
 docs/                     # All documentation (this folder)
 baseline/                 # Shared performance and OWASP header contract, synced from the template
+styles/                   # Sass entry + govuk-overrides (compiles to dist/stylesheets/)
+scripts/                  # Node build helpers (styles, template sync)
 src/                      # TypeScript application (ESM)
   main.ts                 # npm start
   app.ts                  # Routes and the Node HTTP server
@@ -46,12 +48,13 @@ Detail: [example-service.md](example-service.md) and [tech-stack.md](tech-stack.
 
 ## Run modes
 
-| Mode    | Command          | Purpose                                                                      |
-| ------- | ---------------- | ---------------------------------------------------------------------------- |
-| Preview | `npm start`      | Example service, component catalogue, and fixture previews                   |
-| Test    | `npm test`       | Baseline suite, fixture parity, and service tests. Fails below 100% coverage |
-| Verify  | `npm run verify` | Docs, typecheck, and the full test suite                                     |
-| Upgrade | see the playbook | Frontend bump — [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)   |
+| Mode    | Command                | Purpose                                                                               |
+| ------- | ---------------------- | ------------------------------------------------------------------------------------- |
+| Styles  | `npm run build:styles` | Compile `styles/` → `dist/stylesheets/application.css` ([styles.md](styles.md))       |
+| Preview | `npm start`            | build:styles, then example service, component catalogue, and fixture previews         |
+| Test    | `npm test`             | Baseline, Sass pipeline, fixture parity, and service tests. Fails below 100% coverage |
+| Verify  | `npm run verify`       | Docs, build:styles, typecheck, and the full test suite                                |
+| Upgrade | see the playbook       | Frontend bump — [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)            |
 
 ## Testing mindset
 
@@ -79,8 +82,9 @@ More pitfalls: [creating-components.md](creating-components.md).
 
 ```sh
 npm install
+npm run build:styles  # Sass → dist/stylesheets/application.css
 npm start
-npm test              # baseline headers and cache policy, then the TypeScript suite
+npm test              # baseline, Sass pipeline, then the TypeScript suite
 npm run verify:docs   # Prettier + markdownlint
 npm run verify
 ```
@@ -95,4 +99,5 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md). Dotfiles: `.editorconfig`, `.prettier
 4. [govuk-components.md](govuk-components.md)
 5. [service-assessment-readiness.md](service-assessment-readiness.md)
 6. [frontend-performance.md](frontend-performance.md) and [frontend-security.md](frontend-security.md)
-7. [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)
+7. [styles.md](styles.md)
+8. [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)

@@ -29,11 +29,12 @@ Follow current TypeScript / Node ESM best practices:
 
 ```sh
 npm install
-npm start              # example service and component demos — http://127.0.0.1:3000
-npm test               # baseline suite, fixture parity, and service tests; 100% coverage
+npm run build:styles   # Sass → dist/stylesheets/application.css
+npm start              # build:styles, then example service — http://127.0.0.1:3000
+npm test               # baseline, Sass pipeline, fixture parity, service tests; 100% coverage
 npm run typecheck
 npm run verify:docs    # Prettier + markdownlint
-npm run verify         # docs + typecheck + tests
+npm run verify         # docs + build:styles + typecheck + tests
 npm run sync:template  # pull shared paths from language-agnostic template
 ```
 
@@ -47,10 +48,11 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md).
 | ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
 | [`baseline/policy.json`](../baseline/policy.json) | OWASP header values, CSP directives (including the Frontend `js-enabled` hash), cache kinds, Brotli budgets    |
 | [`baseline/index.mjs`](../baseline/index.mjs)     | `applyResponseHeaders` on every response, `buildSetCookie` for the session cookie, `strongEtag` on public HTML |
+| [`styles/`](../styles/)                           | Sass entry compiling Frontend via `@use`, then `govuk-overrides.scss` ([styles.md](styles.md))                 |
 
-`npm run test:baseline` is the template's 100% line, branch, and function gate for `baseline/`. `npm test` runs that and then the TypeScript coverage gate. The shared testing playbook describes the baseline suite on its own, because the template has no wrapper language yet.
+`npm run test:baseline` is the template's 100% line, branch, and function gate for `baseline/`. `npm run test:styles` is the same gate for `scripts/build-styles.mjs`. `npm test` runs both, then `build:styles`, then the TypeScript coverage gate.
 
-Local `npm start` is plain HTTP, so responses omit HSTS and the session cookie is `rod_session` without `Secure`. An `https:` request URL, or `X-Forwarded-Proto: https`, sends HSTS and `__Host-session`. Public HTML that sets a cookie uses `private, no-cache`. Pages that show the application use `sensitive-document` (`no-store`). Fingerprinted styles, scripts, the `initAll()` module, and hashed fonts use `public, max-age=31536000, immutable`. Unhashed asset URLs use `no-cache`.
+Local `npm start` is plain HTTP, so responses omit HSTS and the session cookie is `rod_session` without `Secure`. An `https:` request URL, or `X-Forwarded-Proto: https`, sends HSTS and `__Host-session`. Public HTML that sets a cookie uses `private, no-cache`. Pages that show the application use `sensitive-document` (`no-store`). The fingerprinted compiled stylesheet (`/assets/application.*.css`), Frontend script, `initAll()` module, and hashed fonts use `public, max-age=31536000, immutable`. Unhashed asset URLs use `no-cache`. Do not serve `govuk-frontend.min.css` as the long-term CSS source.
 
 The server compresses with Brotli when the client advertises `br`, and Gzip otherwise. `Vary: Accept-Encoding` comes from the baseline.
 
@@ -63,16 +65,16 @@ Details: [frontend-performance.md](frontend-performance.md), [frontend-security.
 | Implementation language           | TypeScript 7.0.2 on Node ≥22                                                                                                                                                         |
 | Templating / component approach   | Prefer Nunjucks macros from `govuk-frontend`; TypeScript for app/library logic                                                                                                       |
 | `govuk-frontend` (Node)           | **6.5.1** — [v6.5.1](https://github.com/alphagov/govuk-frontend/releases/tag/v6.5.1) (reviewed against [latest release](https://github.com/alphagov/govuk-frontend/releases/latest)) |
+| Sass pipeline                     | `styles/application.scss` → `npm run build:styles` → `dist/stylesheets/application.css` ([styles.md](styles.md))                                                                     |
 | Nunjucks                          | 3.2.4, with Frontend’s `trimBlocks` and `lstripBlocks`                                                                                                                               |
 | Nunjucks fixture verification     | `npm test` — every official `fixtures.json` `html` value, byte for byte                                                                                                              |
 | Page template reference           | https://design-system.service.gov.uk/styles/page-template/                                                                                                                           |
 | Fixture testing guide             | https://frontend.design-system.service.gov.uk/testing-your-html/                                                                                                                     |
 | Example service                   | [example-service.md](example-service.md) — `npm start`                                                                                                                               |
 | Response baseline                 | [`baseline/`](../baseline/) via `applyResponseHeaders` — [frontend-performance.md](frontend-performance.md), [frontend-security.md](frontend-security.md)                            |
-| Upgrade / test / preview commands | `npm start`, `npm test`, `npm run typecheck`, `npm run verify`; Frontend upgrade per [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)                                      |
+| Upgrade / test / preview commands | `npm run build:styles`, `npm start`, `npm test`, `npm run typecheck`, `npm run verify`; Frontend upgrade per [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)              |
 
 ## Hard constraints (always)
 
-Same as the language-agnostic template: one Frontend pin, macros over pasted HTML, fixture parity, no custom CSS restyling Frontend, no SPA UI frameworks, 100% coverage for application code, review https://github.com/alphagov/govuk-frontend/releases/latest before upgrades.
-
+Same as the language-agnostic template: one Frontend pin, macros over pasted HTML, fixture parity, Sass pipeline with `govuk-overrides.scss` last (never `!important` in service CSS), no SPA UI frameworks, 100% coverage for application code, review https://github.com/alphagov/govuk-frontend/releases/latest before upgrades.
 See [`AGENTS.md`](../AGENTS.md), [guidance-sources.md](guidance-sources.md), [creating-components.md](creating-components.md).

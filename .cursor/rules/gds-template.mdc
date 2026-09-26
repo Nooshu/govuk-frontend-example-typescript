@@ -16,3 +16,5 @@ alwaysApply: true
 - Respect EditorConfig / Prettier / markdownlint; run `npm run verify:docs` after doc changes.
 - 100% coverage (functions, branches, statements) for application code when it exists; never edit fixture `html` to pass tests.
 - Serve pages and assets with [`baseline/`](baseline/) (cache kinds and OWASP headers). Compress with Brotli (`br`); Gzip is only the fallback when the client does not advertise `br`. Playbooks: [`docs/frontend-performance.md`](docs/frontend-performance.md), [`docs/frontend-security.md`](docs/frontend-security.md).
+- Compile CSS with Sass (`styles/` → Frontend `@use` → `govuk-overrides.scss` last). Never use `!important` in service CSS. See [`docs/styles.md`](docs/styles.md).
+- When work is complete, split it into focused commits with comprehensive messages.

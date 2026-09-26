@@ -46,7 +46,7 @@ Question pages use one `h1`, `novalidate`, an error summary, and field errors. A
 
 ## Responses
 
-Pages and assets use the shared [baseline](frontend-security.md). Public HTML that sets the session cookie is `private, no-cache`, with a strong `ETag`. Question, task list, check your answers, confirmation, and cookie settings pages are `no-store`. The stylesheet, Frontend script, and the external `initAll()` module are fingerprinted and cached as immutable. The `js-enabled` snippet is the one line hashed in `baseline/policy.json`.
+Pages and assets use the shared [baseline](frontend-security.md). Public HTML that sets the session cookie is `private, no-cache`, with a strong `ETag`. Question, task list, check your answers, confirmation, and cookie settings pages are `no-store`. The compiled Sass stylesheet (`application.css`), Frontend script, and the external `initAll()` module are fingerprinted and cached as immutable. The `js-enabled` snippet is the one line hashed in `baseline/policy.json`.
 
 The server compresses with Brotli when the browser sends `Accept-Encoding: br`. Gzip is only used when the browser does not advertise `br`. Local `npm start` is HTTP, so the session cookie is not `Secure` and responses do not send HSTS.
 
