@@ -1,16 +1,17 @@
 import { readFileSync } from 'node:fs';
 import type { AddressInfo, Server } from 'node:net';
 import { createServer } from 'node:http';
+import { applyResponseHeaders, baselinePolicy, buildSetCookie, strongEtag } from '#baseline';
 
 import { describeComponent, listCatalogue } from './components/catalogue.js';
 import { getFixture, loadComponentFixtures } from './components/fixtures.js';
 import { parityBanner, selectFixture } from './components/preview.js';
 import { isKnownComponent, renderComponent } from './components/render.js';
 import { demosEnabledFromEnv, FRONTEND_VERSION, MAX_BODY_BYTES } from './config.js';
-import { resolveAsset } from './http/assets.js';
+import { pageAssets, resolveAsset, type Asset } from './http/assets.js';
 import { field, fields, parseRequestBody, RequestBodyError, type ParsedBody } from './http/body.js';
-import { parseCookieHeader, serializeCookie } from './http/cookies.js';
-import { createNonce, maybeGzip, securityHeaders } from './http/security.js';
+import { compressBody, isCompressible } from './http/compress.js';
+import { parseCookieHeader } from './http/cookies.js';
 import { type PageView, renderPage } from './pages/document.js';
 import {
   createMemoryStore,
@@ -78,6 +79,7 @@ import {
 } from './service/validate.js';
 
 const SESSION_COOKIE = 'rod_session';
+const HOST_SESSION_COOKIE = '__Host-session';
 
 /** Dependencies for {@link createApp}. Tests replace the store, clock, renderer, and body parser. */
 export type AppOptions = {
@@ -120,9 +122,8 @@ export function createApp(options: AppOptions = {}): App {
   return {
     async handle(request) {
       const url = new URL(request.url);
-      const nonce = createNonce();
       try {
-        const result = await route(request, url, nonce, {
+        const result = await route(request, url, {
           store,
           demosEnabled,
           now,
@@ -130,17 +131,17 @@ export function createApp(options: AppOptions = {}): App {
         });
         if (result.type === 'raw') return result.response;
         if (result.type === 'redirect') {
-          return redirectResponse(result.location, nonce, resultCookie(request, result.session));
+          return redirectResponse(result.location, request, resultCookie(request, result.session));
         }
-        return pageResponse(result.view, result.session, url, nonce, demosEnabled, request, render);
+        return pageResponse(result.view, result.session, url, demosEnabled, request, render);
       } catch (error) {
         logger(error);
         try {
-          const body = render(problemView(500), createSession(), url, nonce, demosEnabled);
-          return htmlResponse(500, body, nonce);
+          const body = render(problemView(500), createSession(), url, demosEnabled);
+          return htmlResponse(500, body, request, 'document', []);
         } catch (nested) {
           logger(nested);
-          return textResponse(500, 'Sorry, there is a problem with the service', nonce);
+          return textResponse(500, 'Sorry, there is a problem with the service', request);
         }
       }
     },
@@ -160,11 +161,10 @@ type RedirectResult = { type: 'redirect'; location: string; session: Session };
 async function route(
   request: Request,
   url: URL,
-  nonce: string,
   deps: RouteDeps,
 ): Promise<PageResult | RedirectResult | RawResult> {
   if (request.method !== 'GET' && request.method !== 'POST') {
-    return { type: 'raw', response: textResponse(405, 'Method not allowed', nonce) };
+    return { type: 'raw', response: textResponse(405, 'Method not allowed', request) };
   }
 
   const path = url.pathname;
@@ -174,23 +174,13 @@ async function route(
   }
 
   if (request.method === 'GET' && path === '/health') {
-    return { type: 'raw', response: textResponse(200, 'ok', nonce) };
+    return { type: 'raw', response: textResponse(200, 'ok', request) };
   }
 
   if (request.method === 'GET' && path.startsWith('/assets/')) {
     const asset = resolveAsset(path);
-    if (!asset) return { type: 'raw', response: textResponse(404, 'Not found', nonce) };
-    return {
-      type: 'raw',
-      response: new Response(readFileSync(asset.filePath), {
-        status: 200,
-        headers: {
-          'content-type': asset.contentType,
-          'cache-control': asset.cacheControl,
-          ...securityHeaders(nonce),
-        },
-      }),
-    };
+    if (!asset) return { type: 'raw', response: textResponse(404, 'Not found', request) };
+    return { type: 'raw', response: assetResponse(asset, request) };
   }
 
   const session = openSession(request, deps.store);
@@ -201,7 +191,7 @@ async function route(
       body = await deps.readBody(request);
     } catch (error) {
       if (error instanceof RequestBodyError) {
-        return { type: 'raw', response: textResponse(error.status, error.message, nonce) };
+        return { type: 'raw', response: textResponse(error.status, error.message, request) };
       }
       throw error;
     }
@@ -213,7 +203,7 @@ async function route(
   }
 
   if (request.method === 'GET') {
-    const viewed = get(path, url, session, deps);
+    const viewed = get(request, path, url, session, deps);
     if (viewed) return viewed;
   }
 
@@ -235,13 +225,14 @@ function post(
 }
 
 function get(
+  request: Request,
   path: string,
   url: URL,
   session: Session,
   deps: RouteDeps,
 ): PageResult | RedirectResult | RawResult | undefined {
   if (deps.demosEnabled) {
-    const demo = demoGet(path, url, session);
+    const demo = demoGet(request, path, url, session);
     if (demo) return demo;
   }
   if (path === '/new-application') {
@@ -272,6 +263,7 @@ function get(
 }
 
 function demoGet(
+  request: Request,
   path: string,
   url: URL,
   session: Session,
@@ -292,17 +284,7 @@ function demoGet(
     if (!isKnownComponent(name)) return { type: 'page', view: notFoundView(), session };
     const fixture = getFixture(name, url.searchParams.get('fixture') ?? '');
     if (!fixture) return { type: 'page', view: notFoundView(), session };
-    return {
-      type: 'raw',
-      response: new Response(fixture.html, {
-        status: 200,
-        headers: {
-          'content-type': 'text/html; charset=utf-8',
-          'cache-control': 'no-store',
-          ...securityHeaders(createNonce()),
-        },
-      }),
-    };
+    return { type: 'raw', response: htmlResponse(200, fixture.html, request, 'document', []) };
   }
 
   const componentRoute = /^\/components\/([a-z0-9-]+)$/.exec(path);
@@ -471,6 +453,7 @@ function checkAnswersGet(session: Session, now: Date): PageResult | RedirectResu
       heading: 'Check your answers',
       backLink: { text: 'Back', href: '/create-a-password' },
       mainClasses: 'govuk-main-wrapper--l',
+      personal: true,
       context: { rows: summaryRows(session.application, now) },
     },
   };
@@ -486,6 +469,7 @@ function confirmationGet(session: Session): PageResult | RedirectResult {
       status: 200,
       heading: 'Application complete',
       showFeedback: true,
+      personal: true,
       context: { panel: confirmationPanel(session.application.reference) },
     },
   };
@@ -538,6 +522,7 @@ function stepView(
     status: 200,
     heading: step.heading,
     hasErrors: errors.length > 0,
+    personal: true,
     backLink: {
       text: 'Back',
       href: returnTo ? '/check-answers' : (previous?.path ?? '/task-list'),
@@ -635,6 +620,7 @@ function taskListView(session: Session): PageView {
     status: 200,
     heading: 'Your application',
     backLink: { text: 'Back', href: '/' },
+    personal: true,
     context: { sections: taskSections(session.application) },
   };
 }
@@ -677,6 +663,7 @@ function cookiesView(session: Session, errors: FieldError[]): PageView {
     status: 200,
     heading: 'Cookies',
     hasErrors: errors.length > 0,
+    personal: true,
     breadcrumbs: crumbs('Cookies'),
     context: {
       ...cookieFields(session.cookieChoice, errors),
@@ -842,7 +829,8 @@ function takeNotice(session: Session, path: string): string | undefined {
 }
 
 function openSession(request: Request, store: SessionStore): Session {
-  const id = parseCookieHeader(request.headers.get('cookie')).get(SESSION_COOKIE);
+  const cookies = parseCookieHeader(request.headers.get('cookie'));
+  const id = cookies.get(HOST_SESSION_COOKIE) ?? cookies.get(SESSION_COOKIE);
   if (id) {
     const existing = store.get(id);
     if (existing) return existing;
@@ -857,12 +845,11 @@ async function defaultReadBody(request: Request): Promise<ParsedBody> {
 }
 
 function resultCookie(request: Request, session: Session): string {
-  return serializeCookie(SESSION_COOKIE, session.id, {
-    secure: new URL(request.url).protocol === 'https:',
+  const secure = requestIsSecure(request);
+  return buildSetCookie(secure ? HOST_SESSION_COOKIE : SESSION_COOKIE, session.id, {
+    secure,
     maxAge: 60 * 60 * 4,
-    httpOnly: true,
-    sameSite: 'Lax',
-    path: '/',
+    ...(secure ? { hostPrefix: true } : {}),
   });
 }
 
@@ -870,21 +857,18 @@ function pageResponse(
   view: PageView,
   session: Session,
   url: URL,
-  nonce: string,
   demosEnabled: boolean,
   request: Request,
   render: typeof renderPage,
 ): Response {
-  const body = render(view, session, url, nonce, demosEnabled);
-  return htmlResponse(view.status, body, nonce, [resultCookie(request, session)]);
+  const body = render(view, session, url, demosEnabled);
+  const kind = view.personal === true ? 'sensitive-document' : 'document';
+  return htmlResponse(view.status, body, request, kind, [resultCookie(request, session)]);
 }
 
-function redirectResponse(location: string, nonce: string, cookie: string): Response {
-  const headers = new Headers({
-    location,
-    'cache-control': 'no-store',
-    ...securityHeaders(nonce),
-  });
+function redirectResponse(location: string, request: Request, cookie: string): Response {
+  const headers = documentHeaders(request, 'document', true);
+  headers.set('location', location);
   headers.append('set-cookie', cookie);
   return new Response(null, { status: 303, headers });
 }
@@ -892,27 +876,72 @@ function redirectResponse(location: string, nonce: string, cookie: string): Resp
 function htmlResponse(
   status: number,
   body: string,
-  nonce: string,
-  cookies: string[] = [],
+  request: Request,
+  kind: 'document' | 'sensitive-document',
+  cookies: string[],
 ): Response {
-  const headers = new Headers({
-    'content-type': 'text/html; charset=utf-8',
-    'cache-control': 'no-store',
-    ...securityHeaders(nonce),
-  });
+  const headers = documentHeaders(request, kind, cookies.length > 0);
   for (const cookie of cookies) headers.append('set-cookie', cookie);
+  if (kind === 'document') {
+    const etag = strongEtag(body);
+    headers.set('etag', etag);
+    if (request.headers.get('if-none-match') === etag) {
+      return new Response(null, { status: 304, headers });
+    }
+  }
   return new Response(body, { status, headers });
 }
 
-function textResponse(status: number, body: string, nonce: string): Response {
-  return new Response(body, {
-    status,
-    headers: {
-      'content-type': 'text/plain; charset=utf-8',
-      'cache-control': 'no-store',
-      ...securityHeaders(nonce),
+function textResponse(status: number, body: string, request: Request): Response {
+  const headers = new Headers();
+  applyResponseHeaders(
+    { headers },
+    {
+      kind: 'static-asset',
+      secureTransport: requestIsSecure(request),
+      contentType: 'text/plain; charset=utf-8',
     },
-  });
+  );
+  return new Response(body, { status, headers });
+}
+
+function assetResponse(asset: Asset, request: Request): Response {
+  const headers = new Headers();
+  applyResponseHeaders(
+    { headers },
+    {
+      kind: asset.kind,
+      secureTransport: requestIsSecure(request),
+      contentType: asset.contentType,
+    },
+  );
+  const bytes = asset.body ?? readFileSync(asset.filePath);
+  return new Response(bytes, { status: 200, headers });
+}
+
+function documentHeaders(
+  request: Request,
+  kind: 'document' | 'sensitive-document',
+  setsCookie: boolean,
+): Headers {
+  const headers = new Headers();
+  applyResponseHeaders(
+    { headers },
+    {
+      kind,
+      secureTransport: requestIsSecure(request),
+      setsCookie,
+      preload: pageAssets().preloads,
+    },
+  );
+  return headers;
+}
+
+function requestIsSecure(request: Request): boolean {
+  if (new URL(request.url).protocol === 'https:') return true;
+  const forwarded = request.headers.get('x-forwarded-proto');
+  if (!forwarded) return false;
+  return forwarded.split(',')[0]!.trim().toLowerCase() === 'https';
 }
 
 /**
@@ -1028,7 +1057,7 @@ async function writeNodeResponse(
   const payload = Buffer.from(await response.arrayBuffer());
   const encodingHeader = headers.get('accept-encoding');
   const type = response.headers.get('content-type') ?? 'application/octet-stream';
-  const compressed = maybeGzip(payload, encodingHeader, type);
+  const compressed = compressBody(payload, encodingHeader, type);
   nodeResponse.statusCode = response.status;
   response.headers.forEach((value, key) => {
     if (key === 'set-cookie') return;
@@ -1037,16 +1066,11 @@ async function writeNodeResponse(
   const cookies = response.headers.getSetCookie();
   if (cookies.length > 0) nodeResponse.setHeader('set-cookie', cookies);
   if (compressed.encoding) nodeResponse.setHeader('content-encoding', compressed.encoding);
-  if (isText(type)) nodeResponse.setHeader('vary', 'Accept-Encoding');
+  if (isCompressible(type) && nodeResponse.getHeader('vary') === undefined) {
+    nodeResponse.setHeader('vary', 'Accept-Encoding');
+  }
+  for (const name of baselinePolicy.remove) nodeResponse.removeHeader(name);
   nodeResponse.end(method === 'HEAD' ? undefined : compressed.body);
-}
-
-function isText(contentType: string): boolean {
-  return (
-    contentType.startsWith('text/') ||
-    contentType.includes('javascript') ||
-    contentType.includes('json')
-  );
 }
 
 function closeServer(server: Server): Promise<void> {

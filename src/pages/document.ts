@@ -3,6 +3,7 @@ import { createRequire } from 'node:module';
 import { renderComponent } from '../components/render.js';
 import { govukDist, SERVICE_NAME, SERVICE_NAME_CY, viewsRoot } from '../config.js';
 import { pageTitle, safeLocalPath } from '../html.js';
+import { pageAssets } from '../http/assets.js';
 import type { Session } from '../session/store.js';
 
 const require = createRequire(import.meta.url);
@@ -21,6 +22,7 @@ export type PageView = {
   breadcrumbs?: Record<string, unknown>;
   mainClasses?: string;
   showFeedback?: boolean;
+  personal?: boolean;
   exitThisPage?: Record<string, unknown>;
   context: Record<string, unknown>;
 };
@@ -42,7 +44,6 @@ const FEEDBACK = {
  * @param view - Template name, heading, and page-specific context.
  * @param session - Session used for the CSRF token and cookie banner.
  * @param url - Request URL, used for a safe return path.
- * @param nonce - CSP nonce for the `initAll` script.
  * @param demosEnabled - Whether catalogue and example links are included.
  * @returns The full HTML document.
  * @throws Error when the view sets both a back link and breadcrumbs.
@@ -51,7 +52,6 @@ export function renderPage(
   view: PageView,
   session: Session,
   url: URL,
-  nonce: string,
   demosEnabled: boolean,
 ): string {
   if (view.backLink && view.breadcrumbs) {
@@ -59,11 +59,13 @@ export function renderPage(
   }
   const lang = view.lang ?? 'en';
   const serviceName = lang === 'cy' ? SERVICE_NAME_CY : SERVICE_NAME;
+  const assets = pageAssets();
   return env.render(view.template, {
     ...view.context,
     heading: view.heading,
     csrf: session.csrf,
-    cspNonce: nonce,
+    stylesheetHref: assets.stylesheetHref,
+    appModuleHref: assets.appModuleHref,
     htmlLang: lang,
     pageTitle: pageTitle(view.heading, serviceName, view.hasErrors === true),
     skipLinkText: lang === 'cy' ? "Neidio i'r prif gynnwys" : 'Skip to main content',

@@ -93,8 +93,10 @@ function assertShell(html: string, lang = 'en'): void {
   assert.match(html, /href="#main-content"/);
   assert.match(html, /id="main-content"/);
   assert.match(html, /noindex/);
-  assert.match(html, /initAll\(\)/);
-  assert.match(html, /\/assets\/govuk-frontend\.min\.css/);
+  assert.match(html, /document\.body\.className \+= ' js-enabled'/);
+  assert.match(html, /<script type="module" src="\/assets\/app\.[a-f0-9]+\.mjs"><\/script>/);
+  assert.doesNotMatch(html, /nonce=/);
+  assert.match(html, /\/assets\/govuk-frontend\.[a-f0-9]+\.min\.css/);
   assert.doesNotMatch(html, /outline:\s*none/);
   const skip = html.indexOf(lang === 'cy' ? 'Neidio i&#39;r prif gynnwys' : 'Skip to main content');
   const banner = html.indexOf('Cookies on Apply for a rod fishing licence');
@@ -113,14 +115,19 @@ describe('example service', { timeout: 120_000 }, () => {
     assert.match(start.text, /Help us improve this service/);
     assert.doesNotMatch(start.text, /govuk-back-link/);
     assert.doesNotMatch(start.text, /govuk-breadcrumbs/);
-    assert.match(start.response.headers.get('content-security-policy') ?? '', /nonce-/);
+    const policy = start.response.headers.get('content-security-policy') ?? '';
+    assert.match(policy, /sha256-GUQ5ad8JK5KmEWmROf3LZd9ge94daqNvd8xy9YS1iDw=/);
+    assert.doesNotMatch(policy, /unsafe-inline|nonce-/);
     assert.equal(start.response.headers.get('x-frame-options'), 'DENY');
-    assert.equal(start.response.headers.get('cache-control'), 'no-store');
-    const nonce = /'nonce-([^']+)'/.exec(
-      start.response.headers.get('content-security-policy') ?? '',
-    )?.[1];
-    assert.ok(nonce);
-    assert.ok(start.text.includes(`nonce="${nonce}"`));
+    assert.equal(start.response.headers.get('x-content-type-options'), 'nosniff');
+    assert.equal(start.response.headers.get('cache-control'), 'private, no-cache');
+    assert.match(start.response.headers.get('link') ?? '', /woff2/);
+    const etag = start.response.headers.get('etag');
+    assert.match(etag ?? '', /^".+"$/);
+    const revalidated = await send('/', { headers: { 'if-none-match': etag ?? '' } });
+    assert.equal(revalidated.status, 304);
+    const stale = await send('/', { headers: { 'if-none-match': '"missing"' } });
+    assert.equal(stale.status, 200);
 
     const welsh = await send('/cy');
     assertShell(welsh.text, 'cy');
@@ -135,6 +142,8 @@ describe('example service', { timeout: 120_000 }, () => {
 
     const name = await send('/name');
     assertShell(name.text);
+    assert.equal(name.response.headers.get('cache-control'), 'no-store');
+    assert.equal(name.response.headers.get('etag'), null);
     assert.match(name.text, /novalidate/);
     assert.match(name.text, /govuk-back-link/);
     assert.doesNotMatch(name.text, /govuk-breadcrumbs/);
@@ -619,6 +628,26 @@ describe('example service', { timeout: 120_000 }, () => {
     const css = await send('/assets/govuk-frontend.min.css');
     assert.equal(css.status, 200);
     assert.match(css.response.headers.get('content-type') ?? '', /text\/css/);
+    assert.equal(css.response.headers.get('cache-control'), 'no-cache');
+    assert.equal(css.response.headers.get('content-security-policy'), null);
+    assert.equal(css.response.headers.get('x-content-type-options'), 'nosniff');
+    const stylesheet = /href="(\/assets\/govuk-frontend\.[a-f0-9]+\.min\.css)"/.exec(
+      about.text,
+    )?.[1];
+    assert.ok(stylesheet);
+    const cachedCss = await send(stylesheet);
+    assert.equal(
+      cachedCss.response.headers.get('cache-control'),
+      'public, max-age=31536000, immutable',
+    );
+    const modulePath = /src="(\/assets\/app\.[a-f0-9]+\.mjs)"/.exec(about.text)?.[1];
+    assert.ok(modulePath);
+    const moduleResponse = await send(modulePath);
+    assert.match(moduleResponse.text, /initAll\(\)/);
+    assert.equal(
+      moduleResponse.response.headers.get('cache-control'),
+      'public, max-age=31536000, immutable',
+    );
     const script = await send('/assets/govuk-frontend.min.js');
     assert.match(script.response.headers.get('content-type') ?? '', /javascript/);
     const json = await send('/assets/manifest.json');
@@ -634,7 +663,18 @@ describe('example service', { timeout: 120_000 }, () => {
     assert.equal(method.status, 405);
 
     const secure = await send('/', { https: true });
+    assert.match(secure.response.headers.get('set-cookie') ?? '', /__Host-session=/);
     assert.match(secure.response.headers.get('set-cookie') ?? '', /Secure/);
+    assert.match(
+      secure.response.headers.get('strict-transport-security') ?? '',
+      /max-age=63072000/,
+    );
+    const forwarded = await send('/fees', { headers: { 'x-forwarded-proto': ' HTTPS, http' } });
+    assert.match(forwarded.response.headers.get('set-cookie') ?? '', /__Host-session=/);
+    assert.match(forwarded.response.headers.get('strict-transport-security') ?? '', /max-age=/);
+    const plainForwarded = await send('/fees', { headers: { 'x-forwarded-proto': 'http' } });
+    assert.match(plainForwarded.response.headers.get('set-cookie') ?? '', /rod_session=/);
+    assert.equal(plainForwarded.response.headers.get('strict-transport-security'), null);
 
     const expired = await send('/name', {
       method: 'POST',

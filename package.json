@@ -4,6 +4,9 @@
   "private": true,
   "description": "TypeScript line of the GDS-compliant GOV.UK Frontend template. Server-rendered HTML via Node/TypeScript + Nunjucks; no SPA UI frameworks.",
   "type": "module",
+  "imports": {
+    "#baseline": "./baseline/index.mjs"
+  },
   "engines": {
     "node": ">=22"
   },
@@ -14,7 +17,8 @@
     "verify:docs": "npm run format:check && npm run lint:md",
     "typecheck": "tsc --noEmit",
     "start": "tsx src/main.ts",
-    "test": "c8 --all --src src --include 'src/**/*.ts' --exclude 'src/**/*.test.ts' --exclude 'src/main.ts' --reporter=text --check-coverage --lines 100 --statements 100 --branches 100 --functions 100 -- node --import tsx --test 'src/**/*.test.ts'",
+    "test:baseline": "node --test --experimental-test-coverage --test-coverage-include='baseline/**/*.mjs' --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 tests/baseline.test.mjs",
+    "test": "npm run test:baseline && c8 --all --src src --include 'src/**/*.ts' --exclude 'src/**/*.test.ts' --exclude 'src/**/*.d.ts' --exclude 'src/main.ts' --reporter=text --check-coverage --lines 100 --statements 100 --branches 100 --functions 100 -- node --import tsx --test 'src/**/*.test.ts'",
     "verify": "npm run verify:docs && npm run typecheck && npm test",
     "sync:template": "./scripts/sync-from-template.sh"
   },

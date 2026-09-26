@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { request as httpRequest } from 'node:http';
-import { gunzipSync } from 'node:zlib';
+import { brotliDecompressSync, gunzipSync } from 'node:zlib';
 
 import {
   copyNodeHeaders,
@@ -82,6 +82,12 @@ describe('node server', () => {
       assert.equal(page.headers['content-encoding'], 'gzip');
       assert.equal(page.headers.vary, 'Accept-Encoding');
       assert.match(gunzipSync(page.body).toString('utf8'), /<h1/);
+      const brotli = await raw(running.port, {
+        path: '/fees',
+        headers: { 'accept-encoding': 'gzip, br' },
+      });
+      assert.equal(brotli.headers['content-encoding'], 'br');
+      assert.match(brotliDecompressSync(brotli.body).toString('utf8'), /<h1/);
       const cookie = page.headers['set-cookie'];
       assert.match(Array.isArray(cookie) ? cookie.join(',') : (cookie ?? ''), /rod_session=/);
 
@@ -98,17 +104,18 @@ describe('node server', () => {
       const redirect = await raw(running.port, { path: '/fees/' });
       assert.equal(redirect.status, 303);
       assert.equal(redirect.headers.location, '/fees');
-      assert.equal(redirect.headers['content-type'], undefined);
+      assert.equal(redirect.headers['content-type'], 'text/html; charset=utf-8');
       assert.equal(redirect.body.length, 0);
 
       const font = await raw(running.port, {
         path: '/assets/fonts/bold-b542beb274-v2.woff2',
-        headers: { 'accept-encoding': 'gzip' },
+        headers: { 'accept-encoding': 'br, gzip' },
       });
       assert.equal(font.status, 200);
       assert.equal(font.headers['content-type'], 'font/woff2');
       assert.equal(font.headers['content-encoding'], undefined);
-      assert.equal(font.headers.vary, undefined);
+      assert.equal(font.headers.vary, 'Accept-Encoding');
+      assert.equal(font.headers['cache-control'], 'public, max-age=31536000, immutable');
 
       const token = /name="csrf" value="([^"]+)"/.exec(gunzipSync(page.body).toString('utf8'))?.[1];
       assert.ok(token);

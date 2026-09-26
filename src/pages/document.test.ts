@@ -19,7 +19,6 @@ describe('page document', () => {
           },
           createSession(),
           new URL('http://example.test/help'),
-          'nonce',
           true,
         ),
       /both a back link and breadcrumbs/,
