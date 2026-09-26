@@ -52,6 +52,11 @@ When the wrapper language is chosen, add its format/lint/test/coverage commands 
 - Use the PR template checklist.
 - For Frontend bumps: follow [`docs/upgrading-govuk-frontend.md`](docs/upgrading-govuk-frontend.md).
 
+## Licence and security
+
+- [MIT License](LICENSE)
+- [SECURITY.md](SECURITY.md) — private vulnerability reporting; Frontend upgrade and encoding expectations
+
 ## Documentation for both audiences
 
 See [`docs/documentation-structure.md`](docs/documentation-structure.md). Put detail in `/docs`; keep `AGENTS.md` as the agent index.

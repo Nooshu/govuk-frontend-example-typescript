@@ -24,6 +24,8 @@ npm install
 npm run verify:docs
 ```
 
-## Licence note
+## Licence and security
 
-GOV.UK Design System and Frontend are maintained by GDS. Crown copyright / OGL apply to GOV.UK content patterns as documented on GOV.UK.
+- Code in this repository: [MIT License](LICENSE)
+- How to report vulnerabilities: [SECURITY.md](SECURITY.md)
+- GOV.UK Design System and Frontend are maintained by GDS; Crown copyright / OGL apply to GOV.UK content patterns as documented on GOV.UK.
