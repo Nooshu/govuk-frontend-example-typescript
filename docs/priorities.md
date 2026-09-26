@@ -26,7 +26,8 @@ Apply the OWASP response-header baseline on every response (CSP with the Fronten
 - Generate HTML from **Frontend macros** where possible — not by copy-pasting HTML from each release into templates.
 - Extensive **fixture parity** tests catch drift early so upgrades are mechanical, not archaeological.
 - Watch roadmap/releases before inventing components ([govuk-frontend-roadmap.md](govuk-frontend-roadmap.md)).
-- Use the chosen language’s idiomatic tooling ([tech-stack.md](tech-stack.md)); automate sync; humans for visual QA.
+- Use the chosen language’s **latest** idiomatic tooling ([tech-stack.md](tech-stack.md)); automate sync; humans for visual QA.
+- Keep **dual-audience documentation** current with every feature ([documentation-structure.md](documentation-structure.md)) so onboarding and agent sessions stay cheap.
 
 ## 4. Accessibility
 
