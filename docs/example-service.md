@@ -2,7 +2,7 @@
 
 **Apply for a rod fishing licence** is the reference GOV.UK service in this repository. It is an example. It does not take payment, send email, or issue a licence.
 
-Every page shows an **Important** notification banner: “This is a live demo. It is not a real government service.” (Welsh on `/cy`). The banner uses Frontend’s notification banner macro with an `app-notification-banner--demo` class so [`govuk-overrides.scss`](../styles/govuk-overrides.scss) can paint yellow chrome for this demo notice only (default Important stays blue). Pages are excluded from search engines via `noindex, nofollow` in the document head, an `X-Robots-Tag` response header, and `/robots.txt` (`Disallow: /`).
+Every page shows an **Important** notification banner: “This is a live demo. It is not a real government service.” (Welsh on `/cy`). The banner sits full width inside the page width container (not in the two-thirds column used by journey content). It uses Frontend’s notification banner macro with an `app-notification-banner--demo` class so [`govuk-overrides.scss`](../styles/govuk-overrides.scss) can paint yellow chrome for this demo notice only (default Important stays blue). Pages are excluded from search engines via `noindex, nofollow` in the document head, an `X-Robots-Tag` response header, and `/robots.txt` (`Disallow: /`).
 
 Pages are TypeScript on Node. Component HTML comes from **GOV.UK Frontend Nunjucks macros**. The pin is **6.5.1**. See [tech-stack.md](tech-stack.md).
 

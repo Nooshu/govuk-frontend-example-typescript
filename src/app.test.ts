@@ -94,6 +94,11 @@ function assertShell(html: string, lang = 'en'): void {
   assert.match(html, /id="main-content"/);
   assert.match(html, /name="robots" content="noindex, nofollow"/);
   assert.match(html, /govuk-notification-banner app-notification-banner--demo/);
+  // Full width of the page container: demo banner is the first child of main (not inside two-thirds).
+  assert.match(
+    html,
+    /id="main-content"[^>]*>\s*<div class="govuk-notification-banner app-notification-banner--demo"/,
+  );
   assert.match(
     html,
     lang === 'cy'

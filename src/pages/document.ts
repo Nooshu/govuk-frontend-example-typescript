@@ -148,7 +148,8 @@ function phaseBanner(lang: 'en' | 'cy'): Record<string, unknown> {
 
 /**
  * Site-wide demo warning shown on every page (notification banner, Important).
- * Uses `app-notification-banner--demo` so `govuk-overrides.scss` can paint yellow
+ * Rendered full width at the top of `main` (see `layout.njk`). Uses
+ * `app-notification-banner--demo` so `govuk-overrides.scss` can paint yellow
  * chrome for this demo notice only — Frontend’s default Important stays blue.
  */
 function demoBanner(lang: 'en' | 'cy'): Record<string, unknown> {

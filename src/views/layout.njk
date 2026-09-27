@@ -49,11 +49,7 @@
 
 {% block main %}
   <main class="govuk-main-wrapper{%- if mainClasses %} {{ mainClasses }}{% endif %}" id="main-content"{% if mainLang %} lang="{{ mainLang }}"{% endif %}>
-    <div class="govuk-grid-row">
-      <div class="govuk-grid-column-two-thirds">
-        {{ govukNotificationBanner(demoBanner) }}
-      </div>
-    </div>
+    {{ govukNotificationBanner(demoBanner) }}
     {% block content %}{% endblock %}
   </main>
 {% endblock %}
