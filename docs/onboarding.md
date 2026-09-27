@@ -14,7 +14,7 @@ A **base template** for **GDS-compliant** frontends on **TypeScript / Node**: **
 
 **Documentation:** every lasting change is documented for **humans and agents** ([documentation-structure.md](documentation-structure.md)).
 
-**HTML:** prefer **Nunjucks macros**; fixtures for extensive **100% parity** tests. Before Frontend upgrades, always read https://github.com/alphagov/govuk-frontend/releases/latest.
+**HTML:** prefer **Nunjucks macros**; **TypeScript vs fixture** parity for every fixture (`npm test`). Before Frontend upgrades, always read https://github.com/alphagov/govuk-frontend/releases/latest.
 
 ## Priorities
 
@@ -60,10 +60,11 @@ Detail: [example-service.md](example-service.md) and [tech-stack.md](tech-stack.
 
 ## Testing mindset
 
-1. **Parity checks** compare library output to fixture `html` with ordinal string equality.
-2. **Never** edit fixture `html` to make tests pass — fix the renderer.
-3. **Never** normalise HTML in tests.
-4. **Nunjucks suite** (Node) catches **stale fixtures**; library tests catch **renderer drift**.
+1. **Parity checks (primary)** compare **TypeScript `renderComponent`** output to fixture `html` with ordinal string equality — every fixture from the pinned Frontend release (`src/components/render.test.ts`).
+2. **Nunjucks freshness (secondary)** — fixtures are loaded from the same pinned `govuk-frontend` package the macros come from; a separate Nunjucks-only suite is optional. Never treat “macros still match fixtures” as a substitute for the TypeScript parity suite.
+3. **Never** edit fixture `html` to make tests pass — fix the renderer.
+4. **Never** normalise HTML in tests.
+5. A green Nunjucks-only check alone does **not** prove this line’s API is correct.
 
 Details: [testing-components.md](testing-components.md).
 

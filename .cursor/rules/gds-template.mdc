@@ -6,7 +6,7 @@ alwaysApply: true
 # Template consistency
 
 - This repo is the **TypeScript** line of the GDS template: Node/TypeScript HTML + **GOV.UK Frontend** only. **No** React/Vue/Angular/Svelte for UI.
-- Prefer **Nunjucks macros** over copy-pasted component HTML. Use official **fixtures** for 100% HTML parity.
+- Prefer **Nunjucks macros** over copy-pasted component HTML. Compare **TypeScript-rendered HTML** (`renderComponent`) to official fixtures for every fixture (primary gate); Nunjucks-vs-fixture without the library API is freshness only. See [`docs/testing-components.md`](docs/testing-components.md).
 - Sync shared docs from `template` remote (`npm run sync:template`) — do not overwrite `docs/tech-stack.md`, `package.json`, or `src/` casually.
 - Language-agnostic sibling: https://github.com/Nooshu/govuk-frontend-example
 - Priorities: frontend web performance → frontend security → reduced maintenance → accessibility → inclusive design.

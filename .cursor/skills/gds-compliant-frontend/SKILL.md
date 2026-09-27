@@ -32,7 +32,7 @@ Detail for humans: [`docs/project-purpose.md`](../../../docs/project-purpose.md)
 | UI                  | GOV.UK Frontend only (`govuk-*`, official JS via `initAll()`)                                                        |
 | HTML generation     | Prefer **Nunjucks macros** from `govuk-frontend`; otherwise thin wrappers that stay fixture-parity with those macros |
 | Frontend frameworks | **Forbidden** for UI                                                                                                 |
-| Parity              | Official `fixtures.json` + ordinal HTML equality against backend output                                              |
+| Parity              | Official `fixtures.json` + ordinal HTML equality of **backend** output vs **every** fixture `html`                   |
 | Upstream            | Node package + Nunjucks / `template.njk` / fixtures                                                                  |
 
 ## Authoritative guidance (search these first)
@@ -53,8 +53,9 @@ Local index: [`docs/guidance-sources.md`](../../../docs/guidance-sources.md).
 ## Test coverage and HTML parity
 
 - **Code:** 100% functions, branches, statements (CI fails below).
-- **HTML:** extensive fixture parity — backend output must match official fixture `html` byte-for-byte where fixtures exist.
-- Do not weaken either gate to satisfy the other.
+- **HTML (primary):** TypeScript `renderComponent` output must match official fixture `html` byte-for-byte for **every** fixture on every shipped component. See [`docs/testing-components.md`](../../../docs/testing-components.md).
+- **HTML (secondary):** A Nunjucks-only suite (if present) proves stored fixtures still match Frontend macros — freshness only; it does **not** replace backend vs fixture parity.
+- Do not weaken either gate to satisfy the other; do not treat Nunjucks-only green as done.
 
 ## Workflow reminders
 

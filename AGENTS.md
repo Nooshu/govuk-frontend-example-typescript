@@ -12,7 +12,7 @@
 
 **TypeScript** specialised line: **Node + TypeScript** generates HTML; **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/)** (latest pinned version) is the **only** UI component library. **No frontend frameworks** (React, Vue, Angular, Svelte, etc.) for UI.
 
-All component HTML should come from **GOV.UK Frontend macros** (prefer **Nunjucks** over copy-pasting release HTML). Official **test fixtures** enable extensive **100% HTML parity** testing of TypeScript/Nunjucks output.
+All component HTML should come from **GOV.UK Frontend macros** (prefer **Nunjucks** over copy-pasting release HTML). Official **test fixtures** from each Frontend release are the contract: this line’s **TypeScript-rendered HTML** must match every fixture `html` byte-for-byte. A Nunjucks-only check is not enough.
 
 Language-agnostic template (shared playbooks): https://github.com/Nooshu/govuk-frontend-example — sync with `npm run sync:template` ([docs/syncing-from-template.md](docs/syncing-from-template.md)).
 
@@ -53,7 +53,7 @@ Details: [`docs/priorities.md`](docs/priorities.md).
 ## Non-negotiables
 
 1. **GOV.UK Frontend macros are the HTML source of truth** — prefer rendering via Nunjucks macros (or an equivalent that tracks them). Do **not** copy-paste component HTML from release notes or the Design System site as the long-term approach.
-2. **Exact HTML parity via fixtures** — set up official `fixtures.json` so backend output can be tested extensively at **100% parity** (byte-for-byte vs fixture `html` / Nunjucks output). No normalisation; never edit fixture `html` to pass tests.
+2. **Backend HTML must match every official fixture** — for each shipped component, **TypeScript `renderComponent` output** is compared byte-for-byte to the `html` in that release’s `fixtures.json`, for **every** fixture (including hidden ones). That is the primary parity gate. A Nunjucks-only check (macro output vs stored `html` without going through this line’s API) proves fixtures are fresh; it does **not** replace backend vs fixture comparison. No normalisation; never edit fixture `html` to pass tests. See [`docs/testing-components.md`](docs/testing-components.md).
 3. **No frontend UI frameworks** — no React/Vue/Angular/Svelte (or similar) for GOV.UK UI; backend + GOV.UK Frontend only.
 4. **No ad-hoc custom CSS** — ship styles through the Sass pipeline in [`styles/`](styles/) (`application.scss` → GOV.UK Frontend `@use` → [`govuk-overrides.scss`](styles/govuk-overrides.scss) last). Prefer component options and Design System patterns; do not paste or serve Frontend’s prebuilt `govuk-frontend.min.css` as the long-term source. See [`docs/styles.md`](docs/styles.md).
 5. **No `!important` in service CSS** — overrides must win with cascade order and specificity only. This applies to every project using this template. Frontend’s own `govuk-!-…` utilities are upstream; do not copy that pattern into service styles.
@@ -108,6 +108,7 @@ Before finishing a page change:
 - [ ] No `!important` in service styles; overrides only via `govuk-overrides.scss` specificity
 - [ ] Pattern guidance followed; out-of-scope widgets called out with inset text
 - [ ] Coverage remains 100% functions / branches / statements for touched library code
+- [ ] Backend parity suite green: TypeScript `renderComponent` HTML ≡ every fixture `html` (not only Nunjucks ≡ fixtures)
 - [ ] Fixture parity still green for any touched components
 - [ ] Dual-audience docs updated (humans in `/docs` or CONTRIBUTING; agents via `AGENTS.md` / skill / playbook links if contracts changed)
 - [ ] Code follows TypeScript / Node’s latest best practices ([`docs/tech-stack.md`](docs/tech-stack.md))

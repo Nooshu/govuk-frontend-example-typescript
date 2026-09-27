@@ -1,6 +1,6 @@
 # GOV.UK Frontend example (TypeScript)
 
-**TypeScript** specialised line of the GDS-compliant frontend template: **Node + TypeScript** generates HTML; **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/)** macros (**prefer Nunjucks**) — **no** React/Vue/Angular/Svelte for UI. Official fixtures enable **100% HTML parity** testing.
+**TypeScript** specialised line of the GDS-compliant frontend template: **Node + TypeScript** generates HTML; **[GOV.UK Frontend](https://frontend.design-system.service.gov.uk/)** macros (**prefer Nunjucks**) — **no** React/Vue/Angular/Svelte for UI. Official fixtures enable **100% HTML parity** of TypeScript output vs every fixture `html`.
 
 Language-agnostic sibling (shared playbooks): [Nooshu/govuk-frontend-example](https://github.com/Nooshu/govuk-frontend-example). Sync: [`docs/syncing-from-template.md`](docs/syncing-from-template.md).
 

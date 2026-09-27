@@ -8,7 +8,7 @@ import { listComponentNames, loadComponentFixtures } from './fixtures.js';
 import { macroNameFor } from './names.js';
 import { isKnownComponent, renderComponent } from './render.js';
 
-describe('Nunjucks macro rendering', { timeout: 120_000 }, () => {
+describe('TypeScript component HTML parity', { timeout: 120_000 }, () => {
   it('uses the macro name declared in each macro.njk', () => {
     for (const name of listComponentNames()) {
       const source = readFileSync(join(componentsRoot, name, 'macro.njk'), 'utf8');
@@ -16,7 +16,7 @@ describe('Nunjucks macro rendering', { timeout: 120_000 }, () => {
     }
   });
 
-  it('matches every official fixture, including hidden ones', () => {
+  it('matches every official fixture via renderComponent, including hidden ones', () => {
     let count = 0;
     for (const name of listComponentNames()) {
       for (const fixture of loadComponentFixtures(name).fixtures) {

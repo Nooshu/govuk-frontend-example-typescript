@@ -33,7 +33,7 @@ Shared Node tooling (Sass pipeline, `baseline/`, docs scripts) already uses curr
 npm install
 npm run build:styles   # Sass → dist/stylesheets/application.css
 npm start              # build:styles, then example service — http://127.0.0.1:3000
-npm test               # baseline, Sass pipeline, fixture parity, service tests; 100% coverage
+npm test               # baseline, Sass, TypeScript vs every fixture, service tests; 100% coverage
 npm run typecheck
 npm run verify:docs    # Prettier + markdownlint
 npm run verify         # docs + build:styles + typecheck + tests
@@ -69,7 +69,8 @@ Details: [frontend-performance.md](frontend-performance.md), [frontend-security.
 | `govuk-frontend` (Node)           | **6.5.1** — [v6.5.1](https://github.com/alphagov/govuk-frontend/releases/tag/v6.5.1) (reviewed against [latest release](https://github.com/alphagov/govuk-frontend/releases/latest)) |
 | Sass pipeline                     | `styles/application.scss` → `npm run build:styles` → `dist/stylesheets/application.css` ([styles.md](styles.md))                                                                     |
 | Nunjucks                          | 3.2.4, with Frontend’s `trimBlocks` and `lstripBlocks`                                                                                                                               |
-| Nunjucks fixture verification     | `npm test` — every official `fixtures.json` `html` value, byte for byte                                                                                                              |
+| Backend parity (primary)          | `npm test` — TypeScript `renderComponent` ≡ every official `fixtures.json` `html` (including hidden) ([testing-components.md](testing-components.md))                                |
+| Nunjucks freshness (secondary)    | Fixtures and macros come from the same pinned `govuk-frontend` package; optional separate Nunjucks-only suite — never a substitute for backend parity                                |
 | Page template reference           | https://design-system.service.gov.uk/styles/page-template/                                                                                                                           |
 | Fixture testing guide             | https://frontend.design-system.service.gov.uk/testing-your-html/                                                                                                                     |
 | Example service                   | [example-service.md](example-service.md) — `npm start`                                                                                                                               |
@@ -78,5 +79,5 @@ Details: [frontend-performance.md](frontend-performance.md), [frontend-security.
 
 ## Hard constraints (always)
 
-Same as the language-agnostic template: one Frontend pin, macros over pasted HTML, fixture parity, Sass pipeline with `govuk-overrides.scss` last (never `!important` in service CSS), no SPA UI frameworks, 100% coverage for application code, review https://github.com/alphagov/govuk-frontend/releases/latest before upgrades.
+Same as the language-agnostic template: one Frontend pin, macros over pasted HTML, **backend vs fixture** parity for every fixture (Nunjucks-only is not enough), Sass pipeline with `govuk-overrides.scss` last (never `!important` in service CSS), no SPA UI frameworks, 100% coverage for application code, review https://github.com/alphagov/govuk-frontend/releases/latest before upgrades.
 See [`AGENTS.md`](../AGENTS.md), [guidance-sources.md](guidance-sources.md), [creating-components.md](creating-components.md).
