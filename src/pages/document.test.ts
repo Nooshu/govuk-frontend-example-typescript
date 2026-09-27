@@ -39,6 +39,6 @@ describe('page document', () => {
     );
     assert.match(html, /name="robots" content="noindex, nofollow"/);
     assert.match(html, /This is a live demo\. It is not a real government service\./);
-    assert.match(html, /govuk-notification-banner/);
+    assert.match(html, /govuk-notification-banner app-notification-banner--demo/);
   });
 });

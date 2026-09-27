@@ -93,7 +93,7 @@ function assertShell(html: string, lang = 'en'): void {
   assert.match(html, /href="#main-content"/);
   assert.match(html, /id="main-content"/);
   assert.match(html, /name="robots" content="noindex, nofollow"/);
-  assert.match(html, /govuk-notification-banner/);
+  assert.match(html, /govuk-notification-banner app-notification-banner--demo/);
   assert.match(
     html,
     lang === 'cy'

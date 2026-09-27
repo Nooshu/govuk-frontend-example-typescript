@@ -148,18 +148,21 @@ function phaseBanner(lang: 'en' | 'cy'): Record<string, unknown> {
 
 /**
  * Site-wide demo warning shown on every page (notification banner, Important).
- * Frontend’s Important style is blue; do not restyle it yellow with custom CSS.
+ * Uses `app-notification-banner--demo` so `govuk-overrides.scss` can paint yellow
+ * chrome for this demo notice only — Frontend’s default Important stays blue.
  */
 function demoBanner(lang: 'en' | 'cy'): Record<string, unknown> {
   if (lang === 'cy') {
     return {
       titleText: 'Pwysig',
       text: 'Mae hon yn arddangosiad byw. Nid yw’n wasanaeth llywodraeth go iawn.',
+      classes: 'app-notification-banner--demo',
     };
   }
   return {
     titleText: 'Important',
     text: 'This is a live demo. It is not a real government service.',
+    classes: 'app-notification-banner--demo',
   };
 }
 

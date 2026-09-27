@@ -21,3 +21,10 @@
 :root {
   --app-stylesheet-layer: govuk-overrides;
 }
+
+// Demo-only Important banner: yellow chrome with black title text (contrast on yellow).
+// Frontend’s default Important style stays blue; this modifier is scoped to the site-wide demo notice.
+.govuk-notification-banner.app-notification-banner--demo {
+  --_govuk-notification-banner-colour: #{govuk-colour('yellow')};
+  --_govuk-notification-banner-title-text-colour: #{govuk-colour('black')};
+}
