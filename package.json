@@ -25,13 +25,13 @@
     "sync:template": "./scripts/sync-from-template.sh"
   },
   "devDependencies": {
-    "@types/node": "24.5.2",
+    "@types/node": "26.6.2",
     "@types/nunjucks": "3.2.6",
     "c8": "12.0.0",
     "markdownlint-cli2": "0.23.3",
-    "prettier": "3.6.2",
+    "prettier": "3.9.9",
     "sass": "1.105.0",
-    "tsx": "4.20.5",
+    "tsx": "4.23.15",
     "typescript": "7.0.2"
   },
   "dependencies": {
