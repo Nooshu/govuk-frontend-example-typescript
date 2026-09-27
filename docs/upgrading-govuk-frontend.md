@@ -44,7 +44,7 @@ Whatever the wrapper tooling, an upgrade must (and will usually involve **Node**
 4. **Keep a manifest of shipped components** in sync so the sync step knows which fixture sets to update.
 5. **Map upstream package names** to this repo’s names where they differ (e.g. Design System “Text input” ↔ upstream `input`).
 6. **Prefer a single entrypoint** that can dry-run, sync-only, or sync-then-verify — exact flags are stack-specific; Node scripts are the usual way to talk to `govuk-frontend`.
-7. **Run verification** after sync (fixture identity checks + library parity + **Nunjucks suite**).
+7. **Run verification** after sync (fixture identity checks + **backend/library parity vs fixtures** + Nunjucks freshness suite).
 
 Implement these outcomes with the **chosen wrapper language’s best practices**, plus Node where Frontend requires it. Record the concrete entrypoint in [tech-stack.md](tech-stack.md).
 
@@ -84,8 +84,8 @@ If the release adds a component you will ship:
 Report **done** only when:
 
 - [ ] Fixture copy / sync checks are green
-- [ ] Library parity tests are green
-- [ ] Nunjucks fixture verification (Node) is green
+- [ ] **Backend / library parity** tests are green (renderer output ≡ every fixture `html`)
+- [ ] Nunjucks fixture verification (Node) is green (freshness only — not a substitute for backend parity)
 - [ ] Config / CI verify gate is green
 
 Then list what still needs **human visual QA** (preview server — [preview-server.md](preview-server.md)): header/footer, focus states, a sample form with errors, and any components touched by the release notes.

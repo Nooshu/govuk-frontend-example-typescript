@@ -12,7 +12,7 @@ Related docs: [govuk-components.md](govuk-components.md), [testing-components.md
 
 1. **GOV.UK Frontend is the source of truth** — official CSS/JS and `fixtures.json` from the **same** pinned `govuk-frontend` Node package.
 2. **Options mirror Nunjucks macros** — names/shapes align with `macro-options.json` / fixture `options`.
-3. **Exact HTML parity** — output equals each fixture’s `html` byte-for-byte (ordinal equality with Nunjucks output).
+3. **Exact HTML parity (backend vs fixtures)** — the **backend language’s** output equals each fixture’s `html` byte-for-byte (ordinal equality). Cover every fixture. A Nunjucks-vs-fixture check is freshness only; it does not replace backend parity. See [testing-components.md](testing-components.md).
 4. **Never hand-write component markup in pages** — pages invoke the library API.
 5. **No ad-hoc custom CSS** — Sass pipeline + `govuk-overrides.scss` only; no `!important` ([styles.md](styles.md)).
 6. **Register in navigation** — every shipped component appears in the home/components list with a preview link.
@@ -126,7 +126,7 @@ Map fixture `options` → model without losing edge cases: nested text/html, att
 ### 8. Tests
 
 1. Structural/smoke: index lists preview; no embedded demo on index.
-2. Parity: one case per fixture name; in-process mapper + renderer; ordinal string equality; cache fixtures.
+2. Parity (**primary**): one case per fixture name; in-process mapper + **backend** renderer; ordinal string equality to fixture `html`; cache fixtures. This is the wrapper language’s interpretation under test.
 3. Optional HTTP smoke for fixture + preview surfaces when the stack has an HTTP app.
 4. Use the wrapper language’s normal test isolation patterns.
 
@@ -134,7 +134,8 @@ Map fixture `options` → model without losing edge cases: nested text/html, att
 
 - Depend on the same `govuk-frontend` pin via npm/Node.
 - Script renders each fixture through Frontend’s Nunjucks macros and compares to stored `html` (trim trailing newline only if needed).
-- Purpose: catch **stale fixtures**; library tests catch **renderer drift**.
+- Purpose: catch **stale fixtures** only. Library / backend parity tests catch **renderer drift**.
+- A green Nunjucks suite without a green backend parity suite is **not** done.
 - Typical shape: `tests/govuk-fixtures/render-<kebab-name>-fixtures.mjs` — document the exact runner in [tech-stack.md](tech-stack.md).
 
 ### 10. Navigation + docs
@@ -166,6 +167,6 @@ Use the preview server; hard-refresh after rebuilds. Confirm the component is li
 
 ## Do / don’t
 
-**Do:** start from fixtures + Nunjucks `template.njk` + closest sibling; keep one coherent unit per component; prove parity before calling done; use idiomatic types/modules/tests for the wrapper language; keep a Node Nunjucks suite for fixture freshness.
+**Do:** start from fixtures + Nunjucks `template.njk` + closest sibling; keep one coherent unit per component; prove **backend vs fixture** parity before calling done; use idiomatic types/modules/tests for the wrapper language; keep a Node Nunjucks suite for fixture freshness.
 
-**Don’t:** hand-paste `govuk-`\* into pages; ship without nav/preview; embed demos on index; add ad-hoc CSS or `!important`; normalise HTML in tests; invent fixture HTML; nest incompatible components; pretend Frontend is not Node/Nunjucks upstream; ship the prebuilt minified Frontend CSS instead of the Sass pipeline.
+**Don’t:** hand-paste `govuk-`\* into pages; ship without nav/preview; embed demos on index; add ad-hoc CSS or `!important`; normalise HTML in tests; invent fixture HTML; nest incompatible components; pretend Frontend is not Node/Nunjucks upstream; ship the prebuilt minified Frontend CSS instead of the Sass pipeline; claim parity from Nunjucks-only checks without backend vs fixture tests.

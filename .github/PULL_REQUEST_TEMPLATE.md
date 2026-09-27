@@ -11,7 +11,7 @@
 ## Checklist
 
 - [ ] No frontend UI frameworks introduced for GOV.UK chrome
-- [ ] Prefer Nunjucks macros / fixture parity (no pasted release HTML as source of truth)
+- [ ] Prefer Nunjucks macros / **backend vs fixture** parity (not Nunjucks-only; no pasted release HTML as source of truth)
 - [ ] `npm run verify:docs` passes (or N/A if docs untouched)
 - [ ] Fixture HTML not edited to make tests pass
 - [ ] If upgrading `govuk-frontend`: reviewed https://github.com/alphagov/govuk-frontend/releases/latest and followed `docs/upgrading-govuk-frontend.md`
