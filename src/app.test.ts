@@ -92,7 +92,14 @@ function assertShell(html: string, lang = 'en'): void {
   assert.match(html, new RegExp(`<html[^>]* lang="${lang}"`));
   assert.match(html, /href="#main-content"/);
   assert.match(html, /id="main-content"/);
-  assert.match(html, /noindex/);
+  assert.match(html, /name="robots" content="noindex, nofollow"/);
+  assert.match(html, /govuk-notification-banner/);
+  assert.match(
+    html,
+    lang === 'cy'
+      ? /Mae hon yn arddangosiad byw\. Nid yw’n wasanaeth llywodraeth go iawn\./
+      : /This is a live demo\. It is not a real government service\./,
+  );
   assert.match(html, /document\.body\.className \+= ' js-enabled'/);
   assert.match(html, /<script type="module" src="\/assets\/app\.[a-f0-9]+\.mjs"><\/script>/);
   assert.doesNotMatch(html, /nonce=/);
@@ -624,6 +631,12 @@ describe('example service', { timeout: 120_000 }, () => {
     assert.equal(health.status, 200);
     assert.equal(health.text, 'ok');
     assert.equal(health.response.headers.get('set-cookie'), null);
+
+    const robots = await send('/robots.txt');
+    assert.equal(robots.status, 200);
+    assert.equal(robots.text, 'User-agent: *\nDisallow: /\n');
+    assert.match(robots.response.headers.get('content-type') ?? '', /text\/plain/);
+    assert.equal(about.response.headers.get('x-robots-tag'), 'noindex, nofollow');
 
     const legacyCss = await send('/assets/govuk-frontend.min.css');
     assert.equal(legacyCss.status, 404);

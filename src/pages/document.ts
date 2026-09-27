@@ -72,6 +72,7 @@ export function renderPage(
     serviceNavigation: serviceNavigation(lang),
     footer: footer(lang, demosEnabled),
     phaseBanner: phaseBanner(lang),
+    demoBanner: demoBanner(lang),
     cookieBanner: cookieBanner(session),
     feedback: FEEDBACK,
     showFeedback: view.showFeedback === true,
@@ -142,6 +143,23 @@ function phaseBanner(lang: 'en' | 'cy'): Record<string, unknown> {
   return {
     tag: { text: 'Example' },
     html: 'This is an example service – your <a class="govuk-link" href="/about">feedback</a> will help us to improve it.',
+  };
+}
+
+/**
+ * Site-wide demo warning shown on every page (notification banner, Important).
+ * Frontend’s Important style is blue; do not restyle it yellow with custom CSS.
+ */
+function demoBanner(lang: 'en' | 'cy'): Record<string, unknown> {
+  if (lang === 'cy') {
+    return {
+      titleText: 'Pwysig',
+      text: 'Mae hon yn arddangosiad byw. Nid yw’n wasanaeth llywodraeth go iawn.',
+    };
+  }
+  return {
+    titleText: 'Important',
+    text: 'This is a live demo. It is not a real government service.',
   };
 }
 

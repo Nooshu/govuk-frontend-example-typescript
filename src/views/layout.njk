@@ -8,12 +8,13 @@
 {% from "govuk/components/cookie-banner/macro.njk" import govukCookieBanner %}
 {% from "govuk/components/feedback/macro.njk" import govukFeedback %}
 {% from "govuk/components/exit-this-page/macro.njk" import govukExitThisPage %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% block pageTitle %}{{ pageTitle }}{% endblock %}
 
 {% block head %}
   <link rel="stylesheet" href="{{ stylesheetHref }}">
-  <meta name="robots" content="noindex">
+  <meta name="robots" content="noindex, nofollow">
 {% endblock %}
 
 {% block bodyStart %}
@@ -44,6 +45,17 @@
   {% elif breadcrumbs %}
     {{ govukBreadcrumbs(breadcrumbs) }}
   {% endif %}
+{% endblock %}
+
+{% block main %}
+  <main class="govuk-main-wrapper{%- if mainClasses %} {{ mainClasses }}{% endif %}" id="main-content"{% if mainLang %} lang="{{ mainLang }}"{% endif %}>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        {{ govukNotificationBanner(demoBanner) }}
+      </div>
+    </div>
+    {% block content %}{% endblock %}
+  </main>
 {% endblock %}
 
 {% block footer %}

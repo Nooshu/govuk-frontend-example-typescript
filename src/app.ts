@@ -177,6 +177,18 @@ async function route(
     return { type: 'raw', response: textResponse(200, 'ok', request) };
   }
 
+  if (request.method === 'GET' && path === '/robots.txt') {
+    return {
+      type: 'raw',
+      response: textResponse(
+        200,
+        'User-agent: *\nDisallow: /\n',
+        request,
+        'text/plain; charset=utf-8',
+      ),
+    };
+  }
+
   if (request.method === 'GET' && path.startsWith('/assets/')) {
     const asset = resolveAsset(path);
     if (!asset) return { type: 'raw', response: textResponse(404, 'Not found', request) };
@@ -892,14 +904,19 @@ function htmlResponse(
   return new Response(body, { status, headers });
 }
 
-function textResponse(status: number, body: string, request: Request): Response {
+function textResponse(
+  status: number,
+  body: string,
+  request: Request,
+  contentType = 'text/plain; charset=utf-8',
+): Response {
   const headers = new Headers();
   applyResponseHeaders(
     { headers },
     {
       kind: 'static-asset',
       secureTransport: requestIsSecure(request),
-      contentType: 'text/plain; charset=utf-8',
+      contentType,
     },
   );
   return new Response(body, { status, headers });
@@ -934,6 +951,7 @@ function documentHeaders(
       preload: pageAssets().preloads,
     },
   );
+  headers.set('x-robots-tag', 'noindex, nofollow');
   return headers;
 }
 

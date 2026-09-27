@@ -24,4 +24,21 @@ describe('page document', () => {
       /both a back link and breadcrumbs/,
     );
   });
+
+  it('includes the demo banner and noindex,nofollow on every page', () => {
+    const html = renderPage(
+      {
+        template: 'pages/about.njk',
+        status: 200,
+        heading: 'About this example',
+        context: { frontendVersion: '6.5.1' },
+      },
+      createSession(),
+      new URL('http://example.test/about'),
+      true,
+    );
+    assert.match(html, /name="robots" content="noindex, nofollow"/);
+    assert.match(html, /This is a live demo\. It is not a real government service\./);
+    assert.match(html, /govuk-notification-banner/);
+  });
 });

@@ -2,6 +2,8 @@
 
 **Apply for a rod fishing licence** is the reference GOV.UK service in this repository. It is an example. It does not take payment, send email, or issue a licence.
 
+Every page shows an **Important** notification banner: “This is a live demo. It is not a real government service.” (Welsh on `/cy`). Pages are excluded from search engines via `noindex, nofollow` in the document head, an `X-Robots-Tag` response header, and `/robots.txt` (`Disallow: /`).
+
 Pages are TypeScript on Node. Component HTML comes from **GOV.UK Frontend Nunjucks macros**. The pin is **6.5.1**. See [tech-stack.md](tech-stack.md).
 
 ## Run it
