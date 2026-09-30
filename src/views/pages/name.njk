@@ -5,9 +5,7 @@
 
 {% block content %}
   {% call formPage(errorSummary, csrf, returnTo) %}
-    <h1 class="govuk-heading-l">{{ heading }}</h1>
-    {{ govukInput(firstName) }}
-    {{ govukInput(lastName) }}
+    {{ govukInput(fullName) }}
     {{ govukButton({ text: "Continue" }) }}
   {% endcall %}
 {% endblock %}

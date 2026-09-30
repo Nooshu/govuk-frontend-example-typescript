@@ -9,7 +9,7 @@ import { parityBanner, selectFixture } from './components/preview.js';
 import { isKnownComponent, renderComponent } from './components/render.js';
 import { demosEnabledFromEnv, FRONTEND_VERSION, MAX_BODY_BYTES } from './config.js';
 import { pageAssets, resolveAsset, type Asset } from './http/assets.js';
-import { field, fields, parseRequestBody, RequestBodyError, type ParsedBody } from './http/body.js';
+import { field, parseRequestBody, RequestBodyError, type ParsedBody } from './http/body.js';
 import { compressBody, isCompressible } from './http/compress.js';
 import { parseCookieHeader } from './http/cookies.js';
 import { type PageView, renderPage } from './pages/document.js';
@@ -20,25 +20,19 @@ import {
   type Session,
   type SessionStore,
 } from './session/store.js';
-import { summaryRows, taskSections } from './service/answers.js';
+import { summaryRows } from './service/answers.js';
 import {
-  addressFields,
   confirmationPanel,
-  contactFields,
   cookieFields,
+  countryFields,
   dateField,
-  detailsField,
   emailField,
   errorSummary,
-  evidenceField,
   feesTable,
   guidanceTabs,
   helpAccordion,
   licenceFields,
-  monthField,
-  nameFields,
-  passwordFields,
-  regionFields,
+  nameField,
 } from './service/forms.js';
 import {
   createApplication,
@@ -48,36 +42,16 @@ import {
   stepByPath,
   type Step,
 } from './service/model.js';
+import { saveCountry, saveDate, saveEmail, saveLicence, saveName } from './service/save.js';
 import {
-  saveAddress,
-  saveContact,
-  saveDate,
-  saveDetails,
-  saveEmail,
-  saveEvidence,
-  saveLicence,
-  saveMonth,
-  saveName,
-  savePassword,
-  saveRegions,
-} from './service/save.js';
-import {
-  safeFilename,
-  validateAdditionalDetails,
-  validateAddress,
-  validateContactPreference,
   validateCookieChoice,
+  validateCountry,
   validateDateOfBirth,
   validateEmail,
-  validateEvidence,
   validateLicenceLength,
   validateName,
-  validatePassword,
-  validateRegions,
-  validateStartMonth,
   type FieldError,
 } from './service/validate.js';
-
 const SESSION_COOKIE = 'rod_session';
 const HOST_SESSION_COOKIE = '__Host-session';
 
@@ -253,8 +227,7 @@ function get(
   }
   if (path === '/') return { type: 'page', view: startView('en'), session };
   if (path === '/cy') return { type: 'page', view: startView('cy'), session };
-  if (path === '/task-list') return { type: 'page', view: taskListView(session), session };
-  if (path === '/check-answers') return checkAnswersGet(session, deps.now());
+  if (path === '/check-answers') return checkAnswersGet(session);
   if (path === '/confirmation') return confirmationGet(session);
   if (path === '/fees') return { type: 'page', view: feesView(), session };
   if (path === '/help') return { type: 'page', view: helpView(), session };
@@ -326,8 +299,10 @@ function postStep(step: Step, body: ParsedBody, session: Session, now: Date): Re
 
 function validateStep(step: Step, body: ParsedBody, now: Date): FieldError[] {
   switch (step.id) {
+    case 'licence-length':
+      return validateLicenceLength(field(body, 'licence-length'));
     case 'name':
-      return validateName(field(body, 'first-name'), field(body, 'last-name'));
+      return validateName(field(body, 'full-name'));
     case 'date-of-birth':
       return validateDateOfBirth(
         field(body, 'date-of-birth-day'),
@@ -335,28 +310,10 @@ function validateStep(step: Step, body: ParsedBody, now: Date): FieldError[] {
         field(body, 'date-of-birth-year'),
         now,
       );
+    case 'where-you-will-fish':
+      return validateCountry(field(body, 'country'));
     case 'email':
       return validateEmail(field(body, 'email'));
-    case 'contact-preference':
-      return validateContactPreference(field(body, 'contact-by'), field(body, 'telephone'));
-    case 'where-you-will-fish':
-      return validateRegions(fields(body, 'regions'));
-    case 'licence-length':
-      return validateLicenceLength(field(body, 'licence-length'));
-    case 'start-month':
-      return validateStartMonth(field(body, 'start-month'), now);
-    case 'address':
-      return validateAddress(
-        field(body, 'address-line-1'),
-        field(body, 'town'),
-        field(body, 'postcode'),
-      );
-    case 'evidence':
-      return validateEvidence(uploadedName(body) ?? '');
-    case 'additional-details':
-      return validateAdditionalDetails(field(body, 'additional-details'));
-    case 'create-a-password':
-      return validatePassword(field(body, 'password'), field(body, 'password-confirm'));
   }
 }
 
@@ -367,8 +324,10 @@ function applyStep(
   valid: boolean,
 ) {
   switch (step.id) {
+    case 'licence-length':
+      return saveLicence(application, field(body, 'licence-length'), valid);
     case 'name':
-      return saveName(application, field(body, 'first-name'), field(body, 'last-name'), valid);
+      return saveName(application, field(body, 'full-name'), valid);
     case 'date-of-birth':
       return saveDate(
         application,
@@ -377,39 +336,11 @@ function applyStep(
         field(body, 'date-of-birth-year'),
         valid,
       );
+    case 'where-you-will-fish':
+      return saveCountry(application, field(body, 'country'), valid);
     case 'email':
       return saveEmail(application, field(body, 'email'), valid);
-    case 'contact-preference':
-      return saveContact(application, field(body, 'contact-by'), field(body, 'telephone'), valid);
-    case 'where-you-will-fish':
-      return saveRegions(application, fields(body, 'regions'), valid);
-    case 'licence-length':
-      return saveLicence(application, field(body, 'licence-length'), valid);
-    case 'start-month':
-      return saveMonth(application, field(body, 'start-month'), valid);
-    case 'address':
-      return saveAddress(
-        application,
-        {
-          line1: field(body, 'address-line-1'),
-          line2: field(body, 'address-line-2'),
-          town: field(body, 'town'),
-          postcode: field(body, 'postcode'),
-        },
-        valid,
-      );
-    case 'evidence':
-      return saveEvidence(application, uploadedName(body), valid);
-    case 'additional-details':
-      return saveDetails(application, field(body, 'additional-details'), valid);
-    case 'create-a-password':
-      return savePassword(application, valid);
   }
-}
-
-function uploadedName(body: ParsedBody): string | undefined {
-  if (!body.file || body.file.fieldName !== 'evidence') return undefined;
-  return safeFilename(body.file.filename);
 }
 
 function postCookieBanner(body: ParsedBody, session: Session): RedirectResult {
@@ -451,7 +382,7 @@ function postCheckAnswers(session: Session): RedirectResult {
   return { type: 'redirect', location: '/confirmation', session };
 }
 
-function checkAnswersGet(session: Session, now: Date): PageResult | RedirectResult {
+function checkAnswersGet(session: Session): PageResult | RedirectResult {
   if (session.application.submitted)
     return { type: 'redirect', location: '/confirmation', session };
   const incomplete = firstIncompleteStep(session.application);
@@ -463,16 +394,16 @@ function checkAnswersGet(session: Session, now: Date): PageResult | RedirectResu
       template: 'pages/check-answers.njk',
       status: 200,
       heading: 'Check your answers',
-      backLink: { text: 'Back', href: '/create-a-password' },
+      backLink: { text: 'Back', href: '/email' },
       mainClasses: 'govuk-main-wrapper--l',
       personal: true,
-      context: { rows: summaryRows(session.application, now) },
+      context: { rows: summaryRows(session.application) },
     },
   };
 }
 
 function confirmationGet(session: Session): PageResult | RedirectResult {
-  if (!session.application.submitted) return { type: 'redirect', location: '/task-list', session };
+  if (!session.application.submitted) return { type: 'redirect', location: '/', session };
   return {
     type: 'page',
     session,
@@ -480,7 +411,6 @@ function confirmationGet(session: Session): PageResult | RedirectResult {
       template: 'pages/confirmation.njk',
       status: 200,
       heading: 'Application complete',
-      showFeedback: true,
       personal: true,
       context: { panel: confirmationPanel(session.application.reference) },
     },
@@ -537,11 +467,11 @@ function stepView(
     personal: true,
     backLink: {
       text: 'Back',
-      href: returnTo ? '/check-answers' : (previous?.path ?? '/task-list'),
+      href: returnTo ? '/check-answers' : (previous?.path ?? '/'),
     },
     mainClasses: 'govuk-main-wrapper--l',
     context: {
-      ...stepContext(step, session, errors, now),
+      ...stepContext(step, session, errors),
       errorSummary: errorSummary(errors),
       returnTo,
     },
@@ -552,32 +482,19 @@ function stepContext(
   step: Step,
   session: Session,
   errors: FieldError[],
-  now: Date,
 ): Record<string, unknown> {
   const application = session.application;
   switch (step.id) {
-    case 'name':
-      return nameFields(application, errors);
-    case 'date-of-birth':
-      return dateField(application, errors);
-    case 'email':
-      return emailField(application, errors);
-    case 'contact-preference':
-      return contactFields(application, errors);
-    case 'where-you-will-fish':
-      return regionFields(application, errors);
     case 'licence-length':
       return licenceFields(application, errors);
-    case 'start-month':
-      return monthField(application, errors, now);
-    case 'address':
-      return addressFields(application, errors);
-    case 'evidence':
-      return evidenceField(application, errors);
-    case 'additional-details':
-      return detailsField(application, errors);
-    case 'create-a-password':
-      return passwordFields(errors);
+    case 'name':
+      return nameField(application, errors);
+    case 'date-of-birth':
+      return dateField(application, errors);
+    case 'where-you-will-fish':
+      return countryFields(application, errors);
+    case 'email':
+      return emailField(application, errors);
   }
 }
 
@@ -586,7 +503,7 @@ function startView(lang: 'en' | 'cy'): PageView {
   return {
     template: 'pages/start.njk',
     status: 200,
-    heading: welsh ? 'Gwneud cais am drwydded bysgota' : 'Apply for a rod fishing licence',
+    heading: welsh ? 'Gwneud cais am drwydded bysgota' : 'Apply for a fishing rod licence',
     lang,
     showFeedback: true,
     context: {
@@ -596,7 +513,7 @@ function startView(lang: 'en' | 'cy'): PageView {
       timing: welsh ? 'Mae’n cymryd tua 10 munud.' : 'Applying takes about 10 minutes.',
       startButton: {
         text: welsh ? 'Dechrau nawr' : 'Start now',
-        href: '/task-list',
+        href: '/licence-length',
         isStartButton: true,
       },
       notification: {
@@ -619,21 +536,10 @@ function startView(lang: 'en' | 'cy'): PageView {
       details: {
         summaryText: welsh ? 'Beth fydd ei angen arnoch' : 'What you will need',
         html: welsh
-          ? '<ul class="govuk-list govuk-list--bullet"><li>Eich enw</li><li>Eich dyddiad geni</li><li>Eich cyfeiriad</li></ul>'
-          : '<ul class="govuk-list govuk-list--bullet"><li>Your name</li><li>Your date of birth</li><li>Your address</li></ul>',
+          ? '<ul class="govuk-list govuk-list--bullet"><li>Pa mor hir mae angen y drwydded</li><li>Eich enw</li><li>Eich dyddiad geni</li><li>Y wlad lle byddwch yn pysgota</li><li>Eich cyfeiriad e-bost</li></ul>'
+          : '<ul class="govuk-list govuk-list--bullet"><li>How long you need the licence</li><li>Your name</li><li>Your date of birth</li><li>The country where you will fish</li><li>Your email address</li></ul>',
       },
     },
-  };
-}
-
-function taskListView(session: Session): PageView {
-  return {
-    template: 'pages/task-list.njk',
-    status: 200,
-    heading: 'Your application',
-    backLink: { text: 'Back', href: '/' },
-    personal: true,
-    context: { sections: taskSections(session.application) },
   };
 }
 

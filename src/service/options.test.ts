@@ -1,15 +1,14 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { labelFor, startMonths } from './options.js';
+import { COUNTRIES, labelFor, LICENCE_LENGTHS } from './options.js';
 
 describe('service options', () => {
-  it('lists the next 12 months and looks up labels', () => {
-    const months = startMonths(new Date(Date.UTC(2026, 11, 15)));
-    assert.equal(months.length, 12);
-    assert.equal(months[0]?.value, '2026-12');
-    assert.equal(months[11]?.value, '2027-11');
-    assert.equal(labelFor(months, '2026-12'), months[0]?.text);
-    assert.equal(labelFor(months, 'missing'), 'missing');
+  it('lists countries and licence lengths', () => {
+    assert.equal(COUNTRIES.length, 3);
+    assert.equal(LICENCE_LENGTHS.length, 3);
+    assert.equal(labelFor(LICENCE_LENGTHS, '12-months'), '12 months');
+    assert.equal(labelFor(COUNTRIES, 'England'), 'England');
+    assert.equal(labelFor(COUNTRIES, 'missing'), 'missing');
   });
 });

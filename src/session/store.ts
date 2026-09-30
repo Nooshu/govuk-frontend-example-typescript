@@ -67,8 +67,12 @@ export function createMemoryStore(): SessionStore {
  * Confirmation reference for a session.
  *
  * @param sessionId - Session id, hex.
- * @returns `RL` plus the first six characters, in upper case.
+ * @returns `FR` plus eight digits derived from the session id.
  */
 export function referenceFor(sessionId: string): string {
-  return `RL${sessionId.slice(0, 6).toUpperCase()}`;
+  const digits = BigInt(`0x${sessionId.slice(0, 8)}`)
+    .toString()
+    .padStart(8, '0')
+    .slice(-8);
+  return `FR${digits}`;
 }

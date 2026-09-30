@@ -37,7 +37,7 @@ export const repoRoot = fileURLToPath(new URL('../', import.meta.url));
 export const applicationStylesheet = join(repoRoot, 'dist', 'stylesheets', 'application.css');
 
 /** English service name used in the header, title, and phase banner. */
-export const SERVICE_NAME = 'Apply for a rod fishing licence';
+export const SERVICE_NAME = 'Apply for a fishing rod licence';
 
 /** Welsh service name used on the Welsh start page. */
 export const SERVICE_NAME_CY = 'Gwneud cais am drwydded bysgota';

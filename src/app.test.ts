@@ -8,7 +8,6 @@ import { createMemoryStore, type Session, type SessionStore } from './session/st
 import type { renderPage } from './pages/document.js';
 
 const NOW = new Date(Date.UTC(2026, 8, 26));
-const PASSWORD = 'correct-horse';
 
 type Page = { status: number; text: string; location: string | null; response: Response };
 
@@ -111,13 +110,13 @@ function assertShell(html: string, lang = 'en'): void {
   assert.match(html, /\/assets\/application\.[a-f0-9]+\.css/);
   assert.doesNotMatch(html, /outline:\s*none/);
   const skip = html.indexOf(lang === 'cy' ? 'Neidio i&#39;r prif gynnwys' : 'Skip to main content');
-  const banner = html.indexOf('Cookies on Apply for a rod fishing licence');
+  const banner = html.indexOf('Cookies on Apply for a fishing rod licence');
   assert.ok(skip >= 0);
   if (banner >= 0) assert.ok(skip < banner);
 }
 
 describe('example service', { timeout: 120_000 }, () => {
-  it('walks the rod licence journey', async () => {
+  it('walks the fishing rod licence journey', async () => {
     const client = createClient();
     const { send } = client;
 
@@ -125,6 +124,8 @@ describe('example service', { timeout: 120_000 }, () => {
     assert.equal(start.status, 200);
     assertShell(start.text);
     assert.match(start.text, /Help us improve this service/);
+    assert.match(start.text, /Apply for a fishing rod licence/);
+    assert.match(start.text, /href="\/licence-length"/);
     assert.doesNotMatch(start.text, /govuk-back-link/);
     assert.doesNotMatch(start.text, /govuk-breadcrumbs/);
     const policy = start.response.headers.get('content-security-policy') ?? '';
@@ -148,42 +149,67 @@ describe('example service', { timeout: 120_000 }, () => {
 
     const earlyCheck = await send('/check-answers');
     assert.equal(earlyCheck.status, 303);
-    assert.equal(earlyCheck.location, '/name');
+    assert.equal(earlyCheck.location, '/licence-length');
     const earlyConfirmation = await send('/confirmation');
-    assert.equal(earlyConfirmation.location, '/task-list');
+    assert.equal(earlyConfirmation.location, '/');
+
+    const length = await send('/licence-length');
+    assertShell(length.text);
+    assert.equal(length.response.headers.get('cache-control'), 'no-store');
+    assert.equal(length.response.headers.get('etag'), null);
+    assert.match(length.text, /novalidate/);
+    assert.match(length.text, /govuk-back-link/);
+    assert.match(length.text, /How long do you need the licence for\?/);
+    assert.match(length.text, /1 day/);
+    assert.match(length.text, /8 days/);
+    assert.match(length.text, /12 months/);
+    assert.doesNotMatch(length.text, /£7\.10|£14\.20|£36\.80/);
+    assert.doesNotMatch(length.text, /govuk-breadcrumbs/);
+    assert.doesNotMatch(length.text, /Help us improve this service/);
+
+    const invalidLength = await send('/licence-length', {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: form(tokenFrom(length.text), {}),
+    });
+    assert.equal(invalidLength.status, 303);
+    assert.equal(invalidLength.location, '/licence-length');
+    const lengthError = await send('/licence-length');
+    assertShell(lengthError.text);
+    assert.match(lengthError.text, /There is a problem/);
+    assert.match(lengthError.text, /Select how long you need the licence for/);
+    assert.match(lengthError.text, /<title>Error:/);
+    assert.equal(client.session().errors, null);
+
+    const validLength = await send('/licence-length', {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: form(tokenFrom(lengthError.text), { 'licence-length': '12-months' }),
+    });
+    assert.equal(validLength.location, '/name');
 
     const name = await send('/name');
-    assertShell(name.text);
-    assert.equal(name.response.headers.get('cache-control'), 'no-store');
-    assert.equal(name.response.headers.get('etag'), null);
-    assert.match(name.text, /novalidate/);
-    assert.match(name.text, /govuk-back-link/);
-    assert.doesNotMatch(name.text, /govuk-breadcrumbs/);
-    assert.doesNotMatch(name.text, /Help us improve this service/);
-
+    assert.match(name.text, /What is your full name\?/);
     const invalidName = await send('/name', {
       method: 'POST',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: form(tokenFrom(name.text), { 'first-name': '', 'last-name': ' Hobbs ' }),
+      body: form(tokenFrom(name.text), { 'full-name': '' }),
     });
     assert.equal(invalidName.status, 303);
     assert.equal(invalidName.location, '/name');
     const nameError = await send('/name');
     assertShell(nameError.text);
-    assert.match(nameError.text, /There is a problem/);
-    assert.match(nameError.text, /Enter your first name/);
-    assert.match(nameError.text, /value="Hobbs"/);
-    assert.match(nameError.text, /<title>Error:/);
-    assert.equal(client.session().errors, null);
+    assert.match(nameError.text, /Enter your full name/);
 
     const validName = await send('/name', {
       method: 'POST',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: form(tokenFrom(nameError.text), { 'first-name': ' Ada ', 'last-name': 'Lovelace' }),
+      body: form(tokenFrom(nameError.text), { 'full-name': ' Ada Lovelace ' }),
     });
     assert.equal(validName.location, '/date-of-birth');
 
     const date = await send('/date-of-birth');
+    assert.match(date.text, /For example, 31 3 1980/);
     const badDate = await send('/date-of-birth', {
       method: 'POST',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
@@ -195,7 +221,7 @@ describe('example service', { timeout: 120_000 }, () => {
     });
     assert.equal(badDate.location, '/date-of-birth');
     const dateError = await send('/date-of-birth');
-    assert.match(dateError.text, /13 or over/);
+    assert.match(dateError.text, /at least 13/);
     assert.match(dateError.text, /value="27"/);
 
     await send('/date-of-birth', {
@@ -208,8 +234,28 @@ describe('example service', { timeout: 120_000 }, () => {
       }),
     });
 
+    const country = await send('/where-you-will-fish');
+    assert.match(country.text, /This example is fictional/);
+    assert.match(country.text, /England/);
+    assert.match(country.text, /Wales/);
+    assert.match(country.text, /Scotland/);
+    const badCountry = await send('/where-you-will-fish', {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: form(tokenFrom(country.text), {}),
+    });
+    assert.equal(badCountry.location, '/where-you-will-fish');
+    const countryError = await send('/where-you-will-fish');
+    assert.match(countryError.text, /Select where you will fish/);
+    await send('/where-you-will-fish', {
+      method: 'POST',
+      headers: { 'content-type': 'application/x-www-form-urlencoded' },
+      body: form(tokenFrom(countryError.text), { country: 'England' }),
+    });
+
     const email = await send('/email');
     assert.equal(h1Count(email.text), 1);
+    assert.match(email.text, /browser session only/);
     const badEmail = await send('/email', {
       method: 'POST',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
@@ -224,124 +270,7 @@ describe('example service', { timeout: 120_000 }, () => {
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
       body: form(tokenFrom(emailError.text), { email: 'ada@example.com' }),
     });
-    assert.equal(goodEmail.location, '/contact-preference');
-
-    const contact = await send('/contact-preference');
-    const badContact = await send('/contact-preference', {
-      method: 'POST',
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: form(tokenFrom(contact.text), { 'contact-by': 'telephone', telephone: '' }),
-    });
-    assert.equal(badContact.location, '/contact-preference');
-    const contactError = await send('/contact-preference');
-    assert.match(contactError.text, /Enter a telephone number/);
-    await send('/contact-preference', {
-      method: 'POST',
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: form(tokenFrom(contactError.text), { 'contact-by': 'email', telephone: '' }),
-    });
-
-    const regions = await send('/where-you-will-fish');
-    const badRegions = await send('/where-you-will-fish', {
-      method: 'POST',
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: form(tokenFrom(regions.text), { regions: ['not-sure', 'wales'] }),
-    });
-    assert.equal(badRegions.location, '/where-you-will-fish');
-    const regionError = await send('/where-you-will-fish');
-    assert.match(regionError.text, /not decided yet/);
-    await send('/where-you-will-fish', {
-      method: 'POST',
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: form(tokenFrom(regionError.text), { regions: ['wales', 'midlands'] }),
-    });
-
-    const licence = await send('/licence-length');
-    await send('/licence-length', {
-      method: 'POST',
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: form(tokenFrom(licence.text), { 'licence-length': '12-month' }),
-    });
-    const month = await send('/start-month');
-    assert.match(month.text, /September 2026/);
-    await send('/start-month', {
-      method: 'POST',
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: form(tokenFrom(month.text), { 'start-month': '2026-09' }),
-    });
-
-    const address = await send('/address');
-    const badAddress = await send('/address', {
-      method: 'POST',
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: form(tokenFrom(address.text), { 'address-line-1': '', town: '', postcode: 'bad' }),
-    });
-    assert.equal(badAddress.location, '/address');
-    const addressError = await send('/address');
-    assert.match(addressError.text, /Enter address line 1/);
-    assert.match(addressError.text, /value="bad"/);
-    await send('/address', {
-      method: 'POST',
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: form(tokenFrom(addressError.text), {
-        'address-line-1': '1 Horse Guards Road',
-        'address-line-2': '',
-        town: 'London',
-        postcode: 'sw1a1aa',
-      }),
-    });
-
-    const evidence = await send('/evidence');
-    assert.match(evidence.text, /enctype="multipart\/form-data"/);
-    const skipped = await send('/evidence', {
-      method: 'POST',
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: form(tokenFrom(evidence.text), {}),
-    });
-    assert.equal(skipped.location, '/additional-details');
-
-    const details = await send('/additional-details');
-    const longDetails = await send('/additional-details', {
-      method: 'POST',
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: form(tokenFrom(details.text), { 'additional-details': 'a'.repeat(201) }),
-    });
-    assert.equal(longDetails.location, '/additional-details');
-    await send('/additional-details', {
-      method: 'POST',
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: form(tokenFrom((await send('/additional-details')).text), {
-        'additional-details': 'Bank fishing only',
-      }),
-    });
-
-    const password = await send('/create-a-password');
-    const mismatch = await send('/create-a-password', {
-      method: 'POST',
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: form(tokenFrom(password.text), {
-        password: PASSWORD,
-        'password-confirm': 'different-horse',
-      }),
-    });
-    assert.equal(mismatch.location, '/create-a-password');
-    const passwordError = await send('/create-a-password');
-    assert.match(passwordError.text, /same password/);
-    assert.doesNotMatch(passwordError.text, new RegExp(PASSWORD));
-    const created = await send('/create-a-password', {
-      method: 'POST',
-      headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: form(tokenFrom(passwordError.text), {
-        password: PASSWORD,
-        'password-confirm': PASSWORD,
-      }),
-    });
-    assert.equal(created.location, '/check-answers');
-
-    const tasks = await send('/task-list');
-    assertShell(tasks.text);
-    assert.match(tasks.text, /href="\/check-answers"/);
-    assert.match(tasks.text, /Not started/);
+    assert.equal(goodEmail.location, '/check-answers');
 
     const change = await send('/name?return=check-answers');
     assert.match(change.text, /href="\/check-answers"/);
@@ -350,8 +279,7 @@ describe('example service', { timeout: 120_000 }, () => {
       method: 'POST',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
       body: form(tokenFrom(change.text), {
-        'first-name': '',
-        'last-name': 'Lovelace',
+        'full-name': '',
         returnTo: 'check-answers',
       }),
     });
@@ -360,8 +288,7 @@ describe('example service', { timeout: 120_000 }, () => {
       method: 'POST',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
       body: form(tokenFrom((await send('/name?return=check-answers')).text), {
-        'first-name': 'Ada',
-        'last-name': 'Lovelace',
+        'full-name': 'Ada Lovelace',
         returnTo: 'check-answers',
       }),
     });
@@ -370,11 +297,11 @@ describe('example service', { timeout: 120_000 }, () => {
     const check = await send('/check-answers');
     assertShell(check.text);
     assert.match(check.text, /Ada Lovelace/);
-    assert.match(check.text, /SW1A 1AA/);
-    assert.match(check.text, /Wales, Midlands/);
-    assert.match(check.text, />\s*Set\s*</);
-    assert.doesNotMatch(check.text, new RegExp(PASSWORD));
-    assert.equal(JSON.stringify(client.session().application).includes(PASSWORD), false);
+    assert.match(check.text, /12 months/);
+    assert.match(check.text, /31 3 1980/);
+    assert.match(check.text, /England/);
+    assert.match(check.text, /ada@example.com/);
+    assert.match(check.text, /Accept and continue/);
 
     const submitted = await send('/check-answers', {
       method: 'POST',
@@ -394,104 +321,15 @@ describe('example service', { timeout: 120_000 }, () => {
     const confirmation = await send('/confirmation');
     assertShell(confirmation.text);
     assert.match(confirmation.text, new RegExp(client.session().application.reference));
-    assert.match(confirmation.text, /Help us improve this service/);
-    const done = await send('/task-list');
-    assert.match(done.text, /Completed/);
+    assert.match(confirmation.text, /Your example reference number/);
+    assert.match(confirmation.text, /Nobody will send you a fishing rod licence/);
+    assert.match(confirmation.text, /href="\/components"/);
+    assert.doesNotMatch(confirmation.text, /Help us improve this service/);
 
     const reset = await send('/new-application');
     assert.equal(reset.location, '/');
     const cleared = await send('/name');
-    assert.doesNotMatch(cleared.text, /value="Ada"/);
-  });
-
-  it('uploads evidence and keeps only a safe file name', async () => {
-    const { send, session } = createClient();
-    const page = await send('/evidence');
-    const boundary = '----govuk';
-    const body = [
-      `--${boundary}`,
-      'Content-Disposition: form-data; name="csrf"',
-      '',
-      tokenFrom(page.text),
-      `--${boundary}`,
-      'Content-Disposition: form-data; name="evidence"; filename="folder/concession.pdf"',
-      'Content-Type: application/pdf',
-      '',
-      '%PDF not stored',
-      `--${boundary}--`,
-      '',
-    ].join('\r\n');
-    const uploaded = await send('/evidence', {
-      method: 'POST',
-      headers: { 'content-type': `multipart/form-data; boundary=${boundary}` },
-      body: Buffer.from(body),
-    });
-    assert.equal(uploaded.location, '/additional-details');
-    assert.equal(session().application.evidenceFilename, 'concession.pdf');
-    assert.equal(JSON.stringify(session().application).includes('%PDF'), false);
-
-    const next = await send('/evidence');
-    assert.match(next.text, /concession\.pdf/);
-    const rejected = [
-      `--${boundary}`,
-      'Content-Disposition: form-data; name="csrf"',
-      '',
-      tokenFrom(next.text),
-      `--${boundary}`,
-      'Content-Disposition: form-data; name="evidence"; filename="notes.txt"',
-      '',
-      'text',
-      `--${boundary}--`,
-      '',
-    ].join('\r\n');
-    const failed = await send('/evidence', {
-      method: 'POST',
-      headers: { 'content-type': `multipart/form-data; boundary=${boundary}` },
-      body: Buffer.from(rejected),
-    });
-    assert.equal(failed.location, '/evidence');
-    assert.equal(session().application.evidenceFilename, 'concession.pdf');
-
-    const unsafePage = await send('/evidence');
-    const unsafe = [
-      `--${boundary}`,
-      'Content-Disposition: form-data; name="csrf"',
-      '',
-      tokenFrom(unsafePage.text),
-      `--${boundary}`,
-      'Content-Disposition: form-data; name="evidence"; filename="bad<name>.pdf"',
-      '',
-      'pdf',
-      `--${boundary}--`,
-      '',
-    ].join('\r\n');
-    const ignored = await send('/evidence', {
-      method: 'POST',
-      headers: { 'content-type': `multipart/form-data; boundary=${boundary}` },
-      body: Buffer.from(unsafe),
-    });
-    assert.equal(ignored.location, '/additional-details');
-    assert.equal(session().application.evidenceFilename, 'concession.pdf');
-
-    const other = await send('/evidence');
-    const otherFile = [
-      `--${boundary}`,
-      'Content-Disposition: form-data; name="csrf"',
-      '',
-      tokenFrom(other.text),
-      `--${boundary}`,
-      'Content-Disposition: form-data; name="other"; filename="other.pdf"',
-      '',
-      'pdf',
-      `--${boundary}--`,
-      '',
-    ].join('\r\n');
-    await send('/evidence', {
-      method: 'POST',
-      headers: { 'content-type': `multipart/form-data; boundary=${boundary}` },
-      body: Buffer.from(otherFile),
-    });
-    assert.equal(session().application.evidenceFilename, 'concession.pdf');
+    assert.doesNotMatch(cleared.text, /value="Ada Lovelace"/);
   });
 
   it('saves cookie choices and ignores unsafe return paths', async () => {
@@ -592,12 +430,12 @@ describe('example service', { timeout: 120_000 }, () => {
     const session = client.session();
     session.errors = {
       path: '/name',
-      items: [{ field: 'first-name', href: '#first-name', text: 'Enter your first name' }],
+      items: [{ field: 'full-name', href: '#full-name', text: 'Enter your full name' }],
     };
     session.notice = { path: '/fees', text: 'Not about cookies' };
     client.store.save(session);
     const cookies = await client.send('/cookies');
-    assert.doesNotMatch(cookies.text, /Enter your first name/);
+    assert.doesNotMatch(cookies.text, /Enter your full name/);
     assert.doesNotMatch(cookies.text, /Not about cookies/);
     assert.equal(client.session().errors, null);
     assert.equal(client.session().notice, null);
@@ -695,7 +533,7 @@ describe('example service', { timeout: 120_000 }, () => {
     const expired = await send('/name', {
       method: 'POST',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: 'csrf=wrong&first-name=Ada&last-name=Lovelace',
+      body: 'csrf=wrong&full-name=Ada Lovelace',
     });
     assert.equal(expired.status, 403);
     assert.match(expired.text, /session has expired/);
@@ -844,17 +682,17 @@ describe('example service', { timeout: 120_000 }, () => {
     const defaults = createApp();
     const health = await defaults.handle(new Request('http://example.test/health'));
     assert.equal(await health.text(), 'ok');
-    const month = await defaults.handle(new Request('http://example.test/start-month'));
-    assert.equal(month.status, 200);
-    const monthHtml = await month.text();
+    const length = await defaults.handle(new Request('http://example.test/licence-length'));
+    assert.equal(length.status, 200);
+    const lengthHtml = await length.text();
     const posted = await defaults.handle(
-      new Request('http://example.test/start-month', {
+      new Request('http://example.test/licence-length', {
         method: 'POST',
         headers: {
           'content-type': 'application/x-www-form-urlencoded',
-          cookie: month.headers.get('set-cookie')?.split(';')[0] ?? '',
+          cookie: length.headers.get('set-cookie')?.split(';')[0] ?? '',
         },
-        body: form(tokenFrom(monthHtml), { 'start-month': 'not-a-month' }),
+        body: form(tokenFrom(lengthHtml), { 'licence-length': 'not-a-length' }),
       }),
     );
     assert.equal(posted.status, 303);
@@ -866,8 +704,8 @@ describe('example service', { timeout: 120_000 }, () => {
     const denied = await incomplete.send('/check-answers', {
       method: 'POST',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      body: form(tokenFrom((await incomplete.send('/task-list')).text), {}),
+      body: form(tokenFrom((await incomplete.send('/')).text), {}),
     });
-    assert.equal(denied.location, '/name');
+    assert.equal(denied.location, '/licence-length');
   });
 });

@@ -26,7 +26,7 @@ const DETAILS: Record<string, Omit<ComponentInfo, 'name'>> = {
     title: 'Back link',
     description: 'Link to the previous page in a journey.',
     designSystemUrl: `${DESIGN_SYSTEM}/back-link/`,
-    usedOn: [{ href: '/name', text: 'What is your name?' }],
+    usedOn: [{ href: '/name', text: 'What is your full name?' }],
   },
   breadcrumbs: {
     title: 'Breadcrumbs',
@@ -44,13 +44,13 @@ const DETAILS: Record<string, Omit<ComponentInfo, 'name'>> = {
     title: 'Character count',
     description: 'Shows how many characters are left in a textarea.',
     designSystemUrl: `${DESIGN_SYSTEM}/character-count/`,
-    usedOn: [{ href: '/additional-details', text: 'Additional details' }],
+    usedOn: [],
   },
   checkboxes: {
     title: 'Checkboxes',
     description: 'Lets users select one or more options.',
     designSystemUrl: `${DESIGN_SYSTEM}/checkboxes/`,
-    usedOn: [{ href: '/where-you-will-fish', text: 'Where will you fish?' }],
+    usedOn: [],
   },
   'cookie-banner': {
     title: 'Cookie banner',
@@ -92,19 +92,19 @@ const DETAILS: Record<string, Omit<ComponentInfo, 'name'>> = {
     title: 'Feedback',
     description: 'Asks users what they think of a page. Trial component in Frontend 6.5.',
     designSystemUrl: `${DESIGN_SYSTEM}/feedback/`,
-    usedOn: [{ href: '/', text: 'Start, confirmation, and help pages' }],
+    usedOn: [{ href: '/', text: 'Start and help pages' }],
   },
   fieldset: {
     title: 'Fieldset',
     description: 'Groups related form fields, such as an address.',
     designSystemUrl: `${DESIGN_SYSTEM}/fieldset/`,
-    usedOn: [{ href: '/address', text: 'What is your address?' }],
+    usedOn: [{ href: '/licence-length', text: 'How long do you need the licence for?' }],
   },
   'file-upload': {
     title: 'File upload',
     description: 'Lets users select a file to upload.',
     designSystemUrl: `${DESIGN_SYSTEM}/file-upload/`,
-    usedOn: [{ href: '/evidence', text: 'Upload evidence' }],
+    usedOn: [],
   },
   footer: {
     title: 'Footer',
@@ -129,19 +129,19 @@ const DETAILS: Record<string, Omit<ComponentInfo, 'name'>> = {
     description:
       'Extra help for a form field. Form controls include it; the catalogue shows it on its own.',
     designSystemUrl: 'https://design-system.service.gov.uk/get-started/labels-legends-headings/',
-    usedOn: [{ href: '/name', text: 'Composed inside form controls' }],
+    usedOn: [{ href: '/email', text: 'Composed inside form controls' }],
   },
   input: {
     title: 'Text input',
     description: 'Lets users enter a single line of text.',
     designSystemUrl: `${DESIGN_SYSTEM}/text-input/`,
-    usedOn: [{ href: '/name', text: 'What is your name?' }],
+    usedOn: [{ href: '/name', text: 'What is your full name?' }],
   },
   'inset-text': {
     title: 'Inset text',
     description: 'Draws attention to important content on the page.',
     designSystemUrl: `${DESIGN_SYSTEM}/inset-text/`,
-    usedOn: [{ href: '/address', text: 'What is your address?' }],
+    usedOn: [{ href: '/', text: 'Start page' }],
   },
   label: {
     title: 'Label',
@@ -178,7 +178,7 @@ const DETAILS: Record<string, Omit<ComponentInfo, 'name'>> = {
     title: 'Password input',
     description: 'Lets users enter a password, with a control to show or hide it.',
     designSystemUrl: `${DESIGN_SYSTEM}/password-input/`,
-    usedOn: [{ href: '/create-a-password', text: 'Create a password' }],
+    usedOn: [],
   },
   'phase-banner': {
     title: 'Phase banner',
@@ -190,13 +190,13 @@ const DETAILS: Record<string, Omit<ComponentInfo, 'name'>> = {
     title: 'Radios',
     description: 'Lets users select one option from a list.',
     designSystemUrl: `${DESIGN_SYSTEM}/radios/`,
-    usedOn: [{ href: '/contact-preference', text: 'How should we contact you?' }],
+    usedOn: [{ href: '/licence-length', text: 'How long do you need the licence for?' }],
   },
   select: {
     title: 'Select',
     description: 'Lets users choose one option from a long list.',
     designSystemUrl: `${DESIGN_SYSTEM}/select/`,
-    usedOn: [{ href: '/start-month', text: 'When should the licence start?' }],
+    usedOn: [],
   },
   'service-navigation': {
     title: 'Service navigation',
@@ -233,20 +233,20 @@ const DETAILS: Record<string, Omit<ComponentInfo, 'name'>> = {
     title: 'Tag',
     description: 'Shows a short status, such as on a task list.',
     designSystemUrl: `${DESIGN_SYSTEM}/tag/`,
-    usedOn: [{ href: '/task-list', text: 'Task list' }],
+    usedOn: [],
   },
   'task-list': {
     title: 'Task list',
     description: 'Shows the tasks in an application and whether they are done.',
     designSystemUrl: `${DESIGN_SYSTEM}/task-list/`,
-    usedOn: [{ href: '/task-list', text: 'Task list' }],
+    usedOn: [],
   },
   textarea: {
     title: 'Textarea',
     description:
       'Lets users enter more than one line of text. This service uses character count, which includes a textarea.',
     designSystemUrl: `${DESIGN_SYSTEM}/textarea/`,
-    usedOn: [{ href: '/additional-details', text: 'Additional details, via character count' }],
+    usedOn: [],
   },
   'warning-text': {
     title: 'Warning text',

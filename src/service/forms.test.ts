@@ -3,27 +3,20 @@ import { describe, it } from 'node:test';
 
 import { createApplication } from './model.js';
 import {
-  addressFields,
   confirmationPanel,
-  contactFields,
   cookieFields,
+  countryFields,
   dateField,
-  detailsField,
   emailField,
   errorSummary,
-  evidenceField,
   feesTable,
   guidanceTabs,
   helpAccordion,
   licenceFields,
-  monthField,
-  nameFields,
-  passwordFields,
-  regionFields,
+  nameField,
 } from './forms.js';
 import type { FieldError } from './validate.js';
 
-const now = new Date(Date.UTC(2026, 8, 26));
 const error = (field: string): FieldError => ({ field, href: `#${field}`, text: 'Fix this' });
 
 describe('form fields', () => {
@@ -37,13 +30,13 @@ describe('form fields', () => {
   it('builds question fields with and without errors', () => {
     const application = createApplication();
     assert.equal(
-      nameFields(application, []).firstName &&
-        'errorMessage' in (nameFields(application, []).firstName as object),
+      nameField(application, []).fullName &&
+        'errorMessage' in (nameField(application, []).fullName as object),
       false,
     );
-    const named = nameFields({ ...application, firstName: 'Ada' }, [error('first-name')]);
+    const named = nameField({ ...application, fullName: 'Ada Lovelace' }, [error('full-name')]);
     assert.equal(
-      (named.firstName as { errorMessage?: { text: string } }).errorMessage?.text,
+      (named.fullName as { errorMessage?: { text: string } }).errorMessage?.text,
       'Fix this',
     );
 
@@ -65,37 +58,15 @@ describe('form fields', () => {
         .errorMessage,
     );
 
-    const emailContact = contactFields({ ...application, contactBy: 'email' }, []);
-    const phoneContact = contactFields(
-      { ...application, contactBy: 'telephone', telephone: '01632 960 001' },
-      [error('contact-by'), error('telephone')],
-    );
-    const emptyContact = contactFields(application, []);
+    const country = countryFields({ ...application, country: 'Wales' }, [error('country')]);
+    assert.ok((country.radios as { errorMessage?: unknown }).errorMessage);
     assert.equal(
-      (emailContact.radios as { items: { checked?: boolean }[] }).items[0]?.checked,
-      true,
-    );
-    assert.equal(
-      (phoneContact.radios as { items: { checked?: boolean }[] }).items[1]?.checked,
-      true,
-    );
-    assert.equal(
-      (emptyContact.radios as { items: { checked?: boolean }[] }).items[0]?.checked,
-      false,
-    );
-    assert.ok((phoneContact.radios as { errorMessage?: unknown }).errorMessage);
-
-    const regions = regionFields({ ...application, regions: ['wales', 'not-sure'] }, [
-      error('regions'),
-    ]);
-    assert.ok((regions.checkboxes as { errorMessage?: unknown }).errorMessage);
-    assert.equal(
-      regionFields(application, []).checkboxes &&
-        'errorMessage' in (regionFields(application, []).checkboxes as object),
+      (countryFields(application, []).radios as { items: { checked?: boolean }[] }).items[0]
+        ?.checked,
       false,
     );
 
-    const licence = licenceFields({ ...application, licenceLength: '8-day' }, [
+    const licence = licenceFields({ ...application, licenceLength: '8-days' }, [
       error('licence-length'),
     ]);
     assert.ok((licence.radios as { errorMessage?: unknown }).errorMessage);
@@ -103,43 +74,6 @@ describe('form fields', () => {
       (licenceFields(application, []).radios as { items: { checked?: boolean }[] }).items[1]
         ?.checked,
       false,
-    );
-
-    const month = monthField(
-      { ...application, startMonth: '2026-09' },
-      [error('start-month')],
-      now,
-    );
-    assert.ok((month.select as { errorMessage?: unknown }).errorMessage);
-    const emptyMonth = monthField(application, [], now).select as {
-      items: { selected?: boolean }[];
-    };
-    assert.equal(emptyMonth.items[0]?.selected, true);
-
-    assert.ok(
-      addressFields(application, [error('address-line-1'), error('town'), error('postcode')]).line1,
-    );
-    assert.equal(
-      evidenceField({ ...application, evidenceFilename: 'a.pdf' }, [error('evidence')]).currentFile,
-      'a.pdf',
-    );
-    assert.ok(
-      (
-        detailsField(application, [error('additional-details')]).details as {
-          errorMessage?: unknown;
-        }
-      ).errorMessage,
-    );
-    assert.ok(
-      (passwordFields([error('password')]).password as { errorMessage?: unknown }).errorMessage,
-    );
-    assert.ok(
-      (passwordFields([error('password-confirm')]).confirm as { errorMessage?: unknown })
-        .errorMessage,
-    );
-    assert.equal(
-      (passwordFields([]).password as { errorMessage?: unknown }).errorMessage,
-      undefined,
     );
 
     assert.equal(
@@ -162,5 +96,6 @@ describe('form fields', () => {
     assert.equal((helpAccordion().items as unknown[]).length, 3);
     assert.equal((guidanceTabs().items as unknown[]).length, 3);
     assert.match(String(confirmationPanel(`<script>'"`).html), /&lt;script&gt;&#39;&quot;/);
+    assert.match(String(confirmationPanel('FR1').html), /Your example reference number/);
   });
 });

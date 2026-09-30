@@ -1,7 +1,6 @@
 import { escapeHtml } from '../html.js';
-import { renderComponent } from '../components/render.js';
 import type { Application } from './model.js';
-import { CONTACT_OPTIONS, LICENCE_LENGTHS, NOT_SURE, REGIONS, startMonths } from './options.js';
+import { COUNTRIES, LICENCE_FEES, LICENCE_LENGTHS } from './options.js';
 import type { FieldError } from './validate.js';
 
 /**
@@ -19,26 +18,24 @@ export function errorSummary(errors: FieldError[]): Record<string, unknown> | un
 }
 
 /**
- * Text input params for the name question.
+ * Text input params for the full name question.
  *
  * @param application - Current answers, used to retain values.
  * @param errors - Field errors for this page.
- * @returns Params for the first-name and last-name inputs.
+ * @returns Params whose label is the page heading.
  */
-export function nameFields(
+export function nameField(
   application: Application,
   errors: FieldError[],
 ): Record<string, unknown> {
   return {
-    firstName: textInput('first-name', 'First name', application.firstName, errors, {
-      autocomplete: 'given-name',
-      classes: 'govuk-input--width-20',
-      spellcheck: false,
-    }),
-    lastName: textInput('last-name', 'Last name', application.lastName, errors, {
-      autocomplete: 'family-name',
-      classes: 'govuk-input--width-20',
-      spellcheck: false,
+    fullName: textInput('full-name', 'What is your full name?', application.fullName, errors, {
+      autocomplete: 'name',
+      label: {
+        text: 'What is your full name?',
+        isPageHeading: true,
+        classes: 'govuk-label--l',
+      },
     }),
   };
 }
@@ -55,12 +52,11 @@ export function emailField(
   errors: FieldError[],
 ): Record<string, unknown> {
   return {
-    email: textInput('email', 'Email address', application.email, errors, {
+    email: textInput('email', 'What is your email address?', application.email, errors, {
       type: 'email',
       autocomplete: 'email',
       spellcheck: false,
-      classes: 'govuk-input--width-20',
-      hint: { text: 'We will send the decision to this address' },
+      hint: { text: 'This example stores the address in your browser session only.' },
       label: {
         text: 'What is your email address?',
         isPageHeading: true,
@@ -93,92 +89,30 @@ export function dateField(application: Application, errors: FieldError[]): Recor
       hint: { text: 'For example, 31 3 1980' },
       ...(message ? { errorMessage: { text: message } } : {}),
       items: [
-        { name: 'day', autocomplete: 'bday-day', value: application.day },
-        { name: 'month', autocomplete: 'bday-month', value: application.month },
-        { name: 'year', autocomplete: 'bday-year', value: application.year },
+        { name: 'day', value: application.day },
+        { name: 'month', value: application.month },
+        { name: 'year', value: application.year },
       ],
     },
   };
 }
 
 /**
- * Radio params for the contact preference, with a conditional telephone input.
+ * Radio params for where the applicant will fish.
  *
  * @param application - Current answers, used to retain the value.
  * @param errors - Field errors for this page.
  * @returns Params for the radios macro.
  */
-export function contactFields(
+export function countryFields(
   application: Application,
   errors: FieldError[],
 ): Record<string, unknown> {
-  const telephone = textInput('telephone', 'Telephone number', application.telephone, errors, {
-    type: 'tel',
-    autocomplete: 'tel',
-    classes: 'govuk-input--width-20',
-  });
-  const message = messageFor(errors, 'contact-by');
+  const message = messageFor(errors, 'country');
   return {
     radios: {
-      idPrefix: 'contact-by',
-      name: 'contact-by',
-      fieldset: {
-        legend: {
-          text: 'How should we contact you?',
-          isPageHeading: true,
-          classes: 'govuk-fieldset__legend--l',
-        },
-      },
-      hint: { text: 'We will use this if we need to ask about your application' },
-      ...(message ? { errorMessage: { text: message } } : {}),
-      items: CONTACT_OPTIONS.map((option) =>
-        option.value === 'telephone'
-          ? {
-              value: option.value,
-              text: option.text,
-              checked: application.contactBy === 'telephone',
-              conditional: { html: renderComponent('input', telephone) },
-            }
-          : {
-              value: option.value,
-              text: option.text,
-              id: 'contact-by',
-              checked: application.contactBy === option.value,
-            },
-      ),
-    },
-  };
-}
-
-/**
- * Checkbox params for where the applicant will fish.
- *
- * @param application - Current answers, used to retain the value.
- * @param errors - Field errors for this page.
- * @returns Params for the checkboxes macro.
- */
-export function regionFields(
-  application: Application,
-  errors: FieldError[],
-): Record<string, unknown> {
-  const message = messageFor(errors, 'regions');
-  const items: Record<string, unknown>[] = REGIONS.map((region, index) => ({
-    value: region.value,
-    text: region.text,
-    checked: application.regions.includes(region.value),
-    ...(index === 0 ? { id: 'regions' } : {}),
-  }));
-  items.push({ divider: 'or' });
-  items.push({
-    value: NOT_SURE,
-    text: 'I have not decided yet',
-    behaviour: 'exclusive',
-    checked: application.regions.includes(NOT_SURE),
-  });
-  return {
-    checkboxes: {
-      idPrefix: 'where',
-      name: 'regions',
+      idPrefix: 'country',
+      name: 'country',
       fieldset: {
         legend: {
           text: 'Where will you fish?',
@@ -186,15 +120,20 @@ export function regionFields(
           classes: 'govuk-fieldset__legend--l',
         },
       },
-      hint: { text: 'Select all that apply' },
+      hint: { text: 'This example is fictional. It does not check a real fishing area.' },
       ...(message ? { errorMessage: { text: message } } : {}),
-      items,
+      items: COUNTRIES.map((option, index) => ({
+        value: option.value,
+        text: option.text,
+        checked: application.country === option.value,
+        ...(index === 0 ? { id: 'country' } : {}),
+      })),
     },
   };
 }
 
 /**
- * Radio params for the licence length, including the example fee.
+ * Radio params for the licence length.
  *
  * @param application - Current answers, used to retain the value.
  * @param errors - Field errors for this page.
@@ -211,7 +150,7 @@ export function licenceFields(
       name: 'licence-length',
       fieldset: {
         legend: {
-          text: 'How long do you need a licence for?',
+          text: 'How long do you need the licence for?',
           isPageHeading: true,
           classes: 'govuk-fieldset__legend--l',
         },
@@ -219,197 +158,11 @@ export function licenceFields(
       ...(message ? { errorMessage: { text: message } } : {}),
       items: LICENCE_LENGTHS.map((option, index) => ({
         value: option.value,
-        text: `${option.text} (${option.fee})`,
+        text: option.text,
         checked: application.licenceLength === option.value,
         ...(index === 0 ? { id: 'licence-length' } : {}),
       })),
     },
-  };
-}
-
-/**
- * Select params for the licence start month.
- *
- * @param application - Current answers, used to retain the value.
- * @param errors - Field errors for this page.
- * @param now - Clock used to build the next 12 months.
- * @returns Params for the select macro.
- */
-export function monthField(
-  application: Application,
-  errors: FieldError[],
-  now: Date,
-): Record<string, unknown> {
-  return {
-    select: withError(
-      {
-        id: 'start-month',
-        name: 'start-month',
-        label: {
-          text: 'When should the licence start?',
-          isPageHeading: true,
-          classes: 'govuk-label--l',
-        },
-        items: [
-          { value: '', text: 'Select a month', selected: application.startMonth === '' },
-          ...startMonths(now).map((month) => ({
-            value: month.value,
-            text: month.text,
-            selected: application.startMonth === month.value,
-          })),
-        ],
-      },
-      errors,
-      'start-month',
-    ),
-  };
-}
-
-/**
- * Text input params for the address question.
- *
- * @param application - Current answers, used to retain the value.
- * @param errors - Field errors for this page.
- * @returns Params for each address field.
- */
-export function addressFields(
-  application: Application,
-  errors: FieldError[],
-): Record<string, unknown> {
-  return {
-    fieldset: {
-      legend: {
-        text: 'What is your address?',
-        isPageHeading: true,
-        classes: 'govuk-fieldset__legend--l',
-      },
-    },
-    line1: textInput('address-line-1', 'Address line 1', application.addressLine1, errors, {
-      autocomplete: 'address-line1',
-    }),
-    line2: textInput(
-      'address-line-2',
-      'Address line 2 (optional)',
-      application.addressLine2,
-      errors,
-      {
-        autocomplete: 'address-line2',
-      },
-    ),
-    town: textInput('town', 'Town or city', application.town, errors, {
-      autocomplete: 'address-level2',
-      classes: 'govuk-input--width-20',
-    }),
-    postcode: textInput('postcode', 'Postcode', application.postcode, errors, {
-      autocomplete: 'postal-code',
-      classes: 'govuk-input--width-10',
-      spellcheck: false,
-    }),
-    inset: {
-      text: 'This example asks you to type your address. It does not look up addresses from a postcode.',
-    },
-  };
-}
-
-/**
- * File upload params for optional evidence.
- *
- * @param application - Current answers. A stored filename is shown as the current file.
- * @param errors - Field errors for this page.
- * @returns Params for the file upload macro.
- */
-export function evidenceField(
-  application: Application,
-  errors: FieldError[],
-): Record<string, unknown> {
-  return {
-    currentFile: application.evidenceFilename,
-    upload: withError(
-      {
-        id: 'evidence',
-        name: 'evidence',
-        label: {
-          text: 'Upload evidence of a concession',
-          isPageHeading: true,
-          classes: 'govuk-label--l',
-        },
-        hint: {
-          text: 'PDF, PNG, or JPG. You can skip this question if you do not have a concession.',
-        },
-      },
-      errors,
-      'evidence',
-    ),
-  };
-}
-
-/**
- * Character count params for optional extra details.
- *
- * @param application - Current answers, used to retain the value.
- * @param errors - Field errors for this page.
- * @returns Params for the character count macro.
- */
-export function detailsField(
-  application: Application,
-  errors: FieldError[],
-): Record<string, unknown> {
-  return {
-    details: withError(
-      {
-        name: 'additional-details',
-        id: 'additional-details',
-        maxlength: 200,
-        threshold: 75,
-        value: application.additionalDetails,
-        label: {
-          text: 'Is there anything else we should know?',
-          isPageHeading: true,
-          classes: 'govuk-label--l',
-        },
-        hint: {
-          text: 'You can skip this question. Do not include payment card numbers or passwords.',
-        },
-      },
-      errors,
-      'additional-details',
-    ),
-  };
-}
-
-/**
- * Password input params. Values are not retained after a failed submit.
- *
- * @param errors - Field errors for this page.
- * @returns Params for the password and confirmation inputs.
- */
-export function passwordFields(errors: FieldError[]): Record<string, unknown> {
-  return {
-    password: withError(
-      {
-        id: 'password',
-        name: 'password',
-        autocomplete: 'new-password',
-        label: {
-          text: 'Create a password',
-          isPageHeading: true,
-          classes: 'govuk-label--l',
-        },
-        hint: { text: 'Must be at least 8 characters. This example does not store your password.' },
-      },
-      errors,
-      'password',
-    ),
-    confirm: withError(
-      {
-        id: 'password-confirm',
-        name: 'password-confirm',
-        autocomplete: 'new-password',
-        label: { text: 'Confirm password' },
-      },
-      errors,
-      'password-confirm',
-    ),
   };
 }
 
@@ -458,7 +211,7 @@ export function feesTable(): Record<string, unknown> {
     captionClasses: 'govuk-table__caption--m',
     firstCellIsHeader: true,
     head: [{ text: 'Licence' }, { text: 'Fee', format: 'numeric' }],
-    rows: LICENCE_LENGTHS.map((option) => [
+    rows: LICENCE_FEES.map((option) => [
       { text: option.text },
       { text: option.fee, format: 'numeric' },
     ]),
@@ -477,7 +230,7 @@ export function helpAccordion(): Record<string, unknown> {
       {
         heading: { text: 'Who can apply' },
         content: {
-          text: 'You can apply if you are 13 or over and you will fish with a rod in England or Wales.',
+          text: 'You can apply if you are 13 or over and you will fish with a rod in England, Wales or Scotland.',
         },
       },
       {
@@ -509,7 +262,7 @@ export function guidanceTabs(): Record<string, unknown> {
         label: 'Before you apply',
         id: 'before-you-apply',
         panel: {
-          html: '<h2 class="govuk-heading-l">Before you apply</h2><p class="govuk-body">You need your name, date of birth, email address, and home address.</p>',
+          html: '<h2 class="govuk-heading-l">Before you apply</h2><p class="govuk-body">You need how long you need the licence, your name, date of birth, the country where you will fish, and your email address.</p>',
         },
       },
       {
@@ -539,7 +292,7 @@ export function guidanceTabs(): Record<string, unknown> {
 export function confirmationPanel(reference: string): Record<string, unknown> {
   return {
     titleText: 'Application complete',
-    html: `Your reference number<br><strong>${escapeHtml(reference)}</strong>`,
+    html: `Your example reference number<br><strong>${escapeHtml(reference)}</strong>`,
   };
 }
 
@@ -554,7 +307,7 @@ function textInput(
     {
       id,
       name: id,
-      label: extra.label ?? { text: label },
+      label: { text: label },
       value,
       ...extra,
     },

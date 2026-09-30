@@ -8,13 +8,13 @@ describe('sessions', () => {
     const session = createSession();
     assert.equal(session.cookieChoice, null);
     assert.equal(session.application.submitted, false);
-    assert.match(referenceFor(session.id), /^RL[0-9A-F]{6}$/);
+    assert.match(referenceFor(session.id), /^FR\d{8}$/);
 
     const store = createMemoryStore();
     assert.equal(store.get('missing'), undefined);
     const created = store.create();
-    created.application.firstName = 'Ada';
+    created.application.fullName = 'Ada Lovelace';
     store.save(created);
-    assert.equal(store.get(created.id)?.application.firstName, 'Ada');
+    assert.equal(store.get(created.id)?.application.fullName, 'Ada Lovelace');
   });
 });

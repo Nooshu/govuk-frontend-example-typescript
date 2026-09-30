@@ -178,7 +178,7 @@ function cookieBanner(session: Session): Record<string, unknown> | undefined {
   return {
     messages: [
       {
-        headingText: 'Cookies on Apply for a rod fishing licence',
+        headingText: 'Cookies on Apply for a fishing rod licence',
         text: 'We use analytics cookies to understand how you use this example service. This example does not set analytics cookies.',
         actions: [
           { text: 'Accept analytics cookies', type: 'submit', name: 'cookies', value: 'accept' },
