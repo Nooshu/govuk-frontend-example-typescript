@@ -1,5 +1,6 @@
 {% extends "govuk/template.njk" %}
 {% from "govuk/components/skip-link/macro.njk" import govukSkipLink %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
 {% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
 {% from "govuk/components/footer/macro.njk" import govukFooter %}
 {% from "govuk/components/phase-banner/macro.njk" import govukPhaseBanner %}
@@ -11,6 +12,10 @@
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 
 {% block pageTitle %}{{ pageTitle }}{% endblock %}
+
+{% block govukHeader %}
+  {{ govukHeader({ homepageUrl: "/" }) }}
+{% endblock %}
 
 {% block head %}
   <link rel="stylesheet" href="{{ stylesheetHref }}">

@@ -44,5 +44,7 @@ describe('page document', () => {
       html,
       /id="main-content"[^>]*>\s*<div class="govuk-notification-banner app-notification-banner--demo"/,
     );
+    assert.match(html, /href="\/" class="govuk-header__homepage-link"/);
+    assert.doesNotMatch(html, /href="\/\/gov\.uk" class="govuk-header__homepage-link"/);
   });
 });
