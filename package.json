@@ -25,7 +25,7 @@
     "sync:template": "./scripts/sync-from-template.sh"
   },
   "devDependencies": {
-    "@types/node": "26.6.2",
+    "@types/node": "26.6.3",
     "@types/nunjucks": "3.2.6",
     "c8": "12.0.0",
     "markdownlint-cli2": "0.23.3",
