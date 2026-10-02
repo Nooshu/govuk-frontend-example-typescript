@@ -21,7 +21,6 @@
     "test:fixtures": "node --import tsx --test src/components/catalogue.test.ts src/components/fixtures.test.ts src/components/names.test.ts src/components/preview.test.ts src/components/render.test.ts",
     "test:baseline": "node --test --experimental-test-coverage --test-coverage-include='baseline/**/*.mjs' --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 tests/baseline.test.mjs",
     "test:styles": "node --test --experimental-test-coverage --test-coverage-include='scripts/build-styles.mjs' --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 tests/styles.test.mjs",
-    "test:fixtures": "node --import tsx --test src/components/fixtures.test.ts src/components/render.test.ts src/components/preview.test.ts src/components/catalogue.test.ts src/components/names.test.ts",
     "test": "npm run test:baseline && npm run test:styles && npm run build:styles && c8 --all --src src --include 'src/**/*.ts' --exclude 'src/**/*.test.ts' --exclude 'src/**/*.d.ts' --exclude 'src/main.ts' --reporter=text --check-coverage --lines 100 --statements 100 --branches 100 --functions 100 -- node --import tsx --test 'src/**/*.test.ts'",
     "verify": "npm run verify:docs && npm run build:styles && npm run typecheck && npm test",
     "sync:template": "./scripts/sync-from-template.sh"

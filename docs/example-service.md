@@ -39,9 +39,9 @@ Invalid answers stay on the same question, with an error summary and the values 
 | `/fees`, `/help`, `/guidance`        | Fees table, help accordion, and guidance tabs                                                                                              |
 | `/updates`, `/cookies`               | Service updates with pagination, and cookie settings                                                                                       |
 | `/accessibility`, `/about`           | Accessibility statement and what this example is                                                                                           |
-| `/components`                        | Every component in this Frontend release. **Links only** — no embedded demos                                                               |
-| `/components/:name`                  | One fixture, with a banner that says whether the macro HTML matches the fixture                                                            |
-| `/components/:name?fixture=`         | A named fixture                                                                                                                            |
+| `/components`                        | Preview homepage. Every component in this Frontend release as **links only** — no embedded demos                                           |
+| `/components/:name`                  | One fixture in a preview frame, plus every fixture version. The success banner appears only when that HTML equals the fixture              |
+| `/components/:name?fixture=`         | A named fixture version on that component page                                                                                             |
 | `/components/:name/fixture?fixture=` | The fixture HTML fragment only. For tests and debugging                                                                                    |
 | `/examples/exit-this-page`           | Exit this page. The button leaves this example and opens the BBC weather forecast                                                          |
 
@@ -56,12 +56,13 @@ The server compresses with Brotli when the browser sends `Accept-Encoding: br`. 
 ## Tests
 
 ```sh
+npm run test:fixtures
 npm test
 ```
 
-This runs the shared baseline suite at **100%** line, branch, and function coverage, then the Node test runner. The application suite fails if code is below **100%** function, branch, statement, or line coverage. `src/main.ts` is the process entry and is excluded.
+`npm run test:fixtures` compares TypeScript `renderComponent` output with **every** official fixture in the pinned `govuk-frontend` release, including hidden fixtures. The comparison is the fixture `html` string. The renderer trims only the outer whitespace of its own output so that output can equal the fixture. Tests do not edit fixture HTML and do not normalise it before comparing.
 
-Component tests render **every** official fixture shipped with the pinned `govuk-frontend` release, including hidden fixtures. The comparison is the fixture `html` string. The renderer trims only the outer whitespace of its own output so that output can equal the fixture. Tests do not edit fixture HTML and do not normalise it before comparing.
+`npm test` runs that parity suite as well, plus the shared baseline suite at **100%** line, branch, and function coverage. The application suite fails if code is below **100%** function, branch, statement, or line coverage. `src/main.ts` is the process entry and is excluded. The service tests also open every component page for every fixture version and check that the “HTML matches the fixture” banner is present only when the rendered HTML equals the fixture.
 
 The service tests walk the licence journey, including validation, retained answers, check your answers, confirmation, cookies, Welsh, and the catalogue.
 

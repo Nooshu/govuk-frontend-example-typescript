@@ -37,7 +37,7 @@ Official GOV.UK Frontend CSS + JavaScript
 
 This implementation provides a useful baseline against which the Go, Java, C#, Python, Ruby, PHP, Rust, and other implementations can be compared.
 
-# Fundamental principles
+## Fundamental principles
 
 The application must:
 
@@ -57,7 +57,7 @@ Do not introduce React, Angular, Vue, Svelte, or another frontend application fr
 
 The browser should receive useful HTML directly from the server.
 
-# Technology stack
+## Technology stack
 
 Use:
 
@@ -79,7 +79,7 @@ Keep the dependency surface small.
 
 Do not install packages for functionality that is straightforward using Node.js or existing project dependencies.
 
-# TypeScript
+## TypeScript
 
 Use TypeScript for all application source code.
 
@@ -121,7 +121,7 @@ Avoid excessive type-level programming.
 
 Type safety should make the application easier to understand, not harder.
 
-# Node.js
+## Node.js
 
 Use a current supported Node.js LTS release.
 
@@ -141,7 +141,7 @@ Do not depend on experimental Node.js behaviour without a clear requirement.
 
 Prefer built-in Node.js APIs where they provide a suitable solution.
 
-# Package management
+## Package management
 
 Use npm unless the repository explicitly standardises on another package manager.
 
@@ -180,7 +180,7 @@ or appropriate dependency security tooling as part of normal maintenance.
 
 Use automated dependency update tooling such as Renovate or Dependabot where appropriate.
 
-# Express
+## Express
 
 Use Express for HTTP routing and middleware.
 
@@ -202,7 +202,7 @@ Use middleware only where behaviour genuinely applies across routes or groups of
 
 Do not create middleware simply to move ordinary function calls elsewhere.
 
-# Application architecture
+## Application architecture
 
 Keep these concerns separate:
 
@@ -259,7 +259,7 @@ Adapt the structure where a simpler design is appropriate.
 
 Do not create directories or abstractions merely for architectural symmetry.
 
-# GOV.UK Frontend
+## GOV.UK Frontend
 
 Install GOV.UK Frontend from the official npm package.
 
@@ -286,7 +286,7 @@ GOV.UK Frontend is authoritative for:
 
 Use official GOV.UK Frontend implementations rather than recreating components locally.
 
-# Nunjucks
+## Nunjucks
 
 Use Nunjucks as the server-side template engine.
 
@@ -310,7 +310,7 @@ Do not manually reproduce GOV.UK component HTML when an official macro exists.
 
 This TypeScript implementation is intentionally the reference case where official Nunjucks macros can be used directly.
 
-# Layouts
+## Layouts
 
 Use the official GOV.UK Frontend page template or extend it through Nunjucks as appropriate.
 
@@ -336,7 +336,7 @@ Do not copy the complete GOV.UK page template into the application unless there 
 
 Extending the upstream template makes upgrades easier.
 
-# Component usage
+## Component usage
 
 Use official GOV.UK Frontend Nunjucks macros.
 
@@ -364,7 +364,7 @@ Keep complex business decisions out of Nunjucks.
 
 Templates should primarily be responsible for presentation.
 
-# Text and HTML options
+## Text and HTML options
 
 Understand the distinction between GOV.UK Frontend component options such as:
 
@@ -381,7 +381,7 @@ HTML options must contain content that has been explicitly classified as trusted
 
 Never use an HTML option merely to work around escaping.
 
-# Nunjucks escaping
+## Nunjucks escaping
 
 Enable automatic escaping for HTML templates.
 
@@ -400,7 +400,7 @@ Do not use Nunjucks `safe` indiscriminately.
 
 Never mark arbitrary user-controlled data as safe.
 
-# Page/view models
+## Page/view models
 
 Use explicit TypeScript types for page data.
 
@@ -427,7 +427,7 @@ This improves:
 - testing
 - understanding of the template contract
 
-# Forms
+## Forms
 
 Use normal HTML forms.
 
@@ -460,7 +460,7 @@ Validate input on the server.
 
 Client-side validation may enhance the experience but must not be the sole validation mechanism.
 
-# Validation
+## Validation
 
 Validate all user input on the server.
 
@@ -476,7 +476,7 @@ Do not depend exclusively on browser-native or JavaScript validation.
 
 Business validation belongs in application/domain logic rather than Nunjucks.
 
-# Progressive enhancement
+## Progressive enhancement
 
 Progressive enhancement is a core requirement.
 
@@ -494,7 +494,7 @@ JavaScript must not be required simply to make ordinary page content appear.
 
 Do not use client-side rendering for content that can reasonably be server-rendered.
 
-# GOV.UK Frontend JavaScript
+## GOV.UK Frontend JavaScript
 
 Use the official GOV.UK Frontend JavaScript implementation.
 
@@ -504,7 +504,7 @@ Do not rewrite component JavaScript locally unless there is a documented require
 
 Do not initialise components more than once.
 
-# JavaScript
+## JavaScript
 
 Keep application-specific browser JavaScript minimal.
 
@@ -520,7 +520,7 @@ Ask:
 
 The core service journey should remain usable wherever reasonably possible.
 
-# Assets
+## Assets
 
 Use official GOV.UK Frontend assets.
 
@@ -537,7 +537,7 @@ Do not silently depend on a CDN whose version can change independently of the ap
 
 Asset builds must be reproducible.
 
-# Sass
+## Sass
 
 Use GOV.UK Frontend's supported Sass APIs where application-specific styling is required.
 
@@ -549,7 +549,7 @@ Application-specific CSS should be minimal.
 
 Before adding custom styling, check whether GOV.UK Frontend or the GOV.UK Design System already provides the required pattern.
 
-# Custom components
+## Custom components
 
 Do not create a custom component if an appropriate GOV.UK Design System component or pattern already exists.
 
@@ -565,7 +565,7 @@ If a genuinely new component is required:
 
 Do not imitate GOV.UK styling without following the underlying interaction and accessibility requirements.
 
-# Accessibility
+## Accessibility
 
 Target WCAG 2.2 AA.
 
@@ -592,7 +592,7 @@ Do not assume that using GOV.UK Frontend automatically makes the entire service 
 
 Application-specific markup and journeys still require accessibility testing.
 
-# Resilience
+## Resilience
 
 Design the service to remain usable when reasonable dependencies fail.
 
@@ -610,7 +610,7 @@ Handle failures deliberately.
 
 Return appropriate HTTP status codes.
 
-# Security
+## Security
 
 Follow secure Express and Node.js practices.
 
@@ -632,7 +632,7 @@ Use established security middleware where justified.
 
 Do not expose stack traces or internal errors to users in production.
 
-# Content Security Policy
+## Content Security Policy
 
 Prefer a restrictive Content Security Policy.
 
@@ -642,7 +642,7 @@ Do not weaken CSP merely to make third-party tooling easier to integrate.
 
 Any CSP exceptions should have a documented reason.
 
-# Sessions
+## Sessions
 
 If sessions are required:
 
@@ -655,7 +655,7 @@ If sessions are required:
 
 Do not use Express's default in-memory session store in production.
 
-# Logging
+## Logging
 
 Use structured server-side logging.
 
@@ -669,7 +669,7 @@ Do not log:
 
 Include sufficient context to diagnose failures without exposing sensitive data.
 
-# Error handling
+## Error handling
 
 Use central Express error handling.
 
@@ -687,7 +687,7 @@ Return appropriate HTTP status codes.
 
 User-facing errors should be clear and actionable.
 
-# Testing strategy
+## Testing strategy
 
 Use multiple levels of testing.
 
@@ -702,7 +702,7 @@ Use Supertest for HTTP behaviour where appropriate.
 
 Test rendered HTML, not merely controller return values.
 
-# GOV.UK Frontend fixture testing
+## GOV.UK Frontend fixture testing
 
 Although this implementation uses the official Nunjucks macros directly, the official GOV.UK Frontend fixtures should still be treated as the rendering reference for the experiment.
 
@@ -718,7 +718,7 @@ Do not modify expected HTML.
 
 Do not special-case fixture names.
 
-# HTML comparison
+## HTML comparison
 
 Where structural HTML comparison is required, use a standards-aware parser such as parse5.
 
@@ -740,7 +740,7 @@ Meaningful differences include:
 
 Any normalisation must be conservative and documented.
 
-# Unit testing
+## Unit testing
 
 Use Vitest or Jest consistently.
 
@@ -755,7 +755,7 @@ Test:
 - error handling
 - security-sensitive behaviour
 
-# Integration testing
+## Integration testing
 
 Use Supertest for Express integration testing.
 
@@ -771,7 +771,7 @@ Verify:
 - headers
 - error handling
 
-# End-to-end testing
+## End-to-end testing
 
 Use browser-based end-to-end testing only where it adds genuine value.
 
@@ -781,7 +781,7 @@ Use lower-level tests for deterministic rendering and business logic.
 
 Browser tests should concentrate on important user journeys and progressive enhancements.
 
-# Test accessibility
+## Test accessibility
 
 Automated accessibility testing may be used as part of CI.
 
@@ -789,7 +789,7 @@ Do not treat automated testing as a replacement for manual accessibility testing
 
 Test keyboard behaviour and important interactions manually where appropriate.
 
-# Dependency security
+## Dependency security
 
 Keep npm dependencies to a sensible minimum.
 
@@ -807,7 +807,7 @@ Run security scanning in CI where appropriate.
 
 Use automated dependency updates, but do not merge updates without tests.
 
-# Lockfile
+## Lockfile
 
 Commit `package-lock.json`.
 
@@ -821,7 +821,7 @@ Unexpected lockfile changes should be reviewed.
 
 Do not delete and regenerate the lockfile simply to resolve dependency problems without understanding the change.
 
-# Linting
+## Linting
 
 Use ESLint with TypeScript support.
 
@@ -831,7 +831,7 @@ Do not disable lint rules globally simply to make CI pass.
 
 Where a rule must be disabled locally, document why when it is not obvious.
 
-# Formatting
+## Formatting
 
 Use Prettier.
 
@@ -839,7 +839,7 @@ Formatting should be deterministic.
 
 Do not manually maintain formatting rules that conflict with Prettier.
 
-# Code quality
+## Code quality
 
 Prefer:
 
@@ -866,7 +866,7 @@ Avoid:
 - unnecessary npm packages
 - abstractions without a concrete requirement
 
-# Performance
+## Performance
 
 Server-side rendering should remain straightforward and predictable.
 
@@ -883,7 +883,7 @@ Measure performance before optimising.
 
 Prefer architectural simplicity over speculative micro-optimisation.
 
-# Browser payload
+## Browser payload
 
 Keep browser JavaScript small.
 
@@ -893,7 +893,7 @@ Server-side TypeScript does not require client-side TypeScript.
 
 Only ship JavaScript required for GOV.UK Frontend enhancements and genuine application-specific user needs.
 
-# No frontend framework
+## No frontend framework
 
 Do not introduce:
 
@@ -912,7 +912,7 @@ unless the repository requirements are explicitly changed.
 
 This project deliberately demonstrates an HTML-first server-rendered architecture.
 
-# Forbidden shortcuts
+## Forbidden shortcuts
 
 Never:
 
@@ -931,7 +931,7 @@ Never:
 
 If something cannot be implemented correctly, expose and document the limitation rather than hiding it.
 
-# CI
+## CI
 
 CI must at minimum:
 
@@ -957,7 +957,7 @@ The exact scripts should be defined in `package.json`.
 
 A failing test or fixture parity check must fail CI.
 
-# Production build
+## Production build
 
 Production builds must be reproducible.
 
@@ -967,7 +967,7 @@ Do not depend on development-only transpilation behaviour in production.
 
 Separate development dependencies from runtime dependencies appropriately.
 
-# Production runtime
+## Production runtime
 
 Run the compiled application using Node.js.
 
@@ -983,7 +983,7 @@ Support environment-based configuration.
 
 Do not hard-code environment-specific URLs or secrets.
 
-# Configuration
+## Configuration
 
 Use environment variables for environment-specific configuration.
 
@@ -993,7 +993,7 @@ Fail early with a useful error when required configuration is missing.
 
 Do not expose secrets to templates or browser JavaScript.
 
-# GOV.UK Frontend upgrades
+## GOV.UK Frontend upgrades
 
 Treat a GOV.UK Frontend upgrade as a deliberate compatibility event.
 
@@ -1012,7 +1012,7 @@ When upgrading:
 
 Do not blindly update GOV.UK Frontend without testing.
 
-# Comparison with alternative implementations
+## Comparison with alternative implementations
 
 Remember that this repository is the baseline for a wider experiment.
 
@@ -1050,7 +1050,7 @@ User
 
 Backend architecture and frontend presentation are separate concerns.
 
-# Definition of done
+## Definition of done
 
 A feature or page is complete only when:
 
@@ -1072,7 +1072,7 @@ A feature or page is complete only when:
 
 For GOV.UK components specifically, the official GOV.UK Frontend implementation and fixtures remain the rendering authority.
 
-# Guiding principle
+## Guiding principle
 
 The purpose of this implementation is not to demonstrate TypeScript or Node.js as the preferred technology.
 

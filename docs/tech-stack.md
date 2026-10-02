@@ -33,7 +33,8 @@ Shared Node tooling (Sass pipeline, `baseline/`, docs scripts) already uses curr
 npm install
 npm run build:styles   # Sass → dist/stylesheets/application.css
 npm start              # build:styles, then example service — http://127.0.0.1:3000
-npm test               # baseline, Sass, TypeScript vs every fixture, service tests; 100% coverage
+npm run test:fixtures  # TypeScript renderComponent vs every official fixture html
+npm test               # baseline, Sass, fixture parity, service tests; 100% coverage
 npm run typecheck
 npm run verify:docs    # Prettier + markdownlint
 npm run verify         # docs + build:styles + typecheck + tests
@@ -62,20 +63,20 @@ Details: [frontend-performance.md](frontend-performance.md), [frontend-security.
 
 ## Version pin
 
-| Item                              | Value                                                                                                                                                                                |
-| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Implementation language           | TypeScript 7.0.2 on Node ≥22                                                                                                                                                         |
-| Templating / component approach   | Prefer Nunjucks macros from `govuk-frontend`; TypeScript for app/library logic                                                                                                       |
-| `govuk-frontend` (Node)           | **6.5.1** — [v6.5.1](https://github.com/alphagov/govuk-frontend/releases/tag/v6.5.1) (reviewed against [latest release](https://github.com/alphagov/govuk-frontend/releases/latest)) |
-| Sass pipeline                     | `styles/application.scss` → `npm run build:styles` → `dist/stylesheets/application.css` ([styles.md](styles.md))                                                                     |
-| Nunjucks                          | 3.2.4, with Frontend’s `trimBlocks` and `lstripBlocks`                                                                                                                               |
-| Backend parity (primary)          | `npm test` — TypeScript `renderComponent` ≡ every official `fixtures.json` `html` (including hidden) ([testing-components.md](testing-components.md))                                |
-| Nunjucks freshness (secondary)    | Fixtures and macros come from the same pinned `govuk-frontend` package; optional separate Nunjucks-only suite — never a substitute for backend parity                                |
-| Page template reference           | https://design-system.service.gov.uk/styles/page-template/                                                                                                                           |
-| Fixture testing guide             | https://frontend.design-system.service.gov.uk/testing-your-html/                                                                                                                     |
-| Example service                   | [example-service.md](example-service.md) — `npm start`                                                                                                                               |
-| Response baseline                 | [`baseline/`](../baseline/) via `applyResponseHeaders` — [frontend-performance.md](frontend-performance.md), [frontend-security.md](frontend-security.md)                            |
-| Upgrade / test / preview commands | `npm run build:styles`, `npm start`, `npm test`, `npm run typecheck`, `npm run verify`; Frontend upgrade per [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)              |
+| Item                              | Value                                                                                                                                                                                              |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Implementation language           | TypeScript 7.0.2 on Node ≥22                                                                                                                                                                       |
+| Templating / component approach   | Prefer Nunjucks macros from `govuk-frontend`; TypeScript for app/library logic                                                                                                                     |
+| `govuk-frontend` (Node)           | **6.5.1** — [v6.5.1](https://github.com/alphagov/govuk-frontend/releases/tag/v6.5.1) (reviewed against [latest release](https://github.com/alphagov/govuk-frontend/releases/latest))               |
+| Sass pipeline                     | `styles/application.scss` → `npm run build:styles` → `dist/stylesheets/application.css` ([styles.md](styles.md))                                                                                   |
+| Nunjucks                          | 3.2.4, with Frontend’s `trimBlocks` and `lstripBlocks`                                                                                                                                             |
+| Backend parity (primary)          | `npm run test:fixtures` — TypeScript `renderComponent` ≡ every official `fixtures.json` `html` (including hidden). `npm test` runs the same suite ([testing-components.md](testing-components.md)) |
+| Nunjucks freshness (secondary)    | Fixtures and macros come from the same pinned `govuk-frontend` package; optional separate Nunjucks-only suite — never a substitute for backend parity                                              |
+| Page template reference           | https://design-system.service.gov.uk/styles/page-template/                                                                                                                                         |
+| Fixture testing guide             | https://frontend.design-system.service.gov.uk/testing-your-html/                                                                                                                                   |
+| Example service                   | [example-service.md](example-service.md) — `npm start`                                                                                                                                             |
+| Response baseline                 | [`baseline/`](../baseline/) via `applyResponseHeaders` — [frontend-performance.md](frontend-performance.md), [frontend-security.md](frontend-security.md)                                          |
+| Upgrade / test / preview commands | `npm run build:styles`, `npm start`, `npm run test:fixtures`, `npm test`, `npm run typecheck`, `npm run verify`; Frontend upgrade per [upgrading-govuk-frontend.md](upgrading-govuk-frontend.md)   |
 
 ## Hard constraints (always)
 

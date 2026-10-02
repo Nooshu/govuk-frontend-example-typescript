@@ -241,7 +241,7 @@ function get(
   if (step)
     return {
       type: 'page',
-      view: stepView(step, session, url, takeErrors(session, path), deps.now()),
+      view: stepView(step, session, url, takeErrors(session, path)),
       session,
     };
   return undefined;
@@ -450,13 +450,7 @@ function updatesGet(url: URL, session: Session): PageResult | RedirectResult {
   };
 }
 
-function stepView(
-  step: Step,
-  session: Session,
-  url: URL,
-  errors: FieldError[],
-  now: Date,
-): PageView {
+function stepView(step: Step, session: Session, url: URL, errors: FieldError[]): PageView {
   const returnTo = url.searchParams.get('return') === 'check-answers' ? 'check-answers' : undefined;
   const previous = previousStep(step.id);
   return {
@@ -478,11 +472,7 @@ function stepView(
   };
 }
 
-function stepContext(
-  step: Step,
-  session: Session,
-  errors: FieldError[],
-): Record<string, unknown> {
+function stepContext(step: Step, session: Session, errors: FieldError[]): Record<string, unknown> {
   const application = session.application;
   switch (step.id) {
     case 'licence-length':
@@ -675,7 +665,7 @@ function componentView(name: string, requested: string | null): PageView | undef
       fixtureName: fixture.name,
       rendered,
       matches,
-      parity: parityBanner(true),
+      parity: parityBanner(matches),
       mismatch: parityBanner(false),
       fixtures: fixtures.map((item) => ({
         name: item.name,

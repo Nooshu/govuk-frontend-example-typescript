@@ -88,6 +88,41 @@ function form(token: string, values: Record<string, string | string[]>): string 
   return params.toString();
 }
 
+/** Nunjucks `escape` for text this test looks up in a rendered page. */
+function fixtureLabel(name: string): string {
+  return name
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+/**
+ * The success banner is present only when `renderComponent` equals the fixture HTML.
+ * Every preview still shows that HTML inside the frame.
+ */
+function assertComponentPreview(
+  html: string,
+  componentName: string,
+  fixtureName: string,
+  options: Parameters<typeof renderComponent>[1],
+  fixtureHtml: string,
+): void {
+  const rendered = renderComponent(componentName, options);
+  const matches = rendered === fixtureHtml;
+  const label = `${componentName} / ${fixtureName}`;
+  assert.equal(html.includes('HTML matches the fixture'), matches, label);
+  if (matches) {
+    assert.doesNotMatch(html, /HTML does not match the fixture/);
+  } else {
+    assert.match(html, /HTML does not match the fixture/);
+  }
+  if (fixtureHtml.length > 0) assert.ok(html.includes(fixtureHtml), label);
+  assert.ok(html.includes(`Current version: ${fixtureLabel(fixtureName)}`), label);
+  assert.match(html, /app-component-preview__frame/);
+}
+
 function assertShell(html: string, lang = 'en'): void {
   assert.equal(h1Count(html), 1);
   assert.match(html, new RegExp(`<html[^>]* lang="${lang}"`));
