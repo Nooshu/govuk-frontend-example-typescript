@@ -8,10 +8,19 @@ describe('config', () => {
     assert.equal(FRONTEND_VERSION, '6.5.1');
   });
 
-  it('enables demos unless NODE_ENV is production', () => {
-    assert.equal(demosEnabledFromEnv({ NODE_ENV: 'production' }), false);
+  it('keeps demos on unless DEMOS_ENABLED turns them off', () => {
+    assert.equal(demosEnabledFromEnv({ NODE_ENV: 'production' }), true);
     assert.equal(demosEnabledFromEnv({ NODE_ENV: 'development' }), true);
     assert.equal(demosEnabledFromEnv({}), true);
+    assert.equal(demosEnabledFromEnv({ DEMOS_ENABLED: 'true', NODE_ENV: 'production' }), true);
+    assert.equal(demosEnabledFromEnv({ DEMOS_ENABLED: '1', NODE_ENV: 'production' }), true);
+    assert.equal(demosEnabledFromEnv({ DEMOS_ENABLED: 'yes', NODE_ENV: 'production' }), true);
+    assert.equal(demosEnabledFromEnv({ DEMOS_ENABLED: ' TRUE ' }), true);
+    assert.equal(demosEnabledFromEnv({ DEMOS_ENABLED: 'false', NODE_ENV: 'development' }), false);
+    assert.equal(demosEnabledFromEnv({ DEMOS_ENABLED: '0' }), false);
+    assert.equal(demosEnabledFromEnv({ DEMOS_ENABLED: 'no' }), false);
+    assert.equal(demosEnabledFromEnv({ DEMOS_ENABLED: 'maybe', NODE_ENV: 'production' }), true);
+    assert.equal(demosEnabledFromEnv({ DEMOS_ENABLED: '  ' }), true);
     assert.equal(typeof demosEnabledFromEnv(), 'boolean');
   });
 

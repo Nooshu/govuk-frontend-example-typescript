@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import { parityBanner } from '../components/preview.js';
 import { createSession } from '../session/store.js';
 import { renderPage } from './document.js';
 
@@ -46,5 +47,57 @@ describe('page document', () => {
     );
     assert.match(html, /href="\/" class="govuk-header__homepage-link"/);
     assert.doesNotMatch(html, /href="\/\/gov\.uk" class="govuk-header__homepage-link"/);
+  });
+
+  it('shows the fixture match banner only when the rendered HTML matches', () => {
+    const session = createSession();
+    const url = new URL('http://example.test/components/back-link');
+    const context = {
+      componentName: 'back-link',
+      componentTitle: 'Back link',
+      designSystemUrl: 'https://design-system.service.gov.uk/components/back-link/',
+      frontendVersion: '6.5.1',
+      description: '',
+      fixtureName: 'default',
+      rendered: '<a href="#" class="govuk-back-link">Back</a>',
+      parity: parityBanner(true),
+      mismatch: parityBanner(false),
+      fixtures: [
+        { name: 'default', href: 'default', current: true },
+        { name: 'inverse', href: 'inverse', current: false },
+      ],
+    };
+    const matched = renderPage(
+      {
+        template: 'pages/component.njk',
+        status: 200,
+        heading: 'Back link',
+        backLink: { href: '/components', text: 'Back' },
+        context: { ...context, matches: true },
+      },
+      session,
+      url,
+      true,
+    );
+    assert.match(matched, /HTML matches the fixture/);
+    assert.doesNotMatch(matched, /HTML does not match the fixture/);
+    assert.match(matched, /app-component-preview__frame/);
+    assert.match(matched, /Versions \(Fixtures\)/);
+    assert.match(matched, /govuk-tag/);
+
+    const missed = renderPage(
+      {
+        template: 'pages/component.njk',
+        status: 200,
+        heading: 'Back link',
+        backLink: { href: '/components', text: 'Back' },
+        context: { ...context, matches: false },
+      },
+      session,
+      url,
+      true,
+    );
+    assert.doesNotMatch(missed, /HTML matches the fixture/);
+    assert.match(missed, /HTML does not match the fixture/);
   });
 });

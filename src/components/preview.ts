@@ -27,10 +27,12 @@ export function parityBanner(matches: boolean): Record<string, unknown> {
       type: 'success',
       titleText: 'HTML matches the fixture',
       text: 'The macro output is the same as the official fixture HTML.',
+      titleId: 'component-parity-title',
     };
   }
   return {
     titleText: 'HTML does not match the fixture',
     text: 'The macro output is different from the official fixture HTML.',
+    titleId: 'component-parity-title',
   };
 }

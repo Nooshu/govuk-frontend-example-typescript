@@ -1,0 +1,22 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# Step-by-step: docs/deploying-on-render.md
+#
+# Sessions are in-memory (fine for a public example; not multi-instance durable).
+
+services:
+  - type: web
+    name: govuk-frontend-example-typescript
+    runtime: node
+    plan: free
+    region: oregon
+    branch: main
+    healthCheckPath: /health
+    buildCommand: npm ci --include=dev && npm run build:styles
+    startCommand: npx tsx src/main.ts
+    envVars:
+      # Catalogue and Developer previews stay on for the public example.
+      # Set DEMOS_ENABLED=false to serve the licence journey only.
+      - key: DEMOS_ENABLED
+        value: "true"
+      - key: NODE_VERSION
+        value: "22"

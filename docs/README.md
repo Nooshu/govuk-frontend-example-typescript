@@ -22,6 +22,7 @@ How we keep docs dual-purpose: [documentation-structure.md](documentation-struct
 | [frontend-security.md](frontend-security.md)             | OWASP response headers, CSP, cookies                         |
 | [tech-stack.md](tech-stack.md)                           | TypeScript / Node + Frontend Nunjucks                        |
 | [example-service.md](example-service.md)                 | Rod licence example, `npm start`, fixture previews           |
+| [deploying-on-render.md](deploying-on-render.md)         | Public Render demo, `DEMOS_ENABLED`, health check            |
 | [prompts.md](prompts.md)                                 | Prompts given to the agent to generate this template         |
 | [syncing-from-template.md](syncing-from-template.md)     | Pull shared docs/dotfiles from govuk-frontend-example        |
 | [guidance-sources.md](guidance-sources.md)               | Official GDS / Service Manual / Frontend URLs                |

@@ -2,28 +2,42 @@
 {% from "macros/columns.njk" import fullWidth %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
 
 {% block content %}
   {% call fullWidth() %}
     <h1 class="govuk-heading-l">{{ componentTitle }}</h1>
+    <p class="govuk-body">Preview of this component. Choose a version below to compare the Nunjucks macro HTML with the official fixture from GOV.UK Frontend {{ frontendVersion }}.</p>
     <p class="govuk-body"><a class="govuk-link" href="{{ designSystemUrl }}">{{ componentTitle }} on the GOV.UK Design System</a></p>
-    <h2 class="govuk-heading-m">Fixtures</h2>
-    <ul class="govuk-list">
-      {% for item in fixtures %}
-        <li>
-          {% if item.current %}
-            <strong>{{ item.name }}</strong>
-          {% else %}
-            <a class="govuk-link" href="/components/{{ componentName }}?fixture={{ item.href }}">{{ item.name }}</a>
-          {% endif %}
-        </li>
-      {% endfor %}
-    </ul>
-    {{ govukNotificationBanner(parity) }}
+    <h2 class="govuk-heading-m">Current version: {{ fixtureName }}</h2>
+    {% if matches %}
+      {{ govukNotificationBanner(parity) }}
+    {% else %}
+      {{ govukNotificationBanner(mismatch) }}
+    {% endif %}
     {% if description %}
       {{ govukInsetText({ text: description }) }}
     {% endif %}
-    <h2 class="govuk-heading-m">{{ fixtureName }}</h2>
-    {{ rendered | safe }}
+    <div class="app-component-preview">
+      <h3 class="govuk-heading-s">Component preview</h3>
+      <div class="app-component-preview__frame">
+        {{ rendered | safe }}
+      </div>
+    </div>
+    <h2 class="govuk-heading-m">Versions (Fixtures)</h2>
+    <nav aria-label="Versions">
+      <ul class="govuk-list">
+        {% for item in fixtures %}
+          <li>
+            {% if item.current %}
+              <strong aria-current="true">{{ item.name }}</strong>
+              {{ govukTag({ text: "Current" }) }}
+            {% else %}
+              <a class="govuk-link" href="/components/{{ componentName }}?fixture={{ item.href }}">{{ item.name }}</a>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
   {% endcall %}
 {% endblock %}

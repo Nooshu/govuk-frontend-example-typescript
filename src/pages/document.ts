@@ -137,12 +137,12 @@ function phaseBanner(lang: 'en' | 'cy'): Record<string, unknown> {
   if (lang === 'cy') {
     return {
       tag: { text: 'Enghraifft' },
-      html: 'Mae hon yn wasanaeth enghreifftiol – bydd eich <a class="govuk-link" href="/about">adborth</a> yn ein helpu i wella’r gwasanaeth.',
+      html: 'Mae hon yn arddangosiad – nid gwasanaeth llywodraeth byw mohono. Bydd eich <a class="govuk-link" href="/about">adborth</a> yn helpu i wella’r enghraifft.',
     };
   }
   return {
     tag: { text: 'Example' },
-    html: 'This is an example service – your <a class="govuk-link" href="/about">feedback</a> will help us to improve it.',
+    html: 'This is a demonstration – it is not a live government service. Your <a class="govuk-link" href="/about">feedback</a> will help us improve the example.',
   };
 }
 
@@ -153,18 +153,18 @@ function phaseBanner(lang: 'en' | 'cy'): Record<string, unknown> {
  * chrome for this demo notice only — Frontend’s default Important stays blue.
  */
 function demoBanner(lang: 'en' | 'cy'): Record<string, unknown> {
-  if (lang === 'cy') {
-    return {
-      titleText: 'Pwysig',
-      text: 'Mae hon yn arddangosiad byw. Nid yw’n wasanaeth llywodraeth go iawn.',
-      classes: 'app-notification-banner--demo',
-    };
-  }
-  return {
-    titleText: 'Important',
-    text: 'This is a live demo. It is not a real government service.',
+  const banner: Record<string, unknown> = {
     classes: 'app-notification-banner--demo',
+    titleId: 'app-demo-banner-title',
   };
+  if (lang === 'cy') {
+    banner.titleText = 'Pwysig';
+    banner.text = 'Mae hon yn arddangosiad byw. Nid yw’n wasanaeth llywodraeth go iawn.';
+    return banner;
+  }
+  banner.titleText = 'Important';
+  banner.text = 'This is a live demo. It is not a real government service.';
+  return banner;
 }
 
 function cookieBanner(session: Session): Record<string, unknown> | undefined {

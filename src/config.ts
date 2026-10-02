@@ -46,13 +46,32 @@ export const SERVICE_NAME_CY = 'Gwneud cais am drwydded bysgota';
 export const MAX_BODY_BYTES = 1_000_000;
 
 /**
- * Whether component demos are on.
+ * Whether the component catalogue, example pages, and homepage developer previews are served.
+ *
+ * `DEMOS_ENABLED` wins when it is set to a known value:
+ *
+ * - `true`, `1`, or `yes` forces demos on
+ * - `false`, `0`, or `no` forces demos off
+ *
+ * Any other value, including an unset variable, leaves demos on. Hosts such as Render set
+ * `NODE_ENV=production` for every Node service; that must not hide the public catalogue.
  *
  * @param env - Process environment. Defaults to `process.env`.
- * @returns `false` when `NODE_ENV` is `production`.
+ * @returns Whether demo routes and links are included.
  */
 export function demosEnabledFromEnv(env: NodeJS.ProcessEnv = process.env): boolean {
-  return env.NODE_ENV !== 'production';
+  switch (env.DEMOS_ENABLED?.trim().toLowerCase()) {
+    case 'true':
+    case '1':
+    case 'yes':
+      return true;
+    case 'false':
+    case '0':
+    case 'no':
+      return false;
+    default:
+      return true;
+  }
 }
 
 /**

@@ -660,6 +660,7 @@ function componentView(name: string, requested: string | null): PageView | undef
   if (!fixture) return undefined;
   const info = describeComponent(name);
   const rendered = renderComponent(name, fixture.options);
+  const matches = rendered === fixture.html;
   return {
     template: 'pages/component.njk',
     status: 200,
@@ -669,10 +670,13 @@ function componentView(name: string, requested: string | null): PageView | undef
       componentName: name,
       componentTitle: info.title,
       designSystemUrl: info.designSystemUrl,
+      frontendVersion: FRONTEND_VERSION,
       description: fixture.description,
       fixtureName: fixture.name,
       rendered,
-      parity: parityBanner(rendered === fixture.html),
+      matches,
+      parity: parityBanner(true),
+      mismatch: parityBanner(false),
       fixtures: fixtures.map((item) => ({
         name: item.name,
         href: encodeURIComponent(item.name),

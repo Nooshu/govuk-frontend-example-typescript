@@ -16,5 +16,17 @@
     {{ govukWarningText(warning) }}
     {{ govukInsetText(inset) }}
     {{ govukDetails(details) }}
+    {% if demosEnabled %}
+      <h2 class="govuk-heading-m">
+        {%- if htmlLang == "cy" %}Rhagolygon datblygwyr{% else %}Developer previews{% endif -%}
+      </h2>
+      <p class="govuk-body">
+        {% if htmlLang == "cy" %}
+          <a class="govuk-link" href="/components">Rhagolwg o gydrannau GOV.UK</a> — tudalen ar wahân ar gyfer pob cydran, wedi’i rendro gan y llyfrgell TypeScript.
+        {% else %}
+          <a class="govuk-link" href="/components">Preview GOV.UK components</a> — a separate page for each component, rendered by this service’s TypeScript library.
+        {% endif %}
+      </p>
+    {% endif %}
   {% endcall %}
 {% endblock %}

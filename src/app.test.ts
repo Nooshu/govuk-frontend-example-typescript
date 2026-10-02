@@ -3,6 +3,8 @@ import { describe, it } from 'node:test';
 
 import { createApp, type App, type AppOptions } from './app.js';
 import { listComponentNames, loadComponentFixtures } from './components/fixtures.js';
+import { selectFixture } from './components/preview.js';
+import { renderComponent } from './components/render.js';
 import { demosEnabledFromEnv, FRONTEND_VERSION, MAX_BODY_BYTES } from './config.js';
 import { createMemoryStore, type Session, type SessionStore } from './session/store.js';
 import type { renderPage } from './pages/document.js';
@@ -126,6 +128,10 @@ describe('example service', { timeout: 120_000 }, () => {
     assert.match(start.text, /Help us improve this service/);
     assert.match(start.text, /Apply for a fishing rod licence/);
     assert.match(start.text, /href="\/licence-length"/);
+    assert.match(start.text, /This is a demonstration – it is not a live government service/);
+    assert.match(start.text, /Developer previews/);
+    assert.match(start.text, /href="\/components">Preview GOV\.UK components/);
+    assert.match(start.text, /TypeScript library/);
     assert.doesNotMatch(start.text, /govuk-back-link/);
     assert.doesNotMatch(start.text, /govuk-breadcrumbs/);
     const policy = start.response.headers.get('content-security-policy') ?? '';
@@ -146,6 +152,9 @@ describe('example service', { timeout: 120_000 }, () => {
     assertShell(welsh.text, 'cy');
     assert.match(welsh.text, /Dechrau nawr/);
     assert.match(welsh.text, /href="\/"/);
+    assert.match(welsh.text, /nid gwasanaeth llywodraeth byw mohono/);
+    assert.match(welsh.text, /Rhagolygon datblygwyr/);
+    assert.match(welsh.text, /llyfrgell TypeScript/);
 
     const earlyCheck = await send('/check-answers');
     assert.equal(earlyCheck.status, 303);
@@ -570,13 +579,30 @@ describe('example service', { timeout: 120_000 }, () => {
     const catalogue = await client.send('/components');
     assertShell(catalogue.text);
     assert.match(catalogue.text, /lists links only/);
+    assert.match(catalogue.text, /preview homepage/);
+    assert.match(catalogue.text, /Nunjucks macros/);
     const catalogueMain = catalogue.text.slice(catalogue.text.indexOf('<main'));
     assert.doesNotMatch(catalogueMain, /class="govuk-button/);
     for (const name of listComponentNames()) {
       assert.match(catalogue.text, new RegExp(`href="/components/${name}"`));
+      const loaded = loadComponentFixtures(name);
+      const selected = selectFixture(loaded.fixtures, null);
+      assert.ok(selected);
       const preview = await client.send(`/components/${name}`);
       assert.equal(preview.status, 200, name);
-      assert.match(preview.text, /HTML matches the fixture/);
+      assert.match(preview.text, /Component preview/);
+      assert.match(preview.text, /app-component-preview__frame/);
+      assert.match(preview.text, /Versions \(Fixtures\)/);
+      assertComponentPreview(preview.text, name, selected.name, selected.options, selected.html);
+      for (const fixture of loaded.fixtures) {
+        assert.ok(preview.text.includes(fixtureLabel(fixture.name)), `${name} / ${fixture.name}`);
+        if (fixture.name === selected.name) continue;
+        const page = await client.send(
+          `/components/${name}?fixture=${encodeURIComponent(fixture.name)}`,
+        );
+        assert.equal(page.status, 200, `${name} / ${fixture.name}`);
+        assertComponentPreview(page.text, name, fixture.name, fixture.options, fixture.html);
+      }
     }
 
     const button = loadComponentFixtures('button');
@@ -626,6 +652,7 @@ describe('example service', { timeout: 120_000 }, () => {
     const home = await quiet.send('/');
     assert.equal(home.status, 200);
     assert.doesNotMatch(home.text, /Component catalogue/);
+    assert.doesNotMatch(home.text, /Developer previews/);
     assert.equal((await quiet.send('/components')).status, 404);
     assert.equal((await quiet.send('/examples/exit-this-page')).status, 404);
     const about = await quiet.send('/about');
