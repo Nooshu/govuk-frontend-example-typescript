@@ -24,10 +24,7 @@ export function errorSummary(errors: FieldError[]): Record<string, unknown> | un
  * @param errors - Field errors for this page.
  * @returns Params whose label is the page heading.
  */
-export function nameField(
-  application: Application,
-  errors: FieldError[],
-): Record<string, unknown> {
+export function nameField(application: Application, errors: FieldError[]): Record<string, unknown> {
   return {
     fullName: textInput('full-name', 'What is your full name?', application.fullName, errors, {
       autocomplete: 'name',
