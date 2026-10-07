@@ -73,11 +73,7 @@ Use:
 - ESLint
 - Prettier
 
-Prefer established, actively maintained packages.
-
-Keep the dependency surface small.
-
-Do not install packages for functionality that is straightforward using Node.js or existing project dependencies.
+Prefer established packages and a small dependency surface — see [safe-dependency-updates](../skills/safe-dependency-updates/SKILL.md).
 
 ## TypeScript
 
@@ -141,44 +137,9 @@ Do not depend on experimental Node.js behaviour without a clear requirement.
 
 Prefer built-in Node.js APIs where they provide a suitable solution.
 
-## Package management
+## Dependencies
 
-Use npm unless the repository explicitly standardises on another package manager.
-
-Commit:
-
-```text
-package.json
-package-lock.json
-```
-
-Use reproducible CI installation:
-
-```bash
-npm ci
-```
-
-Do not use:
-
-```bash
-npm install
-```
-
-during normal CI installation.
-
-Pin the GOV.UK Frontend version explicitly.
-
-Avoid broad dependency ranges for critical dependencies where reproducibility matters.
-
-Run:
-
-```bash
-npm audit
-```
-
-or appropriate dependency security tooling as part of normal maintenance.
-
-Use automated dependency update tooling such as Renovate or Dependabot where appropriate.
+Dependency updates, lockfiles, audits, and Dependabot / Renovate review follow [`.cursor/skills/safe-dependency-updates/SKILL.md`](../skills/safe-dependency-updates/SKILL.md). Keep the dependency surface small; prefer platform / standard-library APIs first. Do **not** start or complete dependency changes while CI is red.
 
 ## Express
 
@@ -788,38 +749,6 @@ Automated accessibility testing may be used as part of CI.
 Do not treat automated testing as a replacement for manual accessibility testing.
 
 Test keyboard behaviour and important interactions manually where appropriate.
-
-## Dependency security
-
-Keep npm dependencies to a sensible minimum.
-
-Before adding a dependency, consider:
-
-1. whether Node.js already provides the functionality
-2. whether the functionality is trivial to implement safely
-3. maintenance status
-4. dependency tree size
-5. security history
-6. whether the package executes installation scripts
-7. whether the package is actually required at runtime
-
-Run security scanning in CI where appropriate.
-
-Use automated dependency updates, but do not merge updates without tests.
-
-## Lockfile
-
-Commit `package-lock.json`.
-
-CI must use:
-
-```bash
-npm ci
-```
-
-Unexpected lockfile changes should be reviewed.
-
-Do not delete and regenerate the lockfile simply to resolve dependency problems without understanding the change.
 
 ## Linting
 
