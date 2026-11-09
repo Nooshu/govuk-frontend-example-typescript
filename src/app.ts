@@ -890,7 +890,7 @@ export function startServer(
   });
   return new Promise((resolve, reject) => {
     server.once('error', reject);
-    server.listen(port, () => {
+    server.listen(port, '0.0.0.0', () => {
       const bound = listeningPort(server.address());
       resolve({
         port: bound,

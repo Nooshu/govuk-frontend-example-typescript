@@ -17,7 +17,7 @@ Opens at <http://127.0.0.1:3000>. Set `PORT` to use another port.
 
 The start page includes **Developer previews**, a link to `/components`. The footer includes **Component catalogue** and **Example pages**. Those routes list every component in the pinned Frontend release.
 
-Demos stay on unless `DEMOS_ENABLED` is `false`, `0`, or `no`. `true`, `1`, and `yes` force them on. An unset or unknown value leaves them on, including when `NODE_ENV` is `production`. Render sets `NODE_ENV=production` for Node services; that must not hide the public catalogue. See [deploying-on-render.md](deploying-on-render.md).
+Demos stay on unless `DEMOS_ENABLED` is `false`, `0`, or `no`. `true`, `1`, and `yes` force them on. An unset or unknown value leaves them on, including when `NODE_ENV` is `production`. The Cloud Run image sets `NODE_ENV=production` and `DEMOS_ENABLED=true`, so the public catalogue stays on. See [deploying-on-cloud-run.md](deploying-on-cloud-run.md).
 
 ## Start to confirmation
 
